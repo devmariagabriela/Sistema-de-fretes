@@ -1,26 +1,26 @@
 package br.com.gwfrete.util;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import org.mindrot.jbcrypt.BCrypt;
 
 public final class CriptografiaUtil {
+    private static final int CUSTO_BCRYPT = 10;
+
     private CriptografiaUtil() {
     }
 
-    public static String gerarSha256(String valor) {
+    public static String gerarHashBCrypt(String valor) {
+        return BCrypt.hashpw(valor, BCrypt.gensalt(CUSTO_BCRYPT));
+    }
+
+    public static boolean verificarSenhaBCrypt(String senhaInformada, String hashArmazenado) {
+        if (senhaInformada == null || hashArmazenado == null || hashArmazenado.trim().isEmpty()) {
+            return false;
+        }
+
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(valor.getBytes(StandardCharsets.UTF_8));
-            StringBuilder hexadecimal = new StringBuilder();
-
-            for (byte b : hash) {
-                hexadecimal.append(String.format("%02x", b));
-            }
-
-            return hexadecimal.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Não foi possível criptografar a senha.", e);
+            return BCrypt.checkpw(senhaInformada, hashArmazenado);
+        } catch (IllegalArgumentException e) {
+            return false;
         }
     }
 }

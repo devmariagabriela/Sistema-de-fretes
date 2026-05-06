@@ -1,6 +1,7 @@
 package br.com.gwfrete.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 public class Usuario implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -10,7 +11,8 @@ public class Usuario implements Serializable {
     private String email;
     private String senha;
     private PerfilUsuario perfil;
-    private boolean ativo;
+    private StatusUsuario status;
+    private LocalDateTime dataCriacao;
 
     public Long getId() {
         return id;
@@ -52,12 +54,28 @@ public class Usuario implements Serializable {
         this.perfil = perfil;
     }
 
+    public StatusUsuario getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusUsuario status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
     public boolean isAtivo() {
-        return ativo;
+        return status == StatusUsuario.ATIVO;
     }
 
     public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
+        this.status = ativo ? StatusUsuario.ATIVO : StatusUsuario.INATIVO;
     }
 
     public boolean possuiPerfil(PerfilUsuario perfil) {
