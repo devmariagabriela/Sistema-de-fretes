@@ -1,0 +1,27 @@
+target/
+*.class
+.classpath
+.project
+.settings/
+.idea/
+*.iml
+# Maven
+target/
+
+# IDE
+.vscode/
+
+# IA / ferramentas locais
+.codex/
+.agents/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Configurações sensíveis
+*.properties
+!*.properties.example
