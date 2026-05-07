@@ -76,6 +76,21 @@
         <url-pattern>/veiculos/*</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>MotoristaController</servlet-name>
+        <servlet-class>br.com.gwfrete.controller.MotoristaController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>MotoristaController</servlet-name>
+        <url-pattern>/motoristas</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>MotoristaController</servlet-name>
+        <url-pattern>/motoristas/*</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
