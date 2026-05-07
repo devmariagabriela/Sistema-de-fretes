@@ -46,6 +46,21 @@
         <url-pattern>/dashboard</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>UsuarioController</servlet-name>
+        <servlet-class>br.com.gwfrete.controller.UsuarioController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UsuarioController</servlet-name>
+        <url-pattern>/usuarios</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>UsuarioController</servlet-name>
+        <url-pattern>/usuarios/*</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>

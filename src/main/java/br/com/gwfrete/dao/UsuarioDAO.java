@@ -1,6 +1,7 @@
 package br.com.gwfrete.dao;
 
 import br.com.gwfrete.model.PerfilUsuario;
+import br.com.gwfrete.model.StatusUsuario;
 import br.com.gwfrete.model.Usuario;
 import br.com.gwfrete.util.ConexaoFactory;
 
@@ -8,11 +9,70 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UsuarioDAO {
 
+    public void salvar(Usuario usuario) throws SQLException {
+        String sql = "INSERT INTO usuario (nome, email, senha, perfil, status) "
+                + "VALUES (?, ?, ?, ?::perfil_usuario_enum, ?::status_usuario_enum)";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql, new String[]{"id"})) {
+
+            preencherParametrosUsuario(stmt, usuario);
+            stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    usuario.setId(rs.getLong(1));
+                }
+            }
+        }
+    }
+
+    public List<Usuario> listarTodos() throws SQLException {
+        String sql = "SELECT id, nome, email, senha, perfil, status, data_criacao "
+                + "FROM usuario ORDER BY nome";
+
+        List<Usuario> usuarios = new ArrayList<>();
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                usuarios.add(mapearUsuario(rs));
+            }
+        }
+
+        return usuarios;
+    }
+
+    public Usuario buscarPorId(Long id) throws SQLException {
+        String sql = "SELECT id, nome, email, senha, perfil, status, data_criacao "
+                + "FROM usuario WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapearUsuario(rs);
+                }
+            }
+        }
+
+        return null;
+    }
+
     public Usuario buscarPorEmail(String email) throws SQLException {
-        String sql = "SELECT id, nome, email, senha, perfil, status FROM usuario WHERE LOWER(email) = LOWER(?)";
+        String sql = "SELECT id, nome, email, senha, perfil, status, data_criacao "
+                + "FROM usuario WHERE LOWER(email) = LOWER(?)";
 
         try (Connection conn = ConexaoFactory.obterConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -29,6 +89,28 @@ public class UsuarioDAO {
         return null;
     }
 
+    public void atualizar(Usuario usuario) throws SQLException {
+        String sql = "UPDATE usuario "
+                + "SET nome = ?, email = ?, senha = ?, perfil = ?::perfil_usuario_enum, status = ?::status_usuario_enum "
+                + "WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            preencherParametrosUsuario(stmt, usuario);
+            stmt.setLong(6, usuario.getId());
+            stmt.executeUpdate();
+        }
+    }
+
+    private void preencherParametrosUsuario(PreparedStatement stmt, Usuario usuario) throws SQLException {
+        stmt.setString(1, usuario.getNome());
+        stmt.setString(2, usuario.getEmail());
+        stmt.setString(3, usuario.getSenha());
+        stmt.setString(4, usuario.getPerfil().name());
+        stmt.setString(5, usuario.getStatus().name());
+    }
+
     private Usuario mapearUsuario(ResultSet rs) throws SQLException {
         Usuario usuario = new Usuario();
         usuario.setId(rs.getLong("id"));
@@ -36,7 +118,13 @@ public class UsuarioDAO {
         usuario.setEmail(rs.getString("email"));
         usuario.setSenha(rs.getString("senha"));
         usuario.setPerfil(PerfilUsuario.valueOf(rs.getString("perfil")));
-        usuario.setAtivo("ATIVO".equalsIgnoreCase(rs.getString("status")));
+        usuario.setStatus(StatusUsuario.valueOf(rs.getString("status")));
+
+        Timestamp dataCriacao = rs.getTimestamp("data_criacao");
+        if (dataCriacao != null) {
+            usuario.setDataCriacao(dataCriacao.toLocalDateTime());
+        }
+
         return usuario;
     }
 }
