@@ -1,13 +1,12 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GW FRETE | Fretes</title>
+    <title>GW FRETE | Relatório de Fretes</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css">
 </head>
 <body>
@@ -20,56 +19,55 @@
                 <a href="${pageContext.request.contextPath}/usuarios">Usuários</a>
                 <a href="${pageContext.request.contextPath}/motoristas">Motoristas</a>
                 <a href="${pageContext.request.contextPath}/veiculos">Veículos</a>
-                <a href="${pageContext.request.contextPath}/fretes" class="active">Fretes</a>
-                <a href="#">Ocorrências</a>
-                <a href="${pageContext.request.contextPath}/relatorios/fretes">Relatórios</a>
+                <a href="${pageContext.request.contextPath}/fretes">Fretes</a>
+                <a href="${pageContext.request.contextPath}/ocorrencias-frete">Ocorrências</a>
+                <a href="${pageContext.request.contextPath}/relatorios/fretes" class="active">Relatórios</a>
             </nav>
         </aside>
 
         <section class="app-content">
             <header class="page-header">
                 <div>
-                    <span class="page-kicker">Operação de fretes</span>
-                    <h1>Fretes</h1>
-                    <p>Monitoramento de rotas, cargas, veículos, motoristas e status do ciclo logístico.</p>
+                    <span class="page-kicker">Relatórios operacionais</span>
+                    <h1>Relatório de fretes</h1>
+                    <p>Visão consolidada dos fretes, recursos alocados, status e valores operacionais.</p>
                 </div>
                 <div class="page-actions">
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
-                    <c:if test="${podeGerenciarFretes}">
-                        <a class="button button-primary" href="${pageContext.request.contextPath}/fretes/novo">Novo frete</a>
-                    </c:if>
+                    <a class="button button-secondary" href="${pageContext.request.contextPath}/fretes">Fretes</a>
                 </div>
             </header>
-
-            <c:if test="${not empty mensagemSucesso}">
-                <p class="message message-success" role="status">${mensagemSucesso}</p>
-            </c:if>
 
             <c:if test="${not empty mensagemErro}">
                 <p class="message message-error" role="alert">${mensagemErro}</p>
             </c:if>
 
-            <section class="summary-grid" aria-label="Resumo operacional de fretes">
+            <section class="summary-grid" aria-label="Indicadores do relatório de fretes">
                 <article class="summary-card">
-                    <span class="summary-label">Fretes cadastrados</span>
-                    <strong>${fn:length(fretes)}</strong>
-                    <small>Operações registradas no TMS</small>
+                    <span class="summary-label">Total fretes</span>
+                    <strong>${totalFretes}</strong>
+                    <small>Registros operacionais</small>
                 </article>
                 <article class="summary-card">
-                    <span class="summary-label">Fluxo operacional</span>
-                    <strong>6 status</strong>
-                    <small>Agendamento, coleta, trânsito e entrega</small>
+                    <span class="summary-label">Entregues</span>
+                    <strong>${totalEntregues}</strong>
+                    <small>Concluídos no ciclo logístico</small>
                 </article>
                 <article class="summary-card">
-                    <span class="summary-label">Recursos vinculados</span>
-                    <strong>Frota + motorista</strong>
-                    <small>Fretes sempre ligados à operação</small>
+                    <span class="summary-label">Em trânsito</span>
+                    <strong>${totalEmTransito}</strong>
+                    <small>Operações em andamento</small>
+                </article>
+                <article class="summary-card">
+                    <span class="summary-label">Cancelados</span>
+                    <strong>${totalCancelados}</strong>
+                    <small>Fretes interrompidos</small>
                 </article>
             </section>
 
-            <section class="content-card" aria-label="Fretes cadastrados">
+            <section class="content-card" aria-label="Tabela do relatório de fretes">
                 <div class="table-wrap">
-                    <table class="data-table freight-table">
+                    <table class="data-table report-table">
                         <thead>
                             <tr>
                                 <th>Código</th>
@@ -78,29 +76,19 @@
                                 <th>Motorista</th>
                                 <th>Veículo</th>
                                 <th>Status</th>
-                                <th>Data de saída</th>
-                                <th>Data de entrega</th>
-                                <th>Valor do frete</th>
-                                <c:if test="${podeGerenciarFretes}">
-                                    <th>Ações</th>
-                                </c:if>
+                                <th>Data saída</th>
+                                <th>Data entrega</th>
+                                <th>Valor frete</th>
                             </tr>
                         </thead>
                         <tbody>
                             <c:forEach var="frete" items="${fretes}">
                                 <tr>
-                                    <td>
-                                        <strong class="freight-code">${frete.codigo}</strong>
-                                    </td>
+                                    <td><strong class="freight-code">${frete.codigo}</strong></td>
                                     <td>${frete.origem}</td>
                                     <td>${frete.destino}</td>
-                                    <td class="text-muted">${frete.motorista.nome}</td>
-                                    <td>
-                                        <div class="stacked-cell">
-                                            <span class="plate-code">${frete.veiculo.placa}</span>
-                                            <small class="text-muted">${frete.veiculo.modelo}</small>
-                                        </div>
-                                    </td>
+                                    <td class="text-muted">${frete.motorista}</td>
+                                    <td class="text-muted">${frete.veiculo}</td>
                                     <td>
                                         <span class="badge badge-frete-${frete.status.name().toLowerCase()}">${frete.status.descricao}</span>
                                     </td>
@@ -113,19 +101,12 @@
                                     <td class="text-muted">
                                         <fmt:formatNumber value="${frete.valorFrete}" type="currency"/>
                                     </td>
-                                    <c:if test="${podeGerenciarFretes}">
-                                        <td>
-                                            <div class="row-actions">
-                                                <a class="button button-secondary" href="${pageContext.request.contextPath}/fretes/editar?id=${frete.id}">Editar</a>
-                                            </div>
-                                        </td>
-                                    </c:if>
                                 </tr>
                             </c:forEach>
                             <c:if test="${empty fretes}">
                                 <tr>
-                                    <td colspan="${podeGerenciarFretes ? 10 : 9}">
-                                        <div class="empty-state">Nenhum frete cadastrado.</div>
+                                    <td colspan="9">
+                                        <div class="empty-state">Nenhum frete disponível para o relatório.</div>
                                     </td>
                                 </tr>
                             </c:if>

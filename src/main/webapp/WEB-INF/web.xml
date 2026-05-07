@@ -121,6 +121,16 @@
         <url-pattern>/ocorrencias-frete/*</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>RelatorioController</servlet-name>
+        <servlet-class>br.com.gwfrete.controller.RelatorioController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/fretes</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>

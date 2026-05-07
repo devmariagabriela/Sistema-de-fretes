@@ -19,7 +19,7 @@
                 <a href="${pageContext.request.contextPath}/veiculos">Veículos</a>
                 <a href="${pageContext.request.contextPath}/fretes">Fretes</a>
                 <a href="${pageContext.request.contextPath}/ocorrencias-frete" class="active">Ocorrências</a>
-                <a href="#">Relatórios</a>
+                <a href="${pageContext.request.contextPath}/relatorios/fretes">Relatórios</a>
             </nav>
         </aside>
 
