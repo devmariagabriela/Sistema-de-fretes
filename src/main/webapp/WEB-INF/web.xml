@@ -106,6 +106,21 @@
         <url-pattern>/fretes/*</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>OcorrenciaFreteController</servlet-name>
+        <servlet-class>br.com.gwfrete.controller.OcorrenciaFreteController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>OcorrenciaFreteController</servlet-name>
+        <url-pattern>/ocorrencias-frete</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>OcorrenciaFreteController</servlet-name>
+        <url-pattern>/ocorrencias-frete/*</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
