@@ -330,6 +330,36 @@ a {
     background: rgba(220, 38, 38, 0.12);
 }
 
+.badge-frete-agendado {
+    color: #35506F;
+    background: rgba(45, 140, 255, 0.10);
+}
+
+.badge-frete-em_coleta {
+    color: #8A4F00;
+    background: rgba(217, 119, 6, 0.14);
+}
+
+.badge-frete-em_transito {
+    color: #0B4F8A;
+    background: rgba(45, 140, 255, 0.12);
+}
+
+.badge-frete-entregue {
+    color: #116C34;
+    background: rgba(22, 163, 74, 0.12);
+}
+
+.badge-frete-cancelado {
+    color: #A11D1D;
+    background: rgba(220, 38, 38, 0.12);
+}
+
+.badge-frete-ocorrencia {
+    color: #9A3412;
+    background: rgba(234, 88, 12, 0.13);
+}
+
 .plate-code {
     display: inline-flex;
     align-items: center;
@@ -338,6 +368,19 @@ a {
     border: 1px solid rgba(11, 35, 68, 0.14);
     border-radius: 6px;
     background: #F8FAFC;
+    color: var(--color-primary);
+    font-size: 13px;
+    letter-spacing: 0;
+}
+
+.freight-code {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 9px;
+    border: 1px solid rgba(45, 140, 255, 0.22);
+    border-radius: 6px;
+    background: rgba(45, 140, 255, 0.08);
     color: var(--color-primary);
     font-size: 13px;
     letter-spacing: 0;
@@ -377,6 +420,10 @@ a {
     padding: 24px;
 }
 
+.form-card-wide {
+    max-width: 980px;
+}
+
 .user-form {
     display: grid;
     gap: 20px;
@@ -404,10 +451,9 @@ a {
 }
 
 .form-field input,
-.form-field select {
+.form-field select,
+.form-field textarea {
     width: 100%;
-    height: 44px;
-    padding: 0 12px;
     border: 1px solid var(--color-border);
     border-radius: 8px;
     outline: none;
@@ -416,8 +462,23 @@ a {
     font-size: 14px;
 }
 
+.form-field input,
+.form-field select {
+    height: 44px;
+    padding: 0 12px;
+}
+
+.form-field textarea {
+    min-height: 108px;
+    padding: 12px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.45;
+}
+
 .form-field input:focus,
-.form-field select:focus {
+.form-field select:focus,
+.form-field textarea:focus {
     border-color: var(--color-accent);
     box-shadow: 0 0 0 4px rgba(45, 140, 255, 0.12);
 }
@@ -433,6 +494,44 @@ a {
     gap: 10px;
     justify-content: flex-end;
     padding-top: 4px;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 22px;
+}
+
+.summary-card {
+    padding: 18px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: #FFFFFF;
+    box-shadow: 0 10px 24px rgba(11, 35, 68, 0.05);
+}
+
+.summary-label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--color-muted);
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.summary-card strong {
+    display: block;
+    color: var(--color-primary);
+    font-size: 22px;
+    line-height: 1.2;
+}
+
+.summary-card small {
+    display: block;
+    margin-top: 6px;
+    color: var(--color-muted);
+    font-size: 12px;
 }
 
 @media (max-width: 900px) {
@@ -454,6 +553,10 @@ a {
 
     .page-actions {
         justify-content: flex-start;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
     }
 }
 
