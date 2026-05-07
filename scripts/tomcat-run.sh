@@ -11,5 +11,8 @@ fi
 export JAVA_HOME
 export CATALINA_HOME="$TOMCAT_BASE"
 export CATALINA_BASE="$TOMCAT_BASE"
+export GWFRETE_DB_URL="${GWFRETE_DB_URL:-jdbc:postgresql://localhost:55432/gw_frete}"
+export GWFRETE_DB_USUARIO="${GWFRETE_DB_USUARIO:-postgres}"
+export GWFRETE_DB_SENHA="${GWFRETE_DB_SENHA:-postgres}"
 
 exec "$TOMCAT_BASE/bin/catalina.sh" run
