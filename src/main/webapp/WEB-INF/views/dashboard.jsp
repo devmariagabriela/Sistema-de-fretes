@@ -14,11 +14,11 @@
             <nav aria-label="Módulos principais">
                 <a href="${pageContext.request.contextPath}/dashboard" class="active">Dashboard</a>
                 <a href="#">Clientes</a>
-                <a href="#">Motoristas</a>
-                <a href="#">Veículos</a>
-                <a href="#">Fretes</a>
-                <a href="#">Ocorrências</a>
-                <a href="#">Relatórios</a>
+                <a href="${pageContext.request.contextPath}/motoristas">Motoristas</a>
+                <a href="${pageContext.request.contextPath}/veiculos">Veículos</a>
+                <a href="${pageContext.request.contextPath}/fretes">Fretes</a>
+                <a href="${pageContext.request.contextPath}/ocorrencias-frete">Ocorrências</a>
+                <a href="${pageContext.request.contextPath}/relatorios/fretes">Relatórios</a>
             </nav>
         </aside>
 

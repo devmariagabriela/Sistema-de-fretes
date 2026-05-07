@@ -18,7 +18,7 @@
                 <a href="${pageContext.request.contextPath}/usuarios" class="active">Usuários</a>
                 <a href="#">Fretes</a>
                 <a href="#">Ocorrências</a>
-                <a href="#">Relatórios</a>
+                <a href="${pageContext.request.contextPath}/relatorios/fretes">Relatórios</a>
             </nav>
         </aside>
 
