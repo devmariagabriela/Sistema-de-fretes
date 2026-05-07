@@ -114,6 +114,8 @@ public class FreteController extends HttpServlet {
 
         Frete frete = new Frete();
         frete.setStatus(StatusFrete.AGENDADO);
+        frete.setMotorista(new Motorista());
+        frete.setVeiculo(new Veiculo());
 
         request.setAttribute("frete", frete);
         prepararFormulario(request, "Novo frete", request.getContextPath() + "/fretes/salvar");
