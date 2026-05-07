@@ -245,6 +245,55 @@ a {
     background: rgba(220, 38, 38, 0.12);
 }
 
+.badge-tipo-caminhao,
+.badge-tipo-carreta {
+    color: #0B4F8A;
+    background: rgba(45, 140, 255, 0.12);
+}
+
+.badge-tipo-vuc {
+    color: #116C34;
+    background: rgba(22, 163, 74, 0.12);
+}
+
+.badge-tipo-utilitario {
+    color: #4B5563;
+    background: rgba(107, 114, 128, 0.13);
+}
+
+.badge-status-disponivel {
+    color: #116C34;
+    background: rgba(22, 163, 74, 0.12);
+}
+
+.badge-status-em_rota {
+    color: #0B4F8A;
+    background: rgba(45, 140, 255, 0.12);
+}
+
+.badge-status-manutencao {
+    color: #8A4F00;
+    background: rgba(217, 119, 6, 0.14);
+}
+
+.badge-status-inativo {
+    color: #6B1F1F;
+    background: rgba(220, 38, 38, 0.11);
+}
+
+.plate-code {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 9px;
+    border: 1px solid rgba(11, 35, 68, 0.14);
+    border-radius: 6px;
+    background: #F8FAFC;
+    color: var(--color-primary);
+    font-size: 13px;
+    letter-spacing: 0;
+}
+
 .row-actions {
     display: flex;
     justify-content: flex-end;
