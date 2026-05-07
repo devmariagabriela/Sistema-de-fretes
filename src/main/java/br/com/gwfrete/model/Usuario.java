@@ -2,6 +2,8 @@ package br.com.gwfrete.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 public class Usuario implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -68,6 +70,14 @@ public class Usuario implements Serializable {
 
     public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    public Date getDataCriacaoFormatada() {
+        if (dataCriacao == null) {
+            return null;
+        }
+
+        return Date.from(dataCriacao.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     public boolean isAtivo() {
