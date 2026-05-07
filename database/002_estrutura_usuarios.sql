@@ -90,7 +90,7 @@ INSERT INTO usuario (nome, email, senha, perfil, status)
 VALUES (
     'Administrador',
     'admin@gwfrete.com',
-    '$2a$10$DsLsEHuzAcZ/rTTJr/SN7ePy8ivr/H0QSIQH/6K9OoYFTp9JZnUJu',
+    '$2a$10$eOVRtAhb7GqkJrfRtcz6a.Na18eJ6./8kAg2FXT9OWikEENWlPPCe',
     'ADMIN',
     'ATIVO'
 )
