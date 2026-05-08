@@ -33,6 +33,8 @@
                     <p>Visão consolidada dos fretes, recursos alocados, status e valores operacionais.</p>
                 </div>
                 <div class="page-actions">
+                    <a class="button button-primary" href="${pageContext.request.contextPath}/relatorios/fretes">Gerar relatório</a>
+                    <span class="button button-disabled" title="Recurso em desenvolvimento" aria-disabled="true">Exportar PDF</span>
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/fretes">Fretes</a>
                 </div>
@@ -41,6 +43,58 @@
             <c:if test="${not empty mensagemErro}">
                 <p class="message message-error" role="alert">${mensagemErro}</p>
             </c:if>
+
+            <section class="content-card filter-panel" aria-label="Filtros do relatório de fretes">
+                <div class="filter-panel-header">
+                    <div>
+                        <span class="summary-label">Filtros analíticos</span>
+                        <h2>Refinar relatório operacional</h2>
+                    </div>
+                    <p>Combine período, status e recursos para preparar análises gerenciais e operacionais.</p>
+                </div>
+
+                <form class="report-filters-form" action="${pageContext.request.contextPath}/relatorios/fretes" method="get">
+                    <div class="form-grid report-filters-grid">
+                        <div class="form-field">
+                            <label for="dataInicial">Data inicial</label>
+                            <input id="dataInicial" name="dataInicial" type="date">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="dataFinal">Data final</label>
+                            <input id="dataFinal" name="dataFinal" type="date">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                <option value="">Todos os status</option>
+                                <option value="AGENDADO">Agendado</option>
+                                <option value="EM_COLETA">Em coleta</option>
+                                <option value="EM_TRANSITO">Em trânsito</option>
+                                <option value="ENTREGUE">Entregue</option>
+                                <option value="CANCELADO">Cancelado</option>
+                                <option value="OCORRENCIA">Ocorrência</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="motorista">Motorista</label>
+                            <input id="motorista" name="motorista" type="text" placeholder="Nome do motorista">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="veiculo">Veículo</label>
+                            <input id="veiculo" name="veiculo" type="text" placeholder="Placa ou identificação">
+                        </div>
+                    </div>
+
+                    <div class="report-filters-actions">
+                        <button class="button button-primary" type="submit">Gerar relatório</button>
+                        <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/fretes">Limpar filtros</a>
+                    </div>
+                </form>
+            </section>
 
             <section class="summary-grid" aria-label="Indicadores do relatório de fretes">
                 <article class="summary-card">
