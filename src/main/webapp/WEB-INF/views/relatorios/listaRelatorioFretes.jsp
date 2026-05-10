@@ -33,8 +33,8 @@
                     <p>Visão consolidada dos fretes, recursos alocados, status e valores operacionais.</p>
                 </div>
                 <div class="page-actions">
-                    <a class="button button-primary" href="${pageContext.request.contextPath}/relatorios/fretes">Gerar relatório</a>
-                    <span class="button button-disabled" title="Recurso em desenvolvimento" aria-disabled="true">Exportar PDF</span>
+                    <button class="button button-primary" type="submit" form="relatorio-filtros-form">Gerar relatório</button>
+                    <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/fretes/pdf${queryStringFiltros}" target="_blank" rel="noopener">Exportar PDF</a>
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/fretes">Fretes</a>
                 </div>
@@ -53,39 +53,39 @@
                     <p>Combine período, status e recursos para preparar análises gerenciais e operacionais.</p>
                 </div>
 
-                <form class="report-filters-form" action="${pageContext.request.contextPath}/relatorios/fretes" method="get">
+                <form id="relatorio-filtros-form" class="report-filters-form" action="${pageContext.request.contextPath}/relatorios/fretes" method="get">
                     <div class="form-grid report-filters-grid">
                         <div class="form-field">
                             <label for="dataInicial">Data inicial</label>
-                            <input id="dataInicial" name="dataInicial" type="date">
+                            <input id="dataInicial" name="dataInicial" type="date" value="${dataInicialFiltro}">
                         </div>
 
                         <div class="form-field">
                             <label for="dataFinal">Data final</label>
-                            <input id="dataFinal" name="dataFinal" type="date">
+                            <input id="dataFinal" name="dataFinal" type="date" value="${dataFinalFiltro}">
                         </div>
 
                         <div class="form-field">
                             <label for="status">Status</label>
                             <select id="status" name="status">
                                 <option value="">Todos os status</option>
-                                <option value="AGENDADO">Agendado</option>
-                                <option value="EM_COLETA">Em coleta</option>
-                                <option value="EM_TRANSITO">Em trânsito</option>
-                                <option value="ENTREGUE">Entregue</option>
-                                <option value="CANCELADO">Cancelado</option>
-                                <option value="OCORRENCIA">Ocorrência</option>
+                                <option value="AGENDADO" ${statusFiltro == 'AGENDADO' ? 'selected' : ''}>Agendado</option>
+                                <option value="EM_COLETA" ${statusFiltro == 'EM_COLETA' ? 'selected' : ''}>Em coleta</option>
+                                <option value="EM_TRANSITO" ${statusFiltro == 'EM_TRANSITO' ? 'selected' : ''}>Em trânsito</option>
+                                <option value="ENTREGUE" ${statusFiltro == 'ENTREGUE' ? 'selected' : ''}>Entregue</option>
+                                <option value="CANCELADO" ${statusFiltro == 'CANCELADO' ? 'selected' : ''}>Cancelado</option>
+                                <option value="OCORRENCIA" ${statusFiltro == 'OCORRENCIA' ? 'selected' : ''}>Ocorrência</option>
                             </select>
                         </div>
 
                         <div class="form-field">
                             <label for="motorista">Motorista</label>
-                            <input id="motorista" name="motorista" type="text" placeholder="Nome do motorista">
+                            <input id="motorista" name="motorista" type="text" value="${motoristaFiltro}" placeholder="Nome do motorista">
                         </div>
 
                         <div class="form-field">
                             <label for="veiculo">Veículo</label>
-                            <input id="veiculo" name="veiculo" type="text" placeholder="Placa ou identificação">
+                            <input id="veiculo" name="veiculo" type="text" value="${veiculoFiltro}" placeholder="Placa ou identificação">
                         </div>
                     </div>
 
