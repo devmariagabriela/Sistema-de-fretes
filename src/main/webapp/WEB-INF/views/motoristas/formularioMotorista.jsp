@@ -10,18 +10,9 @@
 </head>
 <body>
     <main class="app-shell">
-        <aside class="app-sidebar">
-            <div class="app-brand">GW FRETE</div>
-            <nav aria-label="Módulos principais">
-                <a href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
-                <a href="${pageContext.request.contextPath}/usuarios">Usuários</a>
-                <a href="${pageContext.request.contextPath}/motoristas" class="active">Motoristas</a>
-                <a href="${pageContext.request.contextPath}/veiculos">Veículos</a>
-                <a href="#">Fretes</a>
-                <a href="#">Ocorrências</a>
-                <a href="${pageContext.request.contextPath}/relatorios/fretes">Relatórios</a>
-            </nav>
-        </aside>
+        <jsp:include page="/WEB-INF/views/includes/sidebar.jsp">
+            <jsp:param name="ativo" value="motoristas" />
+        </jsp:include>
 
         <section class="app-content">
             <header class="page-header">
@@ -31,6 +22,7 @@
                     <p>Dados cadastrais, vínculo e documentação do condutor para operação logística.</p>
                 </div>
                 <div class="page-actions">
+                    <jsp:include page="/WEB-INF/views/includes/header.jsp" />
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/motoristas">Voltar</a>
                 </div>
             </header>

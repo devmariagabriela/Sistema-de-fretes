@@ -10,19 +10,9 @@
 </head>
 <body>
     <main class="app-shell">
-        <aside class="app-sidebar">
-            <div class="app-brand">GW FRETE</div>
-            <nav aria-label="Módulos principais">
-                <a href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
-                <a href="${pageContext.request.contextPath}/clientes">Clientes</a>
-                <a href="${pageContext.request.contextPath}/usuarios">Usuários</a>
-                <a href="${pageContext.request.contextPath}/veiculos">Veículos</a>
-                <a href="${pageContext.request.contextPath}/manutencoes" class="active">Manutenções</a>
-                <a href="${pageContext.request.contextPath}/fretes">Fretes</a>
-                <a href="${pageContext.request.contextPath}/ocorrencias-frete">Ocorrências</a>
-                <a href="${pageContext.request.contextPath}/relatorios/fretes">Relatórios</a>
-            </nav>
-        </aside>
+        <jsp:include page="/WEB-INF/views/includes/sidebar.jsp">
+            <jsp:param name="ativo" value="manutencoes" />
+        </jsp:include>
 
         <section class="app-content">
             <header class="page-header">
@@ -32,6 +22,7 @@
                     <p>Registro operacional de serviços preventivos e corretivos realizados nos veículos.</p>
                 </div>
                 <div class="page-actions">
+                    <jsp:include page="/WEB-INF/views/includes/header.jsp" />
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/manutencoes">Voltar</a>
                 </div>
             </header>

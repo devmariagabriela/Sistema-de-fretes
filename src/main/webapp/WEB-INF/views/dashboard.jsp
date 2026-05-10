@@ -12,21 +12,10 @@
 <body class="dashboard-page">
     <fmt:setLocale value="pt_BR"/>
     <main class="dashboard-shell">
-        <aside class="dashboard-sidebar">
-            <div class="sidebar-brand">GW FRETE</div>
-            <nav aria-label="Módulos principais">
-                <a href="${pageContext.request.contextPath}/dashboard" class="active">Dashboard</a>
-                <a href="${pageContext.request.contextPath}/clientes">Clientes</a>
-                <a href="${pageContext.request.contextPath}/contratos">Contratos</a>
-                <a href="${pageContext.request.contextPath}/motoristas">Motoristas</a>
-                <a href="${pageContext.request.contextPath}/veiculos">Veículos</a>
-                <a href="${pageContext.request.contextPath}/fretes">Fretes</a>
-                <a href="${pageContext.request.contextPath}/financeiro">Financeiro</a>
-                <a href="${pageContext.request.contextPath}/notificacoes">Notificações</a>
-                <a href="${pageContext.request.contextPath}/ocorrencias-frete">Ocorrências</a>
-                <a href="${pageContext.request.contextPath}/relatorios/fretes">Relatórios</a>
-            </nav>
-        </aside>
+        <jsp:include page="/WEB-INF/views/includes/sidebar.jsp">
+            <jsp:param name="ativo" value="dashboard" />
+            <jsp:param name="layout" value="dashboard" />
+        </jsp:include>
 
         <section class="dashboard-content">
             <header class="dashboard-header">
@@ -34,11 +23,9 @@
                     <span class="section-kicker">Operação logística</span>
                     <h1>Dashboard executivo</h1>
                 </div>
-                <div class="user-summary">
-                    <span>${sessionScope.usuarioLogado.nome}</span>
-                    <strong>${sessionScope.usuarioLogado.perfil.descricao}</strong>
-                    <a href="${pageContext.request.contextPath}/logout">Sair</a>
-                </div>
+                <jsp:include page="/WEB-INF/views/includes/header.jsp">
+                    <jsp:param name="layout" value="dashboard" />
+                </jsp:include>
             </header>
 
             <c:if test="${not empty mensagemErro}">

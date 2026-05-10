@@ -12,19 +12,9 @@
 <body>
     <fmt:setLocale value="pt_BR"/>
     <main class="app-shell">
-        <aside class="app-sidebar">
-            <div class="app-brand">GW FRETE</div>
-            <nav aria-label="Módulos principais">
-                <a href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
-                <a href="${pageContext.request.contextPath}/clientes">Clientes</a>
-                <a href="${pageContext.request.contextPath}/motoristas">Motoristas</a>
-                <a href="${pageContext.request.contextPath}/veiculos">Veículos</a>
-                <a href="${pageContext.request.contextPath}/fretes">Fretes</a>
-                <a href="${pageContext.request.contextPath}/ocorrencias-frete">Ocorrências</a>
-                <a href="${pageContext.request.contextPath}/financeiro" class="active">Financeiro</a>
-                <a href="${pageContext.request.contextPath}/relatorios/fretes">Relatórios</a>
-            </nav>
-        </aside>
+        <jsp:include page="/WEB-INF/views/includes/sidebar.jsp">
+            <jsp:param name="ativo" value="financeiro" />
+        </jsp:include>
 
         <section class="app-content">
             <header class="page-header">
@@ -34,6 +24,7 @@
                     <p>Controle de faturas geradas a partir dos fretes e vinculadas aos clientes.</p>
                 </div>
                 <div class="page-actions">
+                    <jsp:include page="/WEB-INF/views/includes/header.jsp" />
                     <c:if test="${podeGerenciarFaturas}">
                         <a class="button button-primary" href="${pageContext.request.contextPath}/financeiro/nova">Nova fatura</a>
                     </c:if>

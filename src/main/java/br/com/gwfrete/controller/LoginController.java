@@ -37,6 +37,12 @@ public class LoginController extends HttpServlet {
 
         try {
             Usuario usuario = usuarioBO.autenticar(email, senha);
+            HttpSession sessaoAtual = request.getSession(false);
+
+            if (sessaoAtual != null) {
+                sessaoAtual.invalidate();
+            }
+
             HttpSession session = request.getSession(true);
             session.setAttribute("usuarioLogado", usuario);
             session.setAttribute("permissoesUsuario", usuarioBO.obterPermissoes(usuario.getPerfil()));
