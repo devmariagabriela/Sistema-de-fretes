@@ -129,7 +129,203 @@
                     <small>Eventos logísticos</small>
                 </article>
             </div>
+
+            <section class="analytics-grid" aria-label="Análises executivas">
+                <article class="analytics-card analytics-card-wide">
+                    <div class="analytics-card-header">
+                        <div>
+                            <span class="section-kicker">Fretes</span>
+                            <h2>Fretes por status</h2>
+                        </div>
+                        <span class="analytics-badge">Operacional</span>
+                    </div>
+                    <div class="chart-frame chart-frame-bar">
+                        <canvas id="fretesStatusChart" aria-label="Gráfico de barras de fretes por status"></canvas>
+                    </div>
+                </article>
+
+                <article class="analytics-card">
+                    <div class="analytics-card-header">
+                        <div>
+                            <span class="section-kicker">Frota</span>
+                            <h2>Veículos por status</h2>
+                        </div>
+                        <span class="analytics-badge">Frota</span>
+                    </div>
+                    <div class="chart-frame chart-frame-donut">
+                        <canvas id="veiculosStatusChart" aria-label="Gráfico de rosca de veículos por status"></canvas>
+                    </div>
+                </article>
+
+                <article class="analytics-card analytics-card-wide">
+                    <div class="analytics-card-header">
+                        <div>
+                            <span class="section-kicker">Ocorrências</span>
+                            <h2>Ocorrências por tipo</h2>
+                        </div>
+                        <span class="analytics-badge">Risco</span>
+                    </div>
+                    <div class="chart-frame chart-frame-bar">
+                        <canvas id="ocorrenciasTipoChart" aria-label="Gráfico de barras de ocorrências por tipo"></canvas>
+                    </div>
+                </article>
+            </section>
+
+            <section class="operations-insight-grid" aria-label="Ocorrências e alertas operacionais">
+                <article class="analytics-card">
+                    <div class="analytics-card-header">
+                        <div>
+                            <span class="section-kicker">Monitoramento</span>
+                            <h2>Últimas ocorrências</h2>
+                        </div>
+                    </div>
+                    <div class="occurrence-list">
+                        <div class="occurrence-item">
+                            <span class="occurrence-dot occurrence-dot-info"></span>
+                            <div>
+                                <strong>Saída de pátio confirmada</strong>
+                                <small>FRT-1048 · Recife/PE · 08:10</small>
+                            </div>
+                        </div>
+                        <div class="occurrence-item">
+                            <span class="occurrence-dot occurrence-dot-warning"></span>
+                            <div>
+                                <strong>Tentativa de entrega</strong>
+                                <small>FRT-1039 · João Pessoa/PB · 10:45</small>
+                            </div>
+                        </div>
+                        <div class="occurrence-item">
+                            <span class="occurrence-dot occurrence-dot-success"></span>
+                            <div>
+                                <strong>Entrega realizada</strong>
+                                <small>FRT-1027 · Natal/RN · 13:25</small>
+                            </div>
+                        </div>
+                        <div class="occurrence-item">
+                            <span class="occurrence-dot occurrence-dot-danger"></span>
+                            <div>
+                                <strong>Avaria registrada</strong>
+                                <small>FRT-1016 · Cabo/PE · 15:40</small>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="analytics-card">
+                    <div class="analytics-card-header">
+                        <div>
+                            <span class="section-kicker">Prioridades</span>
+                            <h2>Alertas operacionais</h2>
+                        </div>
+                    </div>
+                    <div class="alert-stack">
+                        <div class="operational-alert alert-warning">
+                            <span>Veículos em manutenção</span>
+                            <strong>${dashboardDTO.veiculosEmManutencao}</strong>
+                        </div>
+                        <div class="operational-alert alert-neutral">
+                            <span>Fretes cancelados</span>
+                            <strong>${dashboardDTO.fretesCancelados}</strong>
+                        </div>
+                        <div class="operational-alert alert-danger">
+                            <span>Ocorrências críticas</span>
+                            <strong>2</strong>
+                        </div>
+                    </div>
+                </article>
+            </section>
         </section>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const chartTextColor = "#1F2937";
+        const chartMutedColor = "#6B7280";
+        const chartGridColor = "#E5E7EB";
+
+        Chart.defaults.font.family = '"Inter", "Segoe UI", Arial, Helvetica, sans-serif';
+        Chart.defaults.color = chartMutedColor;
+        Chart.defaults.plugins.legend.labels.boxWidth = 10;
+        Chart.defaults.plugins.legend.labels.boxHeight = 10;
+
+        new Chart(document.getElementById("fretesStatusChart"), {
+            type: "bar",
+            data: {
+                labels: ["Agendado", "Em coleta", "Em trânsito", "Entregue", "Cancelado", "Ocorrência"],
+                datasets: [{
+                    label: "Fretes",
+                    data: [0, 0, ${dashboardDTO.fretesEmTransito}, ${dashboardDTO.fretesEntregues}, ${dashboardDTO.fretesCancelados}, 0],
+                    backgroundColor: ["#D97706", "#38BDF8", "#2563EB", "#16A34A", "#6B7280", "#DC2626"],
+                    borderRadius: 6,
+                    maxBarThickness: 34
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { backgroundColor: chartTextColor }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: chartMutedColor } },
+                    y: { beginAtZero: true, grid: { color: chartGridColor }, ticks: { precision: 0 } }
+                }
+            }
+        });
+
+        new Chart(document.getElementById("veiculosStatusChart"), {
+            type: "doughnut",
+            data: {
+                labels: ["Disponíveis", "Em manutenção", "Em rota/Inativos"],
+                datasets: [{
+                    data: [
+                        ${dashboardDTO.veiculosDisponiveis},
+                        ${dashboardDTO.veiculosEmManutencao},
+                        Math.max(${dashboardDTO.totalVeiculos} - ${dashboardDTO.veiculosDisponiveis} - ${dashboardDTO.veiculosEmManutencao}, 0)
+                    ],
+                    backgroundColor: ["#16A34A", "#D97706", "#2D8CFF"],
+                    borderColor: "#FFFFFF",
+                    borderWidth: 4,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "68%",
+                plugins: {
+                    legend: { position: "bottom" },
+                    tooltip: { backgroundColor: chartTextColor }
+                }
+            }
+        });
+
+        new Chart(document.getElementById("ocorrenciasTipoChart"), {
+            type: "bar",
+            data: {
+                labels: ["Saída", "Em rota", "Tentativa", "Entrega", "Avaria", "Extravio"],
+                datasets: [{
+                    label: "Ocorrências",
+                    data: [4, 7, 3, 6, 2, 1],
+                    backgroundColor: "#2D8CFF",
+                    borderRadius: 6,
+                    maxBarThickness: 32
+                }]
+            },
+            options: {
+                indexAxis: "y",
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { backgroundColor: chartTextColor }
+                },
+                scales: {
+                    x: { beginAtZero: true, grid: { color: chartGridColor }, ticks: { precision: 0 } },
+                    y: { grid: { display: false }, ticks: { color: chartMutedColor } }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
