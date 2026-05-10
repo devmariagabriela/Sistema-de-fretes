@@ -1,0 +1,171 @@
+package br.com.gwfrete.bo;
+
+import br.com.gwfrete.dao.FaturaDAO;
+import br.com.gwfrete.exception.CadastroException;
+import br.com.gwfrete.model.Fatura;
+import br.com.gwfrete.model.StatusFatura;
+
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.List;
+
+public class FaturaBO {
+    private final FaturaDAO faturaDAO;
+
+    public FaturaBO() {
+        this.faturaDAO = new FaturaDAO();
+    }
+
+    public void salvar(Fatura fatura) throws CadastroException {
+        aplicarPadroesCadastro(fatura);
+        validarCadastro(fatura);
+
+        try {
+            if (faturaDAO.buscarPorNumero(fatura.getNumero()) != null) {
+                throw new CadastroException("Já existe fatura cadastrada com este número.");
+            }
+
+            faturaDAO.salvar(fatura);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível salvar a fatura.");
+        }
+    }
+
+    public List<Fatura> listarTodos() throws CadastroException {
+        try {
+            return faturaDAO.listarTodos();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar as faturas.");
+        }
+    }
+
+    public Fatura buscarPorId(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Fatura inválida.");
+        }
+
+        try {
+            return faturaDAO.buscarPorId(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível consultar a fatura.");
+        }
+    }
+
+    public void atualizar(Fatura fatura) throws CadastroException {
+        validarIdentificador(fatura);
+        aplicarPadroesAtualizacao(fatura);
+        validarCamposComuns(fatura);
+
+        try {
+            Fatura faturaAtual = faturaDAO.buscarPorId(fatura.getId());
+
+            if (faturaAtual == null) {
+                throw new CadastroException("Fatura não encontrada.");
+            }
+
+            Fatura faturaComMesmoNumero = faturaDAO.buscarPorNumero(fatura.getNumero());
+            if (faturaComMesmoNumero != null && !faturaComMesmoNumero.getId().equals(fatura.getId())) {
+                throw new CadastroException("Já existe fatura cadastrada com este número.");
+            }
+
+            validarTransicaoPagamento(faturaAtual, fatura);
+            faturaDAO.atualizar(fatura);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível atualizar a fatura.");
+        }
+    }
+
+    private void validarCadastro(Fatura fatura) throws CadastroException {
+        validarCamposComuns(fatura);
+    }
+
+    private void validarIdentificador(Fatura fatura) throws CadastroException {
+        if (fatura == null || fatura.getId() == null || fatura.getId() <= 0) {
+            throw new CadastroException("Fatura inválida.");
+        }
+    }
+
+    private void validarCamposComuns(Fatura fatura) throws CadastroException {
+        if (fatura == null) {
+            throw new CadastroException("Fatura inválida.");
+        }
+
+        if (fatura.getFrete() == null || fatura.getFrete().getId() == null || fatura.getFrete().getId() <= 0) {
+            throw new CadastroException("Frete é obrigatório.");
+        }
+
+        if (fatura.getCliente() == null || fatura.getCliente().getId() == null || fatura.getCliente().getId() <= 0) {
+            throw new CadastroException("Cliente é obrigatório.");
+        }
+
+        if (fatura.getNumero() == null || fatura.getNumero().trim().isEmpty()) {
+            throw new CadastroException("Número da fatura é obrigatório.");
+        }
+
+        if (fatura.getValor() == null) {
+            throw new CadastroException("Valor da fatura é obrigatório.");
+        }
+
+        if (fatura.getValor().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new CadastroException("Valor da fatura deve ser maior que zero.");
+        }
+
+        if (fatura.getDataEmissao() == null) {
+            throw new CadastroException("Data de emissão é obrigatória.");
+        }
+
+        if (fatura.getDataVencimento() == null) {
+            throw new CadastroException("Data de vencimento é obrigatória.");
+        }
+
+        if (fatura.getStatus() == null) {
+            throw new CadastroException("Status da fatura é obrigatório.");
+        }
+
+        if (fatura.getStatus() == StatusFatura.PAGO && fatura.getDataPagamento() == null) {
+            throw new CadastroException("Fatura paga deve possuir data de pagamento.");
+        }
+    }
+
+    private void validarTransicaoPagamento(Fatura faturaAtual, Fatura faturaAtualizada) throws CadastroException {
+        if (faturaAtual.getStatus() == StatusFatura.CANCELADO
+                && faturaAtualizada.getStatus() == StatusFatura.PAGO) {
+            throw new CadastroException("Fatura cancelada não pode ser marcada como paga.");
+        }
+    }
+
+    private void aplicarPadroesCadastro(Fatura fatura) {
+        if (fatura == null) {
+            return;
+        }
+
+        prepararDadosFatura(fatura);
+
+        if (fatura.getStatus() == null) {
+            fatura.setStatus(StatusFatura.PENDENTE);
+        }
+    }
+
+    private void aplicarPadroesAtualizacao(Fatura fatura) {
+        if (fatura == null) {
+            return;
+        }
+
+        prepararDadosFatura(fatura);
+
+        if (fatura.getStatus() == null) {
+            fatura.setStatus(StatusFatura.PENDENTE);
+        }
+    }
+
+    private void prepararDadosFatura(Fatura fatura) {
+        if (fatura.getNumero() != null) {
+            fatura.setNumero(fatura.getNumero().trim().toUpperCase());
+        }
+
+        if (fatura.getObservacao() != null) {
+            String observacao = fatura.getObservacao().trim();
+            fatura.setObservacao(observacao.isEmpty() ? null : observacao);
+        }
+    }
+}
