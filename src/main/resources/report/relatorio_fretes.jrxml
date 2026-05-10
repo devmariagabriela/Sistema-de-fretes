@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+    name="relatorio_fretes" pageWidth="842" pageHeight="595" orientation="Landscape"
+    columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20"
+    uuid="9b86fe61-43f7-48f3-b5d4-a86d1667f7a1">
+
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+
+    <parameter name="GERADO_EM" class="java.lang.String"/>
+
+    <field name="codigo" class="java.lang.String"/>
+    <field name="origem" class="java.lang.String"/>
+    <field name="destino" class="java.lang.String"/>
+    <field name="motorista" class="java.lang.String"/>
+    <field name="veiculo" class="java.lang.String"/>
+    <field name="status" class="br.com.gwfrete.model.StatusFrete"/>
+    <field name="valorFrete" class="java.math.BigDecimal"/>
+
+    <title>
+        <band height="62">
+            <rectangle>
+                <reportElement x="0" y="0" width="802" height="62" uuid="f51b427f-87cb-4f6e-ac0a-dd02a6f27478"/>
+                <graphicElement>
+                    <pen lineWidth="0.0"/>
+                </graphicElement>
+            </rectangle>
+            <textField>
+                <reportElement x="0" y="0" width="520" height="30" forecolor="#0B2344" uuid="c5b05331-c24e-47b4-bdc4-283fa5d38f88"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="19" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Relatório Operacional de Fretes"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="34" width="520" height="18" forecolor="#6B7280" uuid="69474be6-9769-4df0-b7ff-5967b16d5b5e"/>
+                <textElement>
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["GW FRETE - visão consolidada dos fretes operacionais"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="522" y="8" width="280" height="20" forecolor="#1F2937" uuid="4e1a014f-01e7-41bc-90d4-1a34d6d84a2d"/>
+                <textElement textAlignment="Right">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Gerado em: " + $P{GERADO_EM}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="24">
+            <staticText>
+                <reportElement mode="Opaque" x="0" y="0" width="90" height="24" backcolor="#0B2344" forecolor="#FFFFFF" uuid="2be9397b-6c2c-4648-8ffb-06da3cb01371"/>
+                <box leftPadding="6" rightPadding="6"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[CÓDIGO]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="90" y="0" width="145" height="24" backcolor="#0B2344" forecolor="#FFFFFF" uuid="b0b2bf3d-23a7-4c52-9b32-51b8d8f218a9"/>
+                <box leftPadding="6" rightPadding="6"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[ORIGEM]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="235" y="0" width="145" height="24" backcolor="#0B2344" forecolor="#FFFFFF" uuid="1c6785f1-c02b-4482-a1da-a8932e8c5f1e"/>
+                <box leftPadding="6" rightPadding="6"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[DESTINO]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="380" y="0" width="140" height="24" backcolor="#0B2344" forecolor="#FFFFFF" uuid="ca9dad4a-edca-4b91-9fa1-f21aa1eec82d"/>
+                <box leftPadding="6" rightPadding="6"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[MOTORISTA]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="520" y="0" width="100" height="24" backcolor="#0B2344" forecolor="#FFFFFF" uuid="48f419cb-9cc8-43d8-84d7-81201d1f479f"/>
+                <box leftPadding="6" rightPadding="6"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[VEÍCULO]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="620" y="0" width="92" height="24" backcolor="#0B2344" forecolor="#FFFFFF" uuid="6fa7ae18-b5b3-4e30-a332-ed244bf6f522"/>
+                <box leftPadding="6" rightPadding="6"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[STATUS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="712" y="0" width="90" height="24" backcolor="#0B2344" forecolor="#FFFFFF" uuid="444f0446-2585-4fa3-bba4-a8145ad1ae08"/>
+                <box leftPadding="6" rightPadding="6"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[VALOR FRETE]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="22">
+            <textField isBlankWhenNull="true">
+                <reportElement x="0" y="0" width="90" height="22" forecolor="#1F2937" uuid="db31d9c8-8940-497d-a844-b911927e0601"/>
+                <box leftPadding="6" rightPadding="6" topPadding="4" bottomPadding="4">
+                    <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
+                </box>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="90" y="0" width="145" height="22" forecolor="#1F2937" uuid="9b177196-4468-44ff-ad70-b33f9d1a666e"/>
+                <box leftPadding="6" rightPadding="6" topPadding="4" bottomPadding="4">
+                    <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
+                </box>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{origem}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="235" y="0" width="145" height="22" forecolor="#1F2937" uuid="8593f5bb-cb0f-4c77-a366-f356dd8ef5b7"/>
+                <box leftPadding="6" rightPadding="6" topPadding="4" bottomPadding="4">
+                    <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
+                </box>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{destino}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="380" y="0" width="140" height="22" forecolor="#1F2937" uuid="ae17d85d-d50c-486b-b834-986a43a565f6"/>
+                <box leftPadding="6" rightPadding="6" topPadding="4" bottomPadding="4">
+                    <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
+                </box>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{motorista}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="520" y="0" width="100" height="22" forecolor="#1F2937" uuid="ce70ccba-d1e3-4da4-8ce0-78493197b4b6"/>
+                <box leftPadding="6" rightPadding="6" topPadding="4" bottomPadding="4">
+                    <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
+                </box>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{veiculo}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="620" y="0" width="92" height="22" forecolor="#1F2937" uuid="fba7c9e4-627f-47bf-a60e-40ee2d8197a6"/>
+                <box leftPadding="6" rightPadding="6" topPadding="4" bottomPadding="4">
+                    <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
+                </box>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{status} == null ? "" : $F{status}.getDescricao()]]></textFieldExpression>
+            </textField>
+            <textField pattern="R$ #,##0.00" isBlankWhenNull="true">
+                <reportElement x="712" y="0" width="90" height="22" forecolor="#1F2937" uuid="3d164b70-82ba-4384-9ab8-8ce9c0e6af97"/>
+                <box leftPadding="6" rightPadding="6" topPadding="4" bottomPadding="4">
+                    <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
+                </box>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{valorFrete}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <pageFooter>
+        <band height="18">
+            <textField>
+                <reportElement x="0" y="0" width="220" height="18" forecolor="#6B7280" uuid="462028bf-674d-4d26-b5f0-047ee32a0e3f"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["GW FRETE"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="682" y="0" width="120" height="18" forecolor="#6B7280" uuid="26d44f15-a0b0-4510-90f5-368ea2b8d2c7"/>
+                <textElement textAlignment="Right">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+</jasperReport>

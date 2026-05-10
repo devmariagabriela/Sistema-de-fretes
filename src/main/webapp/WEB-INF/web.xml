@@ -131,6 +131,11 @@
         <url-pattern>/relatorios/fretes</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/fretes/pdf</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
