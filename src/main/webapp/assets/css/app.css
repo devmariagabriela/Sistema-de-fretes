@@ -34,7 +34,9 @@ a {
 }
 
 .app-sidebar {
+    max-height: 100vh;
     padding: 24px 16px;
+    overflow-y: auto;
     background: var(--color-primary);
     color: #FFFFFF;
 }
@@ -102,8 +104,33 @@ a {
 .page-actions {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 10px;
     justify-content: flex-end;
+}
+
+.session-user {
+    display: grid;
+    gap: 2px;
+    min-height: 40px;
+    padding: 6px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: #FFFFFF;
+    text-align: right;
+}
+
+.session-user span {
+    color: var(--color-primary);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.session-user strong {
+    color: var(--color-muted);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .button {
@@ -727,6 +754,11 @@ a {
 
     .page-actions {
         justify-content: flex-start;
+    }
+
+    .session-user {
+        width: 100%;
+        text-align: left;
     }
 
     .summary-grid {

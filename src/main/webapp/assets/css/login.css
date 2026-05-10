@@ -762,7 +762,9 @@ a {
 }
 
 .dashboard-sidebar {
+    max-height: 100vh;
     padding: 24px 16px;
+    overflow-y: auto;
     background: var(--color-primary);
     color: var(--color-card);
 }

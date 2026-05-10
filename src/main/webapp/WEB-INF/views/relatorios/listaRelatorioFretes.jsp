@@ -12,18 +12,9 @@
 <body>
     <fmt:setLocale value="pt_BR"/>
     <main class="app-shell">
-        <aside class="app-sidebar">
-            <div class="app-brand">GW FRETE</div>
-            <nav aria-label="Módulos principais">
-                <a href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
-                <a href="${pageContext.request.contextPath}/usuarios">Usuários</a>
-                <a href="${pageContext.request.contextPath}/motoristas">Motoristas</a>
-                <a href="${pageContext.request.contextPath}/veiculos">Veículos</a>
-                <a href="${pageContext.request.contextPath}/fretes">Fretes</a>
-                <a href="${pageContext.request.contextPath}/ocorrencias-frete">Ocorrências</a>
-                <a href="${pageContext.request.contextPath}/relatorios/fretes" class="active">Relatórios</a>
-            </nav>
-        </aside>
+        <jsp:include page="/WEB-INF/views/includes/sidebar.jsp">
+            <jsp:param name="ativo" value="relatorios" />
+        </jsp:include>
 
         <section class="app-content">
             <header class="page-header">
@@ -33,6 +24,7 @@
                     <p>Visão consolidada dos fretes, recursos alocados, status e valores operacionais.</p>
                 </div>
                 <div class="page-actions">
+                    <jsp:include page="/WEB-INF/views/includes/header.jsp" />
                     <button class="button button-primary" type="submit" form="relatorio-filtros-form">Gerar relatório</button>
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/fretes/pdf${queryStringFiltros}" target="_blank" rel="noopener">Exportar PDF</a>
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/dashboard">Dashboard</a>

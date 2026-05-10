@@ -1,5 +1,7 @@
 package br.com.gwfrete.filter;
 
+import br.com.gwfrete.model.Usuario;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -31,9 +33,13 @@ public class AuthFilter implements Filter {
         }
 
         HttpSession session = request.getSession(false);
-        boolean autenticado = session != null && session.getAttribute("usuarioLogado") != null;
+        boolean autenticado = session != null && session.getAttribute("usuarioLogado") instanceof Usuario;
 
         if (!autenticado) {
+            if (session != null) {
+                session.invalidate();
+            }
+
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
