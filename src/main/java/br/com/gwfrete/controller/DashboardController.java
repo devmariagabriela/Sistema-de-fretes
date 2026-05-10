@@ -1,8 +1,10 @@
 package br.com.gwfrete.controller;
 
 import br.com.gwfrete.bo.DashboardBO;
+import br.com.gwfrete.bo.KPIExecutivoBO;
 import br.com.gwfrete.exception.CadastroException;
 import br.com.gwfrete.model.DashboardDTO;
+import br.com.gwfrete.model.KPIExecutivoDTO;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,6 +16,7 @@ public class DashboardController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private final DashboardBO dashboardBO = new DashboardBO();
+    private final KPIExecutivoBO kpiExecutivoBO = new KPIExecutivoBO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -22,6 +25,13 @@ public class DashboardController extends HttpServlet {
         } catch (CadastroException e) {
             request.setAttribute("mensagemErro", e.getMessage());
             request.setAttribute("dashboardDTO", new DashboardDTO());
+        }
+
+        try {
+            request.setAttribute("kpiExecutivoDTO", kpiExecutivoBO.buscarIndicadores());
+        } catch (CadastroException e) {
+            request.setAttribute("mensagemErro", e.getMessage());
+            request.setAttribute("kpiExecutivoDTO", new KPIExecutivoDTO());
         }
 
         request.getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(request, response);
