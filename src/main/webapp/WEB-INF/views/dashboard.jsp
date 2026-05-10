@@ -14,7 +14,7 @@
             <div class="sidebar-brand">GW FRETE</div>
             <nav aria-label="Módulos principais">
                 <a href="${pageContext.request.contextPath}/dashboard" class="active">Dashboard</a>
-                <a href="#">Clientes</a>
+                <a href="${pageContext.request.contextPath}/clientes">Clientes</a>
                 <a href="${pageContext.request.contextPath}/motoristas">Motoristas</a>
                 <a href="${pageContext.request.contextPath}/veiculos">Veículos</a>
                 <a href="${pageContext.request.contextPath}/fretes">Fretes</a>
