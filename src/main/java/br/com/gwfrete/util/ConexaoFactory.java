@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public final class ConexaoFactory {
-    private static final String URL_PADRAO = "jdbc:postgresql://localhost:5432/gw_frete";
+    private static final String URL_PADRAO = "jdbc:postgresql://localhost:5432/gwfrete";
     private static final String USUARIO_PADRAO = "postgres";
-    private static final String SENHA_PADRAO = "postgres";
+    private static final String SENHA_PADRAO = "1234";
 
     private ConexaoFactory() {
     }
