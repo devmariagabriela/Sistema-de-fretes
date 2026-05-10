@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -9,15 +10,19 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css">
 </head>
 <body class="dashboard-page">
+    <fmt:setLocale value="pt_BR"/>
     <main class="dashboard-shell">
         <aside class="dashboard-sidebar">
             <div class="sidebar-brand">GW FRETE</div>
             <nav aria-label="Módulos principais">
                 <a href="${pageContext.request.contextPath}/dashboard" class="active">Dashboard</a>
                 <a href="${pageContext.request.contextPath}/clientes">Clientes</a>
+                <a href="${pageContext.request.contextPath}/contratos">Contratos</a>
                 <a href="${pageContext.request.contextPath}/motoristas">Motoristas</a>
                 <a href="${pageContext.request.contextPath}/veiculos">Veículos</a>
                 <a href="${pageContext.request.contextPath}/fretes">Fretes</a>
+                <a href="${pageContext.request.contextPath}/financeiro">Financeiro</a>
+                <a href="${pageContext.request.contextPath}/notificacoes">Notificações</a>
                 <a href="${pageContext.request.contextPath}/ocorrencias-frete">Ocorrências</a>
                 <a href="${pageContext.request.contextPath}/relatorios/fretes">Relatórios</a>
             </nav>
@@ -130,6 +135,56 @@
                 </article>
             </div>
 
+            <div class="dashboard-section-header executive-section-header">
+                <div>
+                    <span class="section-kicker">Indicadores executivos</span>
+                    <h2>Consolidação gerencial</h2>
+                </div>
+            </div>
+
+            <div class="kpi-grid executive-kpi-grid">
+                <article class="kpi-card kpi-card-primary">
+                    <span class="kpi-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M4 19h16"/><path d="M7 16V8"/><path d="M12 16V5"/><path d="M17 16v-3"/></svg>
+                    </span>
+                    <span>Faturamento total</span>
+                    <strong class="currency-value"><fmt:formatNumber value="${kpiExecutivoDTO.faturamentoTotal}" type="currency"/></strong>
+                    <small>Receita em faturas</small>
+                </article>
+                <article class="kpi-card">
+                    <span class="kpi-icon kpi-icon-danger" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M10.3 4.3 2.8 18a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                    </span>
+                    <span>Faturas vencidas</span>
+                    <strong>${kpiExecutivoDTO.faturasVencidas}</strong>
+                    <small>Demandam cobrança</small>
+                </article>
+                <article class="kpi-card">
+                    <span class="kpi-icon kpi-icon-success" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M7 3h10l3 3v15H4V3z"/><path d="M8 13h8"/><path d="M8 17h5"/><path d="M16 3v4h4"/></svg>
+                    </span>
+                    <span>Contratos ativos</span>
+                    <strong>${kpiExecutivoDTO.totalContratosAtivos}</strong>
+                    <small>Base contratual vigente</small>
+                </article>
+                <article class="kpi-card">
+                    <span class="kpi-icon kpi-icon-info" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+                    </span>
+                    <span>Notificações não lidas</span>
+                    <strong>${kpiExecutivoDTO.totalNotificacoesNaoLidas}</strong>
+                    <small>Alertas pendentes</small>
+                </article>
+                <article class="kpi-card">
+                    <span class="kpi-icon kpi-icon-warning" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="m14.7 6.3 3 3"/><path d="M5 19l8.5-8.5"/><path d="M15 5l4 4-2.5 2.5-4-4z"/><path d="M4 20h4"/></svg>
+                    </span>
+                    <span>Manutenções em andamento</span>
+                    <strong>${kpiExecutivoDTO.totalManutencoesEmAndamento}</strong>
+                    <small>Frota em atenção</small>
+                </article>
+            </div>
+
             <section class="analytics-grid" aria-label="Análises executivas">
                 <article class="analytics-card analytics-card-wide">
                     <div class="analytics-card-header">
@@ -157,16 +212,29 @@
                     </div>
                 </article>
 
+                <article class="analytics-card">
+                    <div class="analytics-card-header">
+                        <div>
+                            <span class="section-kicker">Financeiro</span>
+                            <h2>Faturas por status</h2>
+                        </div>
+                        <span class="analytics-badge">Recebíveis</span>
+                    </div>
+                    <div class="chart-frame chart-frame-donut">
+                        <canvas id="faturasStatusChart" aria-label="Gráfico de faturas por status"></canvas>
+                    </div>
+                </article>
+
                 <article class="analytics-card analytics-card-wide">
                     <div class="analytics-card-header">
                         <div>
-                            <span class="section-kicker">Ocorrências</span>
-                            <h2>Ocorrências por tipo</h2>
+                            <span class="section-kicker">Operação</span>
+                            <h2>Indicadores operacionais</h2>
                         </div>
-                        <span class="analytics-badge">Risco</span>
+                        <span class="analytics-badge">Consolidado</span>
                     </div>
                     <div class="chart-frame chart-frame-bar">
-                        <canvas id="ocorrenciasTipoChart" aria-label="Gráfico de barras de ocorrências por tipo"></canvas>
+                        <canvas id="indicadoresOperacionaisChart" aria-label="Gráfico de barras de indicadores operacionais"></canvas>
                     </div>
                 </article>
             </section>
@@ -228,8 +296,12 @@
                             <strong>${dashboardDTO.fretesCancelados}</strong>
                         </div>
                         <div class="operational-alert alert-danger">
-                            <span>Ocorrências críticas</span>
-                            <strong>2</strong>
+                            <span>Notificações não lidas</span>
+                            <strong>${kpiExecutivoDTO.totalNotificacoesNaoLidas}</strong>
+                        </div>
+                        <div class="operational-alert alert-warning">
+                            <span>Manutenções em andamento</span>
+                            <strong>${kpiExecutivoDTO.totalManutencoesEmAndamento}</strong>
                         </div>
                     </div>
                 </article>
@@ -250,11 +322,16 @@
         new Chart(document.getElementById("fretesStatusChart"), {
             type: "bar",
             data: {
-                labels: ["Agendado", "Em coleta", "Em trânsito", "Entregue", "Cancelado", "Ocorrência"],
+                labels: ["Em trânsito", "Entregue", "Cancelado", "Outros"],
                 datasets: [{
                     label: "Fretes",
-                    data: [0, 0, ${dashboardDTO.fretesEmTransito}, ${dashboardDTO.fretesEntregues}, ${dashboardDTO.fretesCancelados}, 0],
-                    backgroundColor: ["#D97706", "#38BDF8", "#2563EB", "#16A34A", "#6B7280", "#DC2626"],
+                    data: [
+                        ${kpiExecutivoDTO.fretesEmTransito},
+                        ${kpiExecutivoDTO.fretesEntregues},
+                        ${kpiExecutivoDTO.fretesCancelados},
+                        Math.max(${kpiExecutivoDTO.totalFretes} - ${kpiExecutivoDTO.fretesEmTransito} - ${kpiExecutivoDTO.fretesEntregues} - ${kpiExecutivoDTO.fretesCancelados}, 0)
+                    ],
+                    backgroundColor: ["#2563EB", "#16A34A", "#6B7280", "#D97706"],
                     borderRadius: 6,
                     maxBarThickness: 34
                 }]
@@ -269,6 +346,33 @@
                 scales: {
                     x: { grid: { display: false }, ticks: { color: chartMutedColor } },
                     y: { beginAtZero: true, grid: { color: chartGridColor }, ticks: { precision: 0 } }
+                }
+            }
+        });
+
+        new Chart(document.getElementById("faturasStatusChart"), {
+            type: "doughnut",
+            data: {
+                labels: ["Pendentes", "Vencidas", "Outras"],
+                datasets: [{
+                    data: [
+                        ${kpiExecutivoDTO.faturasPendentes},
+                        ${kpiExecutivoDTO.faturasVencidas},
+                        Math.max(${kpiExecutivoDTO.totalFaturas} - ${kpiExecutivoDTO.faturasPendentes} - ${kpiExecutivoDTO.faturasVencidas}, 0)
+                    ],
+                    backgroundColor: ["#D97706", "#DC2626", "#2D8CFF"],
+                    borderColor: "#FFFFFF",
+                    borderWidth: 4,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "68%",
+                plugins: {
+                    legend: { position: "bottom" },
+                    tooltip: { backgroundColor: chartTextColor }
                 }
             }
         });
@@ -300,14 +404,21 @@
             }
         });
 
-        new Chart(document.getElementById("ocorrenciasTipoChart"), {
+        new Chart(document.getElementById("indicadoresOperacionaisChart"), {
             type: "bar",
             data: {
-                labels: ["Saída", "Em rota", "Tentativa", "Entrega", "Avaria", "Extravio"],
+                labels: ["Clientes", "Veículos", "Motoristas", "Ocorrências", "Notificações", "Manutenções"],
                 datasets: [{
-                    label: "Ocorrências",
-                    data: [4, 7, 3, 6, 2, 1],
-                    backgroundColor: "#2D8CFF",
+                    label: "Total",
+                    data: [
+                        ${kpiExecutivoDTO.totalClientes},
+                        ${kpiExecutivoDTO.totalVeiculos},
+                        ${kpiExecutivoDTO.totalMotoristas},
+                        ${kpiExecutivoDTO.totalOcorrencias},
+                        ${kpiExecutivoDTO.totalNotificacoesNaoLidas},
+                        ${kpiExecutivoDTO.totalManutencoesEmAndamento}
+                    ],
+                    backgroundColor: ["#2D8CFF", "#16A34A", "#0B2344", "#D97706", "#DC2626", "#6B7280"],
                     borderRadius: 6,
                     maxBarThickness: 32
                 }]
