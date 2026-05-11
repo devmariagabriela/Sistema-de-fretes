@@ -14,9 +14,11 @@ public class MotoristaBO {
     private static final Pattern SOMENTE_DIGITOS = Pattern.compile("\\D");
 
     private final MotoristaDAO motoristaDAO;
+    private final NotificacaoBO notificacaoBO;
 
     public MotoristaBO() {
         this.motoristaDAO = new MotoristaDAO();
+        this.notificacaoBO = new NotificacaoBO();
     }
 
     public void salvar(Motorista motorista) throws CadastroException {
@@ -33,6 +35,7 @@ public class MotoristaBO {
             }
 
             motoristaDAO.salvar(motorista);
+            gerarNotificacoesAutomaticasSemBloquear();
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível salvar o motorista.");
         }
@@ -91,6 +94,7 @@ public class MotoristaBO {
             }
 
             motoristaDAO.atualizar(motorista);
+            gerarNotificacoesAutomaticasSemBloquear();
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível atualizar o motorista.");
         }
@@ -211,5 +215,13 @@ public class MotoristaBO {
 
         String valorNormalizado = SOMENTE_DIGITOS.matcher(valor.trim()).replaceAll("");
         return valorNormalizado.isEmpty() ? null : valorNormalizado;
+    }
+
+    private void gerarNotificacoesAutomaticasSemBloquear() {
+        try {
+            notificacaoBO.gerarNotificacoesAutomaticas();
+        } catch (CadastroException e) {
+            // Notificações não devem impedir o fluxo de motoristas.
+        }
     }
 }

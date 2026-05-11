@@ -9,6 +9,7 @@ import br.com.gwfrete.model.Motorista;
 import br.com.gwfrete.model.StatusFrete;
 import br.com.gwfrete.model.StatusMotorista;
 import br.com.gwfrete.model.StatusVeiculo;
+import br.com.gwfrete.model.TipoNotificacao;
 import br.com.gwfrete.model.Veiculo;
 
 import java.sql.SQLException;
@@ -18,11 +19,13 @@ public class FreteBO {
     private final FreteDAO freteDAO;
     private final MotoristaDAO motoristaDAO;
     private final VeiculoDAO veiculoDAO;
+    private final NotificacaoBO notificacaoBO;
 
     public FreteBO() {
         this.freteDAO = new FreteDAO();
         this.motoristaDAO = new MotoristaDAO();
         this.veiculoDAO = new VeiculoDAO();
+        this.notificacaoBO = new NotificacaoBO();
     }
 
     public void salvar(Frete frete) throws CadastroException {
@@ -41,6 +44,7 @@ public class FreteBO {
 
             validarRecursosOperacionais(frete);
             freteDAO.salvar(frete);
+            registrarNotificacaoFrete(frete);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível salvar o frete.");
         }
@@ -107,6 +111,7 @@ public class FreteBO {
 
             validarRecursosOperacionais(frete);
             freteDAO.atualizar(frete);
+            registrarNotificacaoFrete(frete);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível atualizar o frete.");
         }
@@ -246,6 +251,22 @@ public class FreteBO {
         if (freteAtual.getStatus() == StatusFrete.ENTREGUE
                 && freteAtualizado.getStatus() == StatusFrete.EM_TRANSITO) {
             throw new CadastroException("Frete entregue não pode voltar para em trânsito.");
+        }
+    }
+
+    private void registrarNotificacaoFrete(Frete frete) {
+        try {
+            if (frete.getStatus() == StatusFrete.CANCELADO) {
+                notificacaoBO.registrarEvento(TipoNotificacao.FRETE_CANCELADO, "Frete cancelado",
+                        "Frete " + frete.getCodigo() + " foi cancelado.", frete.getId(), "FRETE");
+            } else if (frete.getStatus() == StatusFrete.ENTREGUE) {
+                notificacaoBO.registrarEvento(TipoNotificacao.OUTROS, "Frete entregue",
+                        "Frete " + frete.getCodigo() + " foi entregue.", frete.getId(), "FRETE");
+            }
+
+            notificacaoBO.gerarNotificacoesAutomaticas();
+        } catch (CadastroException e) {
+            // Notificações não devem impedir o fluxo operacional principal.
         }
     }
 }

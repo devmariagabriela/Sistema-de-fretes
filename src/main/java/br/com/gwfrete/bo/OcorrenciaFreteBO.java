@@ -6,6 +6,7 @@ import br.com.gwfrete.exception.CadastroException;
 import br.com.gwfrete.model.Frete;
 import br.com.gwfrete.model.OcorrenciaFrete;
 import br.com.gwfrete.model.StatusFrete;
+import br.com.gwfrete.model.TipoNotificacao;
 import br.com.gwfrete.model.TipoOcorrenciaFrete;
 
 import java.sql.SQLException;
@@ -14,10 +15,12 @@ import java.util.List;
 public class OcorrenciaFreteBO {
     private final OcorrenciaFreteDAO ocorrenciaFreteDAO;
     private final FreteDAO freteDAO;
+    private final NotificacaoBO notificacaoBO;
 
     public OcorrenciaFreteBO() {
         this.ocorrenciaFreteDAO = new OcorrenciaFreteDAO();
         this.freteDAO = new FreteDAO();
+        this.notificacaoBO = new NotificacaoBO();
     }
 
     public void salvar(OcorrenciaFrete ocorrencia) throws CadastroException {
@@ -37,6 +40,7 @@ public class OcorrenciaFreteBO {
 
             ocorrenciaFreteDAO.salvar(ocorrencia);
             atualizarStatusFretePorOcorrencia(frete, ocorrencia.getTipo());
+            registrarNotificacaoOcorrencia(ocorrencia);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível registrar a ocorrência do frete.");
         }
@@ -154,6 +158,23 @@ public class OcorrenciaFreteBO {
         if (ocorrencia.getDocumentoRecebedor() != null) {
             String documentoRecebedor = ocorrencia.getDocumentoRecebedor().trim();
             ocorrencia.setDocumentoRecebedor(documentoRecebedor.isEmpty() ? null : documentoRecebedor);
+        }
+    }
+
+    private void registrarNotificacaoOcorrencia(OcorrenciaFrete ocorrencia) {
+        try {
+            notificacaoBO.registrarEvento(TipoNotificacao.OCORRENCIA_CRITICA, "Nova ocorrência cadastrada",
+                    "Nova ocorrência " + ocorrencia.getTipo().getDescricao() + " registrada para o frete "
+                            + ocorrencia.getFrete().getCodigo() + ".",
+                    ocorrencia.getId(), "OCORRENCIA_FRETE");
+
+            if (ocorrencia.getTipo() == TipoOcorrenciaFrete.ENTREGA_REALIZADA) {
+                notificacaoBO.registrarEvento(TipoNotificacao.OUTROS, "Frete entregue",
+                        "Frete " + ocorrencia.getFrete().getCodigo() + " foi entregue.",
+                        ocorrencia.getFrete().getId(), "FRETE");
+            }
+        } catch (CadastroException e) {
+            // Notificações não devem impedir o registro da ocorrência.
         }
     }
 }

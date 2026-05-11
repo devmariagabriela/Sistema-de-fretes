@@ -14,10 +14,12 @@ import java.util.List;
 public class ContratoBO {
     private final ContratoDAO contratoDAO;
     private final ClienteDAO clienteDAO;
+    private final NotificacaoBO notificacaoBO;
 
     public ContratoBO() {
         this.contratoDAO = new ContratoDAO();
         this.clienteDAO = new ClienteDAO();
+        this.notificacaoBO = new NotificacaoBO();
     }
 
     public void salvar(Contrato contrato) throws CadastroException {
@@ -31,6 +33,7 @@ public class ContratoBO {
 
             carregarCliente(contrato);
             contratoDAO.salvar(contrato);
+            gerarNotificacoesAutomaticasSemBloquear();
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível salvar o contrato.");
         }
@@ -76,6 +79,7 @@ public class ContratoBO {
             validarTransicaoStatus(contratoAtual, contrato);
             carregarCliente(contrato);
             contratoDAO.atualizar(contrato);
+            gerarNotificacoesAutomaticasSemBloquear();
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível atualizar o contrato.");
         }
@@ -184,5 +188,13 @@ public class ContratoBO {
 
         String valorNormalizado = valor.trim();
         return valorNormalizado.isEmpty() ? null : valorNormalizado;
+    }
+
+    private void gerarNotificacoesAutomaticasSemBloquear() {
+        try {
+            notificacaoBO.gerarNotificacoesAutomaticas();
+        } catch (CadastroException e) {
+            // Notificações não devem impedir o fluxo de contratos.
+        }
     }
 }
