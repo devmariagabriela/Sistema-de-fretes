@@ -7,9 +7,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GW FRETE | Relatório de Fretes</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css?v=app-20260510-notif">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css?v=app-20260510-theme">
+    <script defer src="${pageContext.request.contextPath}/assets/js/theme.js?v=theme-20260510-ui"></script>
 </head>
-<body>
+<body class="theme-dark">
     <fmt:setLocale value="pt_BR"/>
     <main class="app-shell">
         <jsp:include page="/WEB-INF/views/includes/sidebar.jsp">

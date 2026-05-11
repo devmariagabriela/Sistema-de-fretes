@@ -64,6 +64,14 @@
                             <a class="notification-view-all" href="${pageContext.request.contextPath}/notificacoes">Ver todas</a>
                         </div>
                     </details>
+                    <label class="theme-switcher">
+                        <span>Tema</span>
+                        <select data-theme-select aria-label="Selecionar tema visual">
+                            <option value="theme-dark">Escuro</option>
+                            <option value="theme-light">Claro</option>
+                            <option value="theme-high-contrast">Alto contraste</option>
+                        </select>
+                    </label>
                     <div class="user-summary">
                         <span class="user-avatar" aria-hidden="true">
                             <svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0"/><path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
@@ -131,6 +139,14 @@
                         <a class="notification-view-all" href="${pageContext.request.contextPath}/notificacoes">Ver todas</a>
                     </div>
                 </details>
+                <label class="theme-switcher">
+                    <span>Tema</span>
+                    <select data-theme-select aria-label="Selecionar tema visual">
+                        <option value="theme-dark">Escuro</option>
+                        <option value="theme-light">Claro</option>
+                        <option value="theme-high-contrast">Alto contraste</option>
+                    </select>
+                </label>
                 <div class="session-user">
                     <span>${sessionScope.usuarioLogado.nome}</span>
                     <strong>${sessionScope.usuarioLogado.perfil.descricao}</strong>

@@ -7,9 +7,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GW FRETE | Dashboard</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css?v=dashboard-20260510-notif">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css?v=dashboard-20260510-theme">
+    <script defer src="${pageContext.request.contextPath}/assets/js/theme.js?v=theme-20260510-ui"></script>
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page theme-dark">
     <fmt:setLocale value="pt_BR"/>
 
     <c:set var="fretesOutros" value="${kpiExecutivoDTO.totalFretes - kpiExecutivoDTO.fretesEmTransito - kpiExecutivoDTO.fretesEntregues - kpiExecutivoDTO.fretesCancelados}" />

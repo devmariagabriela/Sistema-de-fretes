@@ -5,9 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GW FRETE | Login</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css?v=login-20260510-login-theme">
+    <script defer src="${pageContext.request.contextPath}/assets/js/theme.js?v=theme-20260510-login"></script>
 </head>
-<body class="login-screen">
+<body class="login-screen theme-dark">
+    <script>
+        (function () {
+            var themes = ["theme-dark", "theme-light", "theme-high-contrast"];
+            var theme = "theme-dark";
+
+            try {
+                var storedTheme = localStorage.getItem("theme") || localStorage.getItem("gwfrete-theme");
+                theme = themes.indexOf(storedTheme) >= 0 ? storedTheme : "theme-dark";
+            } catch (error) {
+                theme = "theme-dark";
+            }
+
+            document.body.classList.remove("theme-dark", "theme-light", "theme-high-contrast");
+            document.body.classList.add(theme);
+        })();
+    </script>
     <header class="login-topbar" aria-hidden="true">
         <div class="topbar-brand">
             <div class="brand-mark">
@@ -25,6 +42,14 @@
         </div>
 
         <div class="system-state">
+            <label class="login-theme-switcher">
+                <span>Tema</span>
+                <select data-theme-select aria-label="Selecionar tema visual">
+                    <option value="theme-dark">Escuro</option>
+                    <option value="theme-light">Claro</option>
+                    <option value="theme-high-contrast">Alto contraste</option>
+                </select>
+            </label>
             <span class="online-pill">
                 <i></i>
                 SISTEMA ONLINE
@@ -150,9 +175,13 @@
                         </div>
                     </div>
 
-                    <button class="primary-button" type="submit">
+                    <button class="primary-button" type="submit" aria-busy="false">
                         <span class="button-shimmer"></span>
-                        <span class="button-label">Entrar no sistema <b>→</b></span>
+                        <span class="button-loader" aria-hidden="true"></span>
+                        <span class="button-label">
+                            <span data-login-button-text>Entrar no sistema</span>
+                            <b>→</b>
+                        </span>
                     </button>
                 </form>
 
@@ -189,6 +218,29 @@
         <span>v4.12.0 · build 2026.05</span>
     </footer>
 
+    <div class="login-loading-overlay" aria-live="polite" aria-hidden="true">
+        <div class="loading-card" role="status">
+            <div class="loading-truck-scene" aria-hidden="true">
+                <div class="loading-road">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <svg class="loading-truck" viewBox="0 0 170 86" focusable="false" aria-hidden="true">
+                    <path class="truck-cargo" d="M18 25h82v37H18z"></path>
+                    <path class="truck-cab" d="M100 37h28l20 16v9h-48z"></path>
+                    <path class="truck-window" d="M109 42h17l10 10h-27z"></path>
+                    <circle class="truck-wheel" cx="45" cy="66" r="10"></circle>
+                    <circle class="truck-wheel" cx="122" cy="66" r="10"></circle>
+                    <circle class="truck-hub" cx="45" cy="66" r="4"></circle>
+                    <circle class="truck-hub" cx="122" cy="66" r="4"></circle>
+                </svg>
+            </div>
+            <strong>Autenticando acesso</strong>
+            <span>Carregando ambiente operacional...</span>
+        </div>
+    </div>
+
     <script>
         (function () {
             var toggle = document.querySelector(".password-toggle");
@@ -196,6 +248,10 @@
             var clock = document.getElementById("liveClock");
             var form = document.querySelector(".login-form");
             var submit = document.querySelector(".primary-button");
+            var loadingOverlay = document.querySelector(".login-loading-overlay");
+            var submitText = submit ? submit.querySelector("[data-login-button-text]") : null;
+            var submitArrow = submit ? submit.querySelector(".button-label b") : null;
+            var submitDefaultText = submitText ? submitText.textContent : "Entrar no sistema";
 
             if (toggle && password) {
                 toggle.addEventListener("click", function () {
@@ -219,8 +275,58 @@
             }
 
             if (form && submit) {
-                form.addEventListener("submit", function () {
+                form.addEventListener("submit", function (event) {
+                    if (form.dataset.submitting === "true") {
+                        return;
+                    }
+
+                    if (form.checkValidity && !form.checkValidity()) {
+                        return;
+                    }
+
+                    event.preventDefault();
+
                     submit.classList.add("is-loading");
+                    submit.disabled = true;
+                    submit.setAttribute("aria-busy", "true");
+                    form.dataset.submitting = "true";
+
+                    if (loadingOverlay) {
+                        loadingOverlay.classList.add("is-visible");
+                        loadingOverlay.setAttribute("aria-hidden", "false");
+                    }
+
+                    if (submitText) {
+                        submitText.textContent = "Autenticando...";
+                    }
+
+                    if (submitArrow) {
+                        submitArrow.hidden = true;
+                    }
+
+                    window.setTimeout(function () {
+                        form.submit();
+                    }, 1400);
+                });
+
+                window.addEventListener("pageshow", function () {
+                    submit.classList.remove("is-loading");
+                    submit.disabled = false;
+                    submit.setAttribute("aria-busy", "false");
+                    delete form.dataset.submitting;
+
+                    if (loadingOverlay) {
+                        loadingOverlay.classList.remove("is-visible");
+                        loadingOverlay.setAttribute("aria-hidden", "true");
+                    }
+
+                    if (submitText) {
+                        submitText.textContent = submitDefaultText;
+                    }
+
+                    if (submitArrow) {
+                        submitArrow.hidden = false;
+                    }
                 });
             }
 
