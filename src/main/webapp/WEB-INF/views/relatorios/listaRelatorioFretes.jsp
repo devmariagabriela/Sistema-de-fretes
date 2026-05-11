@@ -27,7 +27,6 @@
                 <div class="page-actions">
                     <jsp:include page="/WEB-INF/views/includes/header.jsp" />
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios">Central de relatórios</a>
-                    <a class="button button-secondary" href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/fretes">Fretes</a>
                 </div>
             </header>
@@ -119,6 +118,8 @@
                         <thead>
                             <tr>
                                 <th>Código</th>
+                                <th>Remetente</th>
+                                <th>Destinatário</th>
                                 <th>Origem</th>
                                 <th>Destino</th>
                                 <th>Motorista</th>
@@ -133,6 +134,8 @@
                             <c:forEach var="frete" items="${fretes}">
                                 <tr>
                                     <td><strong class="freight-code">${frete.codigo}</strong></td>
+                                    <td class="text-muted">${frete.remetente}</td>
+                                    <td class="text-muted">${frete.destinatario}</td>
                                     <td>${frete.origem}</td>
                                     <td>${frete.destino}</td>
                                     <td class="text-muted">${frete.motorista}</td>
@@ -153,7 +156,7 @@
                             </c:forEach>
                             <c:if test="${empty fretes}">
                                 <tr>
-                                    <td colspan="9">
+                                    <td colspan="11">
                                         <div class="empty-state">Nenhum frete disponível para o relatório.</div>
                                     </td>
                                 </tr>

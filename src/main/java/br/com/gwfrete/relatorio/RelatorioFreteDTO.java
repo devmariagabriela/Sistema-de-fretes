@@ -12,6 +12,8 @@ public class RelatorioFreteDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String codigo;
+    private String remetente;
+    private String destinatario;
     private String origem;
     private String destino;
     private String motorista;
@@ -27,6 +29,22 @@ public class RelatorioFreteDTO implements Serializable {
 
     public void setCodigo(String codigo) {
         this.codigo = codigo;
+    }
+
+    public String getRemetente() {
+        return remetente;
+    }
+
+    public void setRemetente(String remetente) {
+        this.remetente = remetente;
+    }
+
+    public String getDestinatario() {
+        return destinatario;
+    }
+
+    public void setDestinatario(String destinatario) {
+        this.destinatario = destinatario;
     }
 
     public String getOrigem() {

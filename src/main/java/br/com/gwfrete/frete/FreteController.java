@@ -1,5 +1,7 @@
 package br.com.gwfrete.frete;
 
+import br.com.gwfrete.cliente.Cliente;
+import br.com.gwfrete.cliente.ClienteDAO;
 import br.com.gwfrete.frete.FreteBO;
 import br.com.gwfrete.motorista.MotoristaDAO;
 import br.com.gwfrete.veiculo.VeiculoDAO;
@@ -29,6 +31,7 @@ public class FreteController extends HttpServlet {
     private static final String VIEW_FORMULARIO = "/WEB-INF/views/fretes/formularioFrete.jsp";
 
     private final FreteBO freteBO = new FreteBO();
+    private final ClienteDAO clienteDAO = new ClienteDAO();
     private final MotoristaDAO motoristaDAO = new MotoristaDAO();
     private final VeiculoDAO veiculoDAO = new VeiculoDAO();
 
@@ -148,6 +151,8 @@ public class FreteController extends HttpServlet {
         Frete frete = new Frete();
         frete.setCodigo(freteBO.gerarProximoCodigo());
         frete.setStatus(StatusFrete.AGENDADO);
+        frete.setRemetente(new Cliente());
+        frete.setDestinatario(new Cliente());
         frete.setMotorista(new Motorista());
         frete.setVeiculo(new Veiculo());
 
@@ -214,6 +219,8 @@ public class FreteController extends HttpServlet {
     private Frete montarFreteFormulario(HttpServletRequest request) {
         Frete frete = new Frete();
         frete.setCodigo(request.getParameter("codigo"));
+        frete.setRemetente(montarCliente(request.getParameter("remetenteId")));
+        frete.setDestinatario(montarCliente(request.getParameter("destinatarioId")));
         frete.setOrigem(request.getParameter("origem"));
         frete.setDestino(request.getParameter("destino"));
         frete.setDescricaoCarga(request.getParameter("descricaoCarga"));
@@ -225,6 +232,12 @@ public class FreteController extends HttpServlet {
         frete.setMotorista(montarMotorista(request.getParameter("motoristaId")));
         frete.setVeiculo(montarVeiculo(request.getParameter("veiculoId")));
         return frete;
+    }
+
+    private Cliente montarCliente(String id) {
+        Cliente cliente = new Cliente();
+        cliente.setId(obterLong(id));
+        return cliente;
     }
 
     private Motorista montarMotorista(String id) {
@@ -245,10 +258,11 @@ public class FreteController extends HttpServlet {
         request.setAttribute("statusFrete", StatusFrete.values());
 
         try {
+            request.setAttribute("clientes", clienteDAO.listarTodos());
             request.setAttribute("motoristas", motoristaDAO.listarTodos());
             request.setAttribute("veiculos", veiculoDAO.listarTodos());
         } catch (SQLException e) {
-            throw new CadastroException("Não foi possível carregar motoristas e veículos para o formulário.");
+            throw new CadastroException("Não foi possível carregar clientes, motoristas e veículos para o formulário.");
         }
     }
 

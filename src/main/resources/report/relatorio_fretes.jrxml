@@ -48,6 +48,8 @@
     <parameter name="TOTAL_VALOR" class="java.math.BigDecimal"/>
 
     <field name="codigo" class="java.lang.String"/>
+    <field name="remetente" class="java.lang.String"/>
+    <field name="destinatario" class="java.lang.String"/>
     <field name="origem" class="java.lang.String"/>
     <field name="destino" class="java.lang.String"/>
     <field name="motorista" class="java.lang.String"/>
@@ -191,7 +193,15 @@
                 <text><![CDATA[CÓDIGO]]></text>
             </staticText>
             <staticText>
-                <reportElement mode="Opaque" x="75" y="0" width="190" height="28" backcolor="#0B2344" forecolor="#FFFFFF" uuid="b0b2bf3d-23a7-4c52-9b32-51b8d8f218a9"/>
+                <reportElement mode="Opaque" x="75" y="0" width="145" height="28" backcolor="#0B2344" forecolor="#FFFFFF" uuid="b0b2bf3d-23a7-4c52-9b32-51b8d8f218a9"/>
+                <box leftPadding="7" rightPadding="6"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="8" isBold="true"/>
+                </textElement>
+                <text><![CDATA[CLIENTES]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="220" y="0" width="125" height="28" backcolor="#0B2344" forecolor="#FFFFFF" uuid="4e7b3695-8a2c-403b-bfdf-6cde1a385729"/>
                 <box leftPadding="7" rightPadding="6"/>
                 <textElement verticalAlignment="Middle">
                     <font size="8" isBold="true"/>
@@ -199,7 +209,7 @@
                 <text><![CDATA[ROTA]]></text>
             </staticText>
             <staticText>
-                <reportElement mode="Opaque" x="265" y="0" width="125" height="28" backcolor="#0B2344" forecolor="#FFFFFF" uuid="ca9dad4a-edca-4b91-9fa1-f21aa1eec82d"/>
+                <reportElement mode="Opaque" x="345" y="0" width="105" height="28" backcolor="#0B2344" forecolor="#FFFFFF" uuid="ca9dad4a-edca-4b91-9fa1-f21aa1eec82d"/>
                 <box leftPadding="7" rightPadding="6"/>
                 <textElement verticalAlignment="Middle">
                     <font size="8" isBold="true"/>
@@ -207,7 +217,7 @@
                 <text><![CDATA[MOTORISTA]]></text>
             </staticText>
             <staticText>
-                <reportElement mode="Opaque" x="390" y="0" width="90" height="28" backcolor="#0B2344" forecolor="#FFFFFF" uuid="48f419cb-9cc8-43d8-84d7-81201d1f479f"/>
+                <reportElement mode="Opaque" x="450" y="0" width="75" height="28" backcolor="#0B2344" forecolor="#FFFFFF" uuid="48f419cb-9cc8-43d8-84d7-81201d1f479f"/>
                 <box leftPadding="7" rightPadding="6"/>
                 <textElement verticalAlignment="Middle">
                     <font size="8" isBold="true"/>
@@ -215,7 +225,7 @@
                 <text><![CDATA[VEÍCULO]]></text>
             </staticText>
             <staticText>
-                <reportElement mode="Opaque" x="480" y="0" width="80" height="28" backcolor="#0B2344" forecolor="#FFFFFF" uuid="b448269d-67d2-42d0-8c97-a625902846e0"/>
+                <reportElement mode="Opaque" x="525" y="0" width="70" height="28" backcolor="#0B2344" forecolor="#FFFFFF" uuid="b448269d-67d2-42d0-8c97-a625902846e0"/>
                 <box leftPadding="7" rightPadding="6"/>
                 <textElement verticalAlignment="Middle">
                     <font size="8" isBold="true"/>
@@ -223,7 +233,7 @@
                 <text><![CDATA[SAÍDA]]></text>
             </staticText>
             <staticText>
-                <reportElement mode="Opaque" x="560" y="0" width="80" height="28" backcolor="#0B2344" forecolor="#FFFFFF" uuid="af4f1030-c3c9-4539-b5fe-5f2fda2a95c2"/>
+                <reportElement mode="Opaque" x="595" y="0" width="70" height="28" backcolor="#0B2344" forecolor="#FFFFFF" uuid="af4f1030-c3c9-4539-b5fe-5f2fda2a95c2"/>
                 <box leftPadding="7" rightPadding="6"/>
                 <textElement verticalAlignment="Middle">
                     <font size="8" isBold="true"/>
@@ -231,7 +241,7 @@
                 <text><![CDATA[ENTREGA]]></text>
             </staticText>
             <staticText>
-                <reportElement mode="Opaque" x="640" y="0" width="88" height="28" backcolor="#0B2344" forecolor="#FFFFFF" uuid="6fa7ae18-b5b3-4e30-a332-ed244bf6f522"/>
+                <reportElement mode="Opaque" x="665" y="0" width="75" height="28" backcolor="#0B2344" forecolor="#FFFFFF" uuid="6fa7ae18-b5b3-4e30-a332-ed244bf6f522"/>
                 <box leftPadding="7" rightPadding="6"/>
                 <textElement verticalAlignment="Middle">
                     <font size="8" isBold="true"/>
@@ -239,7 +249,7 @@
                 <text><![CDATA[STATUS]]></text>
             </staticText>
             <staticText>
-                <reportElement mode="Opaque" x="728" y="0" width="74" height="28" backcolor="#0B2344" forecolor="#FFFFFF" uuid="444f0446-2585-4fa3-bba4-a8145ad1ae08"/>
+                <reportElement mode="Opaque" x="740" y="0" width="62" height="28" backcolor="#0B2344" forecolor="#FFFFFF" uuid="444f0446-2585-4fa3-bba4-a8145ad1ae08"/>
                 <box leftPadding="6" rightPadding="7"/>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
                     <font size="8" isBold="true"/>
@@ -262,7 +272,17 @@
                 <textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
             </textField>
             <textField isBlankWhenNull="true">
-                <reportElement style="LinhaDetalhe" x="75" y="0" width="190" height="25" forecolor="#1F2937" uuid="9b177196-4468-44ff-ad70-b33f9d1a666e"/>
+                <reportElement style="LinhaDetalhe" x="75" y="0" width="145" height="25" forecolor="#1F2937" uuid="9b177196-4468-44ff-ad70-b33f9d1a666e"/>
+                <box leftPadding="7" rightPadding="6" topPadding="4" bottomPadding="4">
+                    <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
+                </box>
+                <textElement verticalAlignment="Middle">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA[($F{remetente} == null ? "" : $F{remetente}) + "  >  " + ($F{destinatario} == null ? "" : $F{destinatario})]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement style="LinhaDetalhe" x="220" y="0" width="125" height="25" forecolor="#1F2937" uuid="bc6a7759-a021-487b-9334-f2a6d06f6897"/>
                 <box leftPadding="7" rightPadding="6" topPadding="4" bottomPadding="4">
                     <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
                 </box>
@@ -272,7 +292,7 @@
                 <textFieldExpression><![CDATA[($F{origem} == null ? "" : $F{origem}) + "  >  " + ($F{destino} == null ? "" : $F{destino})]]></textFieldExpression>
             </textField>
             <textField isBlankWhenNull="true">
-                <reportElement style="LinhaDetalhe" x="265" y="0" width="125" height="25" forecolor="#1F2937" uuid="ae17d85d-d50c-486b-b834-986a43a565f6"/>
+                <reportElement style="LinhaDetalhe" x="345" y="0" width="105" height="25" forecolor="#1F2937" uuid="ae17d85d-d50c-486b-b834-986a43a565f6"/>
                 <box leftPadding="7" rightPadding="6" topPadding="4" bottomPadding="4">
                     <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
                 </box>
@@ -282,7 +302,7 @@
                 <textFieldExpression><![CDATA[$F{motorista}]]></textFieldExpression>
             </textField>
             <textField isBlankWhenNull="true">
-                <reportElement style="LinhaDetalhe" x="390" y="0" width="90" height="25" forecolor="#1F2937" uuid="ce70ccba-d1e3-4da4-8ce0-78493197b4b6"/>
+                <reportElement style="LinhaDetalhe" x="450" y="0" width="75" height="25" forecolor="#1F2937" uuid="ce70ccba-d1e3-4da4-8ce0-78493197b4b6"/>
                 <box leftPadding="7" rightPadding="6" topPadding="4" bottomPadding="4">
                     <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
                 </box>
@@ -292,7 +312,7 @@
                 <textFieldExpression><![CDATA[$F{veiculo}]]></textFieldExpression>
             </textField>
             <textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-                <reportElement style="LinhaDetalhe" x="480" y="0" width="80" height="25" forecolor="#1F2937" uuid="066a3cb7-4343-4a1a-9457-d8e562a96787"/>
+                <reportElement style="LinhaDetalhe" x="525" y="0" width="70" height="25" forecolor="#1F2937" uuid="066a3cb7-4343-4a1a-9457-d8e562a96787"/>
                 <box leftPadding="7" rightPadding="6" topPadding="4" bottomPadding="4">
                     <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
                 </box>
@@ -302,7 +322,7 @@
                 <textFieldExpression><![CDATA[$F{dataSaidaFormatada}]]></textFieldExpression>
             </textField>
             <textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-                <reportElement style="LinhaDetalhe" x="560" y="0" width="80" height="25" forecolor="#1F2937" uuid="20ed4eb1-b114-45df-8209-bd62cb8a989d"/>
+                <reportElement style="LinhaDetalhe" x="595" y="0" width="70" height="25" forecolor="#1F2937" uuid="20ed4eb1-b114-45df-8209-bd62cb8a989d"/>
                 <box leftPadding="7" rightPadding="6" topPadding="4" bottomPadding="4">
                     <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
                 </box>
@@ -312,7 +332,7 @@
                 <textFieldExpression><![CDATA[$F{dataEntregaFormatada}]]></textFieldExpression>
             </textField>
             <textField isBlankWhenNull="true">
-                <reportElement style="StatusOperacional" x="640" y="4" width="88" height="17" uuid="fba7c9e4-627f-47bf-a60e-40ee2d8197a6"/>
+                <reportElement style="StatusOperacional" x="665" y="4" width="75" height="17" uuid="fba7c9e4-627f-47bf-a60e-40ee2d8197a6"/>
                 <box leftPadding="6" rightPadding="6">
                     <pen lineWidth="0.25" lineColor="#CBD5E1"/>
                 </box>
@@ -322,7 +342,7 @@
                 <textFieldExpression><![CDATA[$F{status} == null ? "" : $F{status}.getDescricao().toUpperCase()]]></textFieldExpression>
             </textField>
             <textField pattern="R$ #,##0.00" isBlankWhenNull="true">
-                <reportElement style="LinhaDetalhe" x="728" y="0" width="74" height="25" forecolor="#0F172A" uuid="3d164b70-82ba-4384-9ab8-8ce9c0e6af97"/>
+                <reportElement style="LinhaDetalhe" x="740" y="0" width="62" height="25" forecolor="#0F172A" uuid="3d164b70-82ba-4384-9ab8-8ce9c0e6af97"/>
                 <box leftPadding="6" rightPadding="7" topPadding="4" bottomPadding="4">
                     <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
                 </box>

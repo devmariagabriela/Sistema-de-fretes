@@ -40,12 +40,15 @@ public class RelatorioDAO {
     public List<RelatorioFreteDTO> listarFretesOperacionais(LocalDate dataInicial, LocalDate dataFinal,
             StatusFrete status, String motorista, String veiculo) throws SQLException {
 
-        StringBuilder sql = new StringBuilder("SELECT f.codigo, f.origem, f.destino, m.nome AS motorista, "
+        StringBuilder sql = new StringBuilder("SELECT f.codigo, remetente.nome AS remetente, "
+                + "destinatario.nome AS destinatario, f.origem, f.destino, m.nome AS motorista, "
                 + "v.placa AS veiculo_placa, v.modelo AS veiculo_modelo, f.status, "
                 + "f.data_saida, f.data_entrega, f.valor_frete "
                 + "FROM frete f "
                 + "INNER JOIN motorista m ON m.id = f.motorista_id "
                 + "INNER JOIN veiculo v ON v.id = f.veiculo_id "
+                + "LEFT JOIN cliente remetente ON remetente.id = f.remetente_id "
+                + "LEFT JOIN cliente destinatario ON destinatario.id = f.destinatario_id "
                 + "WHERE 1 = 1 ");
 
         List<Object> parametros = new ArrayList<>();
@@ -260,6 +263,8 @@ public class RelatorioDAO {
     private RelatorioFreteDTO mapearRelatorioFrete(ResultSet rs) throws SQLException {
         RelatorioFreteDTO frete = new RelatorioFreteDTO();
         frete.setCodigo(rs.getString("codigo"));
+        frete.setRemetente(rs.getString("remetente"));
+        frete.setDestinatario(rs.getString("destinatario"));
         frete.setOrigem(rs.getString("origem"));
         frete.setDestino(rs.getString("destino"));
         frete.setMotorista(rs.getString("motorista"));

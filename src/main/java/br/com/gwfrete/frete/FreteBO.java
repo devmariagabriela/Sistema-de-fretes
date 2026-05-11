@@ -1,5 +1,7 @@
 package br.com.gwfrete.frete;
 
+import br.com.gwfrete.cliente.Cliente;
+import br.com.gwfrete.cliente.ClienteDAO;
 import br.com.gwfrete.notificacao.NotificacaoBO;
 
 import br.com.gwfrete.frete.FreteDAO;
@@ -19,12 +21,14 @@ import java.util.List;
 
 public class FreteBO {
     private final FreteDAO freteDAO;
+    private final ClienteDAO clienteDAO;
     private final MotoristaDAO motoristaDAO;
     private final VeiculoDAO veiculoDAO;
     private final NotificacaoBO notificacaoBO;
 
     public FreteBO() {
         this.freteDAO = new FreteDAO();
+        this.clienteDAO = new ClienteDAO();
         this.motoristaDAO = new MotoristaDAO();
         this.veiculoDAO = new VeiculoDAO();
         this.notificacaoBO = new NotificacaoBO();
@@ -174,6 +178,22 @@ public class FreteBO {
             throw new CadastroException("Destino é obrigatório.");
         }
 
+        if (frete.getRemetente() == null
+                || frete.getRemetente().getId() == null
+                || frete.getRemetente().getId() <= 0) {
+            throw new CadastroException("Remetente é obrigatório.");
+        }
+
+        if (frete.getDestinatario() == null
+                || frete.getDestinatario().getId() == null
+                || frete.getDestinatario().getId() <= 0) {
+            throw new CadastroException("Destinatário é obrigatório.");
+        }
+
+        if (frete.getRemetente().getId().equals(frete.getDestinatario().getId())) {
+            throw new CadastroException("Remetente e destinatário devem ser diferentes.");
+        }
+
         if (frete.getMotorista() == null || frete.getMotorista().getId() == null || frete.getMotorista().getId() <= 0) {
             throw new CadastroException("Motorista é obrigatório.");
         }
@@ -184,6 +204,11 @@ public class FreteBO {
 
         if (frete.getStatus() == null) {
             throw new CadastroException("Status do frete é obrigatório.");
+        }
+
+        if (frete.getDataSaida() != null && frete.getDataEntrega() != null
+                && frete.getDataEntrega().isBefore(frete.getDataSaida())) {
+            throw new CadastroException("Data de entrega não pode ser anterior à data de saída.");
         }
     }
 
@@ -251,6 +276,24 @@ public class FreteBO {
     }
 
     private void validarRecursosOperacionais(Frete frete) throws SQLException, CadastroException {
+        Cliente remetente = clienteDAO.buscarPorId(frete.getRemetente().getId());
+        if (remetente == null) {
+            throw new CadastroException("Remetente não encontrado.");
+        }
+
+        if (!remetente.isAtivo()) {
+            throw new CadastroException("Remetente inativo não pode ser utilizado em fretes.");
+        }
+
+        Cliente destinatario = clienteDAO.buscarPorId(frete.getDestinatario().getId());
+        if (destinatario == null) {
+            throw new CadastroException("Destinatário não encontrado.");
+        }
+
+        if (!destinatario.isAtivo()) {
+            throw new CadastroException("Destinatário inativo não pode ser utilizado em fretes.");
+        }
+
         Motorista motorista = motoristaDAO.buscarPorId(frete.getMotorista().getId());
         if (motorista == null) {
             throw new CadastroException("Motorista não encontrado.");
@@ -269,6 +312,8 @@ public class FreteBO {
             throw new CadastroException("Veículo inativo ou em manutenção não pode ser utilizado em fretes.");
         }
 
+        frete.setRemetente(remetente);
+        frete.setDestinatario(destinatario);
         frete.setMotorista(motorista);
         frete.setVeiculo(veiculo);
     }

@@ -1,5 +1,6 @@
 package br.com.gwfrete.frete;
 
+import br.com.gwfrete.cliente.Cliente;
 import br.com.gwfrete.veiculo.Veiculo;
 
 import br.com.gwfrete.motorista.Motorista;
@@ -15,6 +16,8 @@ public class Frete implements Serializable {
 
     private Long id;
     private String codigo;
+    private Cliente remetente;
+    private Cliente destinatario;
     private String origem;
     private String destino;
     private String descricaoCarga;
@@ -41,6 +44,22 @@ public class Frete implements Serializable {
 
     public void setCodigo(String codigo) {
         this.codigo = codigo;
+    }
+
+    public Cliente getRemetente() {
+        return remetente;
+    }
+
+    public void setRemetente(Cliente remetente) {
+        this.remetente = remetente;
+    }
+
+    public Cliente getDestinatario() {
+        return destinatario;
+    }
+
+    public void setDestinatario(Cliente destinatario) {
+        this.destinatario = destinatario;
     }
 
     public String getOrigem() {
