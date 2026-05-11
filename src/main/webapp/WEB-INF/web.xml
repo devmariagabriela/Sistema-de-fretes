@@ -18,7 +18,7 @@
 
     <servlet>
         <servlet-name>LoginController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.LoginController</servlet-class>
+        <servlet-class>br.com.gwfrete.usuario.LoginController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -28,7 +28,7 @@
 
     <servlet>
         <servlet-name>RecuperacaoSenhaController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.RecuperacaoSenhaController</servlet-class>
+        <servlet-class>br.com.gwfrete.usuario.RecuperacaoSenhaController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -48,7 +48,7 @@
 
     <servlet>
         <servlet-name>LogoutController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.LogoutController</servlet-class>
+        <servlet-class>br.com.gwfrete.usuario.LogoutController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -58,7 +58,7 @@
 
     <servlet>
         <servlet-name>DashboardController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.DashboardController</servlet-class>
+        <servlet-class>br.com.gwfrete.dashboard.DashboardController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -68,7 +68,7 @@
 
     <servlet>
         <servlet-name>UsuarioController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.UsuarioController</servlet-class>
+        <servlet-class>br.com.gwfrete.usuario.UsuarioController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -83,7 +83,7 @@
 
     <servlet>
         <servlet-name>ClienteController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.ClienteController</servlet-class>
+        <servlet-class>br.com.gwfrete.cliente.ClienteController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -98,7 +98,7 @@
 
     <servlet>
         <servlet-name>ContratoController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.ContratoController</servlet-class>
+        <servlet-class>br.com.gwfrete.contrato.ContratoController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -113,7 +113,7 @@
 
     <servlet>
         <servlet-name>VeiculoController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.VeiculoController</servlet-class>
+        <servlet-class>br.com.gwfrete.veiculo.VeiculoController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -128,7 +128,7 @@
 
     <servlet>
         <servlet-name>ManutencaoVeiculoController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.ManutencaoVeiculoController</servlet-class>
+        <servlet-class>br.com.gwfrete.manutencao.ManutencaoVeiculoController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -143,7 +143,7 @@
 
     <servlet>
         <servlet-name>MotoristaController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.MotoristaController</servlet-class>
+        <servlet-class>br.com.gwfrete.motorista.MotoristaController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -158,7 +158,7 @@
 
     <servlet>
         <servlet-name>FreteController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.FreteController</servlet-class>
+        <servlet-class>br.com.gwfrete.frete.FreteController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -173,7 +173,7 @@
 
     <servlet>
         <servlet-name>OcorrenciaFreteController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.OcorrenciaFreteController</servlet-class>
+        <servlet-class>br.com.gwfrete.ocorrencia.OcorrenciaFreteController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -188,7 +188,7 @@
 
     <servlet>
         <servlet-name>FaturaController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.FaturaController</servlet-class>
+        <servlet-class>br.com.gwfrete.financeiro.FaturaController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -203,7 +203,7 @@
 
     <servlet>
         <servlet-name>NotificacaoController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.NotificacaoController</servlet-class>
+        <servlet-class>br.com.gwfrete.notificacao.NotificacaoController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -218,7 +218,7 @@
 
     <servlet>
         <servlet-name>RastreamentoFreteController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.RastreamentoFreteController</servlet-class>
+        <servlet-class>br.com.gwfrete.rastreamento.RastreamentoFreteController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -233,7 +233,7 @@
 
     <servlet>
         <servlet-name>RelatorioController</servlet-name>
-        <servlet-class>br.com.gwfrete.controller.RelatorioController</servlet-class>
+        <servlet-class>br.com.gwfrete.relatorio.RelatorioController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -253,12 +253,22 @@
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/fretes/excel</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/contratos</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/contratos/pdf</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/contratos/excel</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -273,12 +283,22 @@
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/financeiro/excel</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/manutencoes</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/manutencoes/pdf</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/manutencoes/excel</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -293,12 +313,22 @@
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/ocorrencias/excel</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/clientes</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/clientes/pdf</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/clientes/excel</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -313,12 +343,22 @@
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/motoristas/excel</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/veiculos</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/veiculos/pdf</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/veiculos/excel</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>

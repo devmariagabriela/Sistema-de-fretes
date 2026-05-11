@@ -38,7 +38,6 @@
             localStorage.setItem(storageKey, normalizedTheme);
             localStorage.setItem(legacyStorageKey, normalizedTheme);
         } catch (error) {
-            // Prefer a working visual theme over surfacing storage failures to users.
         }
 
         applyTheme(normalizedTheme);

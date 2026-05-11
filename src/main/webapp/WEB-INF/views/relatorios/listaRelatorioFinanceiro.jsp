@@ -21,8 +21,8 @@
             </header>
             <c:if test="${not empty mensagemErro}"><p class="message message-error" role="alert">${mensagemErro}</p></c:if>
             <section class="content-card filter-panel" aria-label="Ações do relatório financeiro">
-                <div class="filter-panel-header"><div><span class="summary-label">Ações</span><h2>Relatório financeiro</h2></div><p>Limpe filtros ou exporte os dados em PDF.</p></div>
-                <div class="report-filters-actions"><a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/financeiro">Limpar filtros</a><a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/financeiro/pdf" target="_blank" rel="noopener">Exportar PDF</a></div>
+                <div class="filter-panel-header"><div><span class="summary-label">Ações</span><h2>Relatório financeiro</h2></div><p>Limpe filtros ou exporte os dados em PDF ou Excel.</p></div>
+                <div class="report-filters-actions"><a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/financeiro">Limpar filtros</a><a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/financeiro/pdf" target="_blank" rel="noopener">Exportar PDF</a><a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/financeiro/excel">Exportar Excel</a></div>
             </section>
             <section class="summary-grid" aria-label="Indicadores financeiros">
                 <article class="summary-card"><span class="summary-label">Total faturas</span><strong>${totalFaturas}</strong><small>Registros financeiros</small></article>
