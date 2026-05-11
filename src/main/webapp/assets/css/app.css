@@ -1280,6 +1280,15 @@ a {
     background: var(--surface-card);
 }
 
+.timeline-item-latest .timeline-marker {
+    box-shadow: 0 0 0 1px var(--color-accent), 0 0 22px rgba(0, 198, 255, 0.28);
+}
+
+.timeline-item-latest .timeline-content {
+    border-color: rgba(0, 198, 255, 0.45);
+    background: linear-gradient(135deg, rgba(0, 198, 255, 0.10), var(--surface-card) 42%);
+}
+
 .timeline-head {
     display: flex;
     align-items: flex-start;

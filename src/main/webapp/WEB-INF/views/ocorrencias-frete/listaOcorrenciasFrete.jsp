@@ -64,13 +64,16 @@
 
             <section class="content-card" aria-label="Timeline de ocorrências">
                 <div class="timeline">
-                    <c:forEach var="ocorrencia" items="${ocorrencias}">
-                        <article class="timeline-item">
+                    <c:forEach var="ocorrencia" items="${ocorrencias}" varStatus="statusTimeline">
+                        <article class="timeline-item ${statusTimeline.first ? 'timeline-item-latest' : ''}">
                             <div class="timeline-marker badge-ocorrencia-${ocorrencia.tipo.name().toLowerCase()}"></div>
                             <div class="timeline-content">
                                 <div class="timeline-head">
                                     <div>
                                         <span class="badge badge-ocorrencia-${ocorrencia.tipo.name().toLowerCase()}">${ocorrencia.tipo.descricao}</span>
+                                        <c:if test="${statusTimeline.first}">
+                                            <span class="badge badge-ativo">Mais recente</span>
+                                        </c:if>
                                         <strong>${ocorrencia.frete.codigo}</strong>
                                     </div>
                                     <span class="text-muted">
@@ -110,44 +113,6 @@
                     <c:if test="${empty ocorrencias}">
                         <div class="empty-state">Selecione um frete para visualizar o rastreamento operacional.</div>
                     </c:if>
-                </div>
-            </section>
-
-            <section class="content-card" aria-label="Tabela de ocorrências">
-                <div class="table-wrap">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Frete</th>
-                                <th>Tipo ocorrência</th>
-                                <th>Data/hora</th>
-                                <th>Localização</th>
-                                <th>Descrição</th>
-                                <th>Recebedor</th>
-                                <th>Status visual</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach var="ocorrencia" items="${ocorrencias}">
-                                <tr>
-                                    <td><strong class="freight-code">${ocorrencia.frete.codigo}</strong></td>
-                                    <td><span class="badge badge-ocorrencia-${ocorrencia.tipo.name().toLowerCase()}">${ocorrencia.tipo.descricao}</span></td>
-                                    <td class="text-muted"><fmt:formatDate value="${ocorrencia.dataHoraFormatada}" pattern="dd/MM/yyyy HH:mm"/></td>
-                                    <td>${ocorrencia.localizacao}</td>
-                                    <td class="text-muted">${ocorrencia.descricao}</td>
-                                    <td class="text-muted">${ocorrencia.nomeRecebedor}</td>
-                                    <td><span class="badge badge-frete-${ocorrencia.frete.status.name().toLowerCase()}">${ocorrencia.frete.status.descricao}</span></td>
-                                </tr>
-                            </c:forEach>
-                            <c:if test="${empty ocorrencias}">
-                                <tr>
-                                    <td colspan="7">
-                                        <div class="empty-state">Nenhuma ocorrência encontrada para o frete selecionado.</div>
-                                    </td>
-                                </tr>
-                            </c:if>
-                        </tbody>
-                    </table>
                 </div>
             </section>
         </section>
