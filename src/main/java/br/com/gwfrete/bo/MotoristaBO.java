@@ -100,6 +100,40 @@ public class MotoristaBO {
         }
     }
 
+    public void inativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Motorista inválido.");
+        }
+
+        try {
+            if (motoristaDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Motorista não encontrado.");
+            }
+
+            motoristaDAO.inativar(id);
+            gerarNotificacoesAutomaticasSemBloquear();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível inativar o motorista.");
+        }
+    }
+
+    public void ativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Motorista inválido.");
+        }
+
+        try {
+            if (motoristaDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Motorista não encontrado.");
+            }
+
+            motoristaDAO.ativar(id);
+            gerarNotificacoesAutomaticasSemBloquear();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível ativar o motorista.");
+        }
+    }
+
     public boolean motoristaDisponivelParaOperacao(Motorista motorista) {
         return motorista != null && motorista.isDisponivelOperacionalmente();
     }

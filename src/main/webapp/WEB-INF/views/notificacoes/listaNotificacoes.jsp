@@ -93,10 +93,13 @@
                                                         <button class="button button-secondary" type="submit">Marcar lida</button>
                                                     </form>
                                                 </c:if>
-                                                <form method="post" action="${pageContext.request.contextPath}/notificacoes/arquivar">
-                                                    <input type="hidden" name="id" value="${notificacao.id}">
-                                                    <button class="button button-secondary" type="submit">Arquivar</button>
-                                                </form>
+                                                <button class="button button-danger" type="button"
+                                                        data-soft-delete-button
+                                                        data-action="${pageContext.request.contextPath}/notificacoes/inativar"
+                                                        data-id="${notificacao.id}"
+                                                        data-title="Arquivar notificação"
+                                                        data-message="Deseja arquivar a notificação ${notificacao.titulo}?"
+                                                        data-submit="Arquivar">Arquivar</button>
                                             </div>
                                         </td>
                                     </c:if>
@@ -115,5 +118,6 @@
             </section>
         </section>
     </main>
+    <jsp:include page="/WEB-INF/views/includes/confirmacaoExclusao.jsp" />
 </body>
 </html>

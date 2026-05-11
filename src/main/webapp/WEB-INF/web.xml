@@ -27,6 +27,26 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>RecuperacaoSenhaController</servlet-name>
+        <servlet-class>br.com.gwfrete.controller.RecuperacaoSenhaController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>RecuperacaoSenhaController</servlet-name>
+        <url-pattern>/esqueci-senha</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RecuperacaoSenhaController</servlet-name>
+        <url-pattern>/recuperar-senha</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RecuperacaoSenhaController</servlet-name>
+        <url-pattern>/redefinir-senha</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>LogoutController</servlet-name>
         <servlet-class>br.com.gwfrete.controller.LogoutController</servlet-class>
     </servlet>

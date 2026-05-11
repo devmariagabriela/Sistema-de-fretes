@@ -106,6 +106,10 @@ public class NotificacaoBO {
         }
     }
 
+    public void inativar(Long id) throws CadastroException {
+        arquivar(id);
+    }
+
     private void validarCamposObrigatorios(Notificacao notificacao) throws CadastroException {
         if (notificacao == null) {
             throw new CadastroException("Notificação inválida.");

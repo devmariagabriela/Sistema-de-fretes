@@ -81,6 +81,8 @@ public class ManutencaoVeiculoController extends HttpServlet {
             salvarManutencao(request, response);
         } else if ("/atualizar".equals(rota)) {
             atualizarManutencao(request, response);
+        } else if ("/cancelar".equals(rota) || "/inativar".equals(rota)) {
+            inativarManutencao(request, response);
         } else {
             response.sendRedirect(request.getContextPath() + "/manutencoes");
         }
@@ -90,7 +92,10 @@ public class ManutencaoVeiculoController extends HttpServlet {
             throws ServletException, IOException, CadastroException {
 
         consumirMensagemSessao(request);
-        request.setAttribute("manutencoes", manutencaoVeiculoBO.listarTodos());
+        String statusFiltro = obterParametroFiltro(request, "status");
+        request.setAttribute("manutencoes", manutencaoVeiculoBO.listarComFiltros(obterStatusManutencao(statusFiltro)));
+        request.setAttribute("statusFiltro", statusFiltro);
+        request.setAttribute("statusManutencao", StatusManutencao.values());
         request.setAttribute("podeGerenciarManutencoes", usuarioPodeGerenciar(obterUsuarioLogado(request)));
         request.getRequestDispatcher(VIEW_LISTA).forward(request, response);
     }
@@ -99,7 +104,10 @@ public class ManutencaoVeiculoController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            request.setAttribute("manutencoes", manutencaoVeiculoBO.listarTodos());
+            String statusFiltro = obterParametroFiltro(request, "status");
+            request.setAttribute("manutencoes", manutencaoVeiculoBO.listarComFiltros(obterStatusManutencao(statusFiltro)));
+            request.setAttribute("statusFiltro", statusFiltro);
+            request.setAttribute("statusManutencao", StatusManutencao.values());
         } catch (CadastroException e) {
             request.setAttribute("mensagemErro", e.getMessage());
         }
@@ -165,6 +173,15 @@ public class ManutencaoVeiculoController extends HttpServlet {
             request.setAttribute("manutencao", manutencao);
             prepararFormulario(request, "Editar manutenção", request.getContextPath() + "/manutencoes/atualizar");
             request.getRequestDispatcher(VIEW_FORMULARIO).forward(request, response);
+        }
+    }
+
+    private void inativarManutencao(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            manutencaoVeiculoBO.inativar(obterId(request));
+            redirecionarComMensagem(request, response, "Manutenção cancelada com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
         }
     }
 
@@ -253,6 +270,13 @@ public class ManutencaoVeiculoController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/manutencoes");
     }
 
+    private void redirecionarComErro(HttpServletRequest request, HttpServletResponse response, String mensagem)
+            throws IOException {
+
+        request.getSession().setAttribute("mensagemErro", mensagem);
+        response.sendRedirect(request.getContextPath() + "/manutencoes");
+    }
+
     private void consumirMensagemSessao(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
@@ -276,6 +300,16 @@ public class ManutencaoVeiculoController extends HttpServlet {
     private String obterRota(HttpServletRequest request) {
         String pathInfo = request.getPathInfo();
         return pathInfo == null ? "" : pathInfo;
+    }
+
+    private String obterParametroFiltro(HttpServletRequest request, String nome) {
+        String valor = request.getParameter(nome);
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
     }
 
     private Long obterId(HttpServletRequest request) {

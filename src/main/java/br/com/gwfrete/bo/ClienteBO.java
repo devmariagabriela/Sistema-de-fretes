@@ -86,6 +86,38 @@ public class ClienteBO {
         }
     }
 
+    public void inativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Cliente inválido.");
+        }
+
+        try {
+            if (clienteDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Cliente não encontrado.");
+            }
+
+            clienteDAO.inativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível inativar o cliente.");
+        }
+    }
+
+    public void ativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Cliente inválido.");
+        }
+
+        try {
+            if (clienteDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Cliente não encontrado.");
+            }
+
+            clienteDAO.ativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível ativar o cliente.");
+        }
+    }
+
     private void validarCadastro(Cliente cliente) throws CadastroException {
         validarCamposComuns(cliente);
     }

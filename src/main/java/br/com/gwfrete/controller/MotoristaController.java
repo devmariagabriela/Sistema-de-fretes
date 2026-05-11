@@ -76,6 +76,10 @@ public class MotoristaController extends HttpServlet {
             salvarMotorista(request, response);
         } else if ("/atualizar".equals(rota)) {
             atualizarMotorista(request, response);
+        } else if ("/inativar".equals(rota)) {
+            inativarMotorista(request, response);
+        } else if ("/ativar".equals(rota)) {
+            ativarMotorista(request, response);
         } else {
             response.sendRedirect(request.getContextPath() + "/motoristas");
         }
@@ -176,6 +180,24 @@ public class MotoristaController extends HttpServlet {
         }
     }
 
+    private void inativarMotorista(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            motoristaBO.inativar(obterId(request));
+            redirecionarComMensagem(request, response, "Motorista inativado com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
+        }
+    }
+
+    private void ativarMotorista(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            motoristaBO.ativar(obterId(request));
+            redirecionarComMensagem(request, response, "Motorista ativado com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
+        }
+    }
+
     private Motorista montarMotoristaFormulario(HttpServletRequest request) {
         Motorista motorista = new Motorista();
         motorista.setNome(request.getParameter("nome"));
@@ -254,6 +276,13 @@ public class MotoristaController extends HttpServlet {
             throws IOException {
 
         request.getSession().setAttribute("mensagemSucesso", mensagem);
+        response.sendRedirect(request.getContextPath() + "/motoristas");
+    }
+
+    private void redirecionarComErro(HttpServletRequest request, HttpServletResponse response, String mensagem)
+            throws IOException {
+
+        request.getSession().setAttribute("mensagemErro", mensagem);
         response.sendRedirect(request.getContextPath() + "/motoristas");
     }
 

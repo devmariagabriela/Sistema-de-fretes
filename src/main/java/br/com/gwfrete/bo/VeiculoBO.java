@@ -90,6 +90,38 @@ public class VeiculoBO {
         }
     }
 
+    public void inativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Veículo inválido.");
+        }
+
+        try {
+            if (veiculoDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Veículo não encontrado.");
+            }
+
+            veiculoDAO.inativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível inativar o veículo.");
+        }
+    }
+
+    public void ativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Veículo inválido.");
+        }
+
+        try {
+            if (veiculoDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Veículo não encontrado.");
+            }
+
+            veiculoDAO.ativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível ativar o veículo.");
+        }
+    }
+
     private void validarCadastro(Veiculo veiculo) throws CadastroException {
         validarCamposComuns(veiculo);
     }

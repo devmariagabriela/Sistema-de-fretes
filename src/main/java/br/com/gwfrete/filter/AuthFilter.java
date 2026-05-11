@@ -55,6 +55,9 @@ public class AuthFilter implements Filter {
         return path.equals("/")
                 || path.equals("/login")
                 || path.equals("/login.jsp")
+                || path.equals("/esqueci-senha")
+                || path.equals("/recuperar-senha")
+                || path.equals("/redefinir-senha")
                 || path.startsWith("/assets/")
                 || path.startsWith("/favicon");
     }

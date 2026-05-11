@@ -146,6 +146,38 @@ public class UsuarioBO {
         }
     }
 
+    public void inativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Usuário inválido.");
+        }
+
+        try {
+            if (usuarioDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Usuário não encontrado.");
+            }
+
+            usuarioDAO.inativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível desativar o usuário.");
+        }
+    }
+
+    public void ativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Usuário inválido.");
+        }
+
+        try {
+            if (usuarioDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Usuário não encontrado.");
+            }
+
+            usuarioDAO.ativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível ativar o usuário.");
+        }
+    }
+
     public Set<String> obterPermissoes(PerfilUsuario perfil) {
         if (perfil == null) {
             return java.util.Collections.emptySet();

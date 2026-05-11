@@ -145,6 +145,15 @@
                                         <td>
                                             <div class="row-actions">
                                                 <a class="button button-secondary" href="${pageContext.request.contextPath}/fretes/editar?id=${frete.id}">Editar</a>
+                                                <c:if test="${frete.status.name() != 'CANCELADO' && frete.status.name() != 'ENTREGUE'}">
+                                                    <button class="button button-danger" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/fretes/cancelar"
+                                                            data-id="${frete.id}"
+                                                            data-title="Cancelar frete"
+                                                            data-message="Deseja cancelar o frete ${frete.codigo}?"
+                                                            data-submit="Cancelar">Cancelar</button>
+                                                </c:if>
                                             </div>
                                         </td>
                                     </c:if>
@@ -163,5 +172,6 @@
             </section>
         </section>
     </main>
+    <jsp:include page="/WEB-INF/views/includes/confirmacaoExclusao.jsp" />
 </body>
 </html>

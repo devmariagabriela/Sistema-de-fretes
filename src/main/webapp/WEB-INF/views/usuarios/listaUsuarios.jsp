@@ -119,6 +119,24 @@
                                     <td>
                                         <div class="row-actions">
                                             <a class="button button-secondary" href="${pageContext.request.contextPath}/usuarios/editar?id=${usuario.id}">Editar</a>
+                                            <c:if test="${usuario.status.name() == 'ATIVO'}">
+                                                <button class="button button-danger" type="button"
+                                                        data-soft-delete-button
+                                                        data-action="${pageContext.request.contextPath}/usuarios/inativar"
+                                                        data-id="${usuario.id}"
+                                                        data-title="Desativar usuário"
+                                                        data-message="Deseja desativar o acesso de ${usuario.nome}?"
+                                                        data-submit="Desativar">Desativar</button>
+                                            </c:if>
+                                            <c:if test="${usuario.status.name() == 'INATIVO' || usuario.status.name() == 'BLOQUEADO'}">
+                                                <button class="button button-secondary" type="button"
+                                                        data-soft-delete-button
+                                                        data-action="${pageContext.request.contextPath}/usuarios/ativar"
+                                                        data-id="${usuario.id}"
+                                                        data-title="Ativar usuário"
+                                                        data-message="Deseja liberar novamente o acesso de ${usuario.nome}?"
+                                                        data-submit="Ativar">Ativar</button>
+                                            </c:if>
                                         </div>
                                     </td>
                                 </tr>
@@ -136,5 +154,6 @@
             </section>
         </section>
     </main>
+    <jsp:include page="/WEB-INF/views/includes/confirmacaoExclusao.jsp" />
 </body>
 </html>

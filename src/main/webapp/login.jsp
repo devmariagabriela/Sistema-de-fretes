@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -129,6 +130,10 @@
 
                 <div class="alert-error" role="alert">${erroLogin}</div>
 
+                <c:if test="${not empty mensagemSucesso}">
+                    <div class="alert-success" role="status">${mensagemSucesso}</div>
+                </c:if>
+
                 <form class="login-form" action="${pageContext.request.contextPath}/login" method="post" autocomplete="on">
                     <div class="form-field">
                         <label for="email">Usuário ou e-mail</label>
@@ -151,7 +156,7 @@
                     <div class="form-field">
                         <div class="label-row">
                             <label for="senha">Senha</label>
-                            <a href="#" class="forgot-link">Esqueci a senha</a>
+                            <a href="${pageContext.request.contextPath}/esqueci-senha" class="forgot-link">Esqueci a senha</a>
                         </div>
                         <div class="input-wrap">
                             <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">

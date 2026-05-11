@@ -117,6 +117,34 @@ public class FreteBO {
         }
     }
 
+    public void inativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Frete inválido.");
+        }
+
+        try {
+            Frete frete = freteDAO.buscarPorId(id);
+
+            if (frete == null) {
+                throw new CadastroException("Frete não encontrado.");
+            }
+
+            if (frete.getStatus() == StatusFrete.CANCELADO) {
+                throw new CadastroException("Frete já está cancelado.");
+            }
+
+            if (frete.getStatus() == StatusFrete.ENTREGUE) {
+                throw new CadastroException("Frete entregue não pode ser cancelado.");
+            }
+
+            freteDAO.inativar(id);
+            frete.setStatus(StatusFrete.CANCELADO);
+            registrarNotificacaoFrete(frete);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível cancelar o frete.");
+        }
+    }
+
     private void validarCadastro(Frete frete) throws CadastroException {
         validarCamposComuns(frete);
     }

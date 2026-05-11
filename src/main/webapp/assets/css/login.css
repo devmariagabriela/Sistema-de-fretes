@@ -30,6 +30,28 @@ body {
     background: var(--color-bg);
 }
 
+.single-login-shell {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+}
+
+.single-login-shell .login-area {
+    width: min(520px, 100%);
+    margin: 0 auto;
+}
+
+.alert-success {
+    display: block;
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    border: 1px solid rgba(34, 197, 94, 0.32);
+    border-radius: 8px;
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--color-success);
+    font-size: 14px;
+    line-height: 1.45;
+}
+
 .login-screen {
     --color-primary: #071827;
     --color-accent: #08C8FF;

@@ -82,6 +82,8 @@ public class FreteController extends HttpServlet {
             salvarFrete(request, response);
         } else if ("/atualizar".equals(rota)) {
             atualizarFrete(request, response);
+        } else if ("/cancelar".equals(rota)) {
+            cancelarFrete(request, response);
         } else {
             response.sendRedirect(request.getContextPath() + "/fretes");
         }
@@ -200,6 +202,15 @@ public class FreteController extends HttpServlet {
         }
     }
 
+    private void cancelarFrete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            freteBO.inativar(obterId(request));
+            redirecionarComMensagem(request, response, "Frete cancelado com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
+        }
+    }
+
     private Frete montarFreteFormulario(HttpServletRequest request) {
         Frete frete = new Frete();
         frete.setCodigo(request.getParameter("codigo"));
@@ -294,6 +305,13 @@ public class FreteController extends HttpServlet {
             throws IOException {
 
         request.getSession().setAttribute("mensagemSucesso", mensagem);
+        response.sendRedirect(request.getContextPath() + "/fretes");
+    }
+
+    private void redirecionarComErro(HttpServletRequest request, HttpServletResponse response, String mensagem)
+            throws IOException {
+
+        request.getSession().setAttribute("mensagemErro", mensagem);
         response.sendRedirect(request.getContextPath() + "/fretes");
     }
 

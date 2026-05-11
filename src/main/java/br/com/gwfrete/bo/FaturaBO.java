@@ -43,6 +43,14 @@ public class FaturaBO {
         }
     }
 
+    public List<Fatura> listarComFiltros(StatusFatura status) throws CadastroException {
+        try {
+            return faturaDAO.listarComFiltros(status);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar as faturas.");
+        }
+    }
+
     public Fatura buscarPorId(Long id) throws CadastroException {
         if (id == null || id <= 0) {
             throw new CadastroException("Fatura inválida.");
@@ -77,6 +85,44 @@ public class FaturaBO {
             registrarNotificacaoFatura(fatura);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível atualizar a fatura.");
+        }
+    }
+
+    public void inativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Fatura inválida.");
+        }
+
+        try {
+            if (faturaDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Fatura não encontrada.");
+            }
+
+            faturaDAO.inativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível cancelar a fatura.");
+        }
+    }
+
+    public void marcarComoPago(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Fatura inválida.");
+        }
+
+        try {
+            Fatura fatura = faturaDAO.buscarPorId(id);
+
+            if (fatura == null) {
+                throw new CadastroException("Fatura não encontrada.");
+            }
+
+            if (fatura.getStatus() == StatusFatura.CANCELADO) {
+                throw new CadastroException("Fatura cancelada não pode ser marcada como paga.");
+            }
+
+            faturaDAO.marcarComoPago(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível marcar a fatura como paga.");
         }
     }
 

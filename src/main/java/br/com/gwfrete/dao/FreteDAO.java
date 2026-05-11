@@ -188,6 +188,17 @@ public class FreteDAO {
         }
     }
 
+    public void inativar(Long id) throws SQLException {
+        String sql = "UPDATE frete SET status = 'CANCELADO'::status_frete_enum WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        }
+    }
+
     private void preencherParametrosFrete(PreparedStatement stmt, Frete frete) throws SQLException {
         stmt.setString(1, frete.getCodigo());
         stmt.setString(2, frete.getOrigem());

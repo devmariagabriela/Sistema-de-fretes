@@ -80,6 +80,12 @@ public class ContratoController extends HttpServlet {
             salvarContrato(request, response);
         } else if ("/atualizar".equals(rota)) {
             atualizarContrato(request, response);
+        } else if ("/encerrar".equals(rota) || "/inativar".equals(rota)) {
+            inativarContrato(request, response);
+        } else if ("/suspender".equals(rota)) {
+            suspenderContrato(request, response);
+        } else if ("/cancelar".equals(rota)) {
+            cancelarContrato(request, response);
         } else {
             response.sendRedirect(request.getContextPath() + "/contratos");
         }
@@ -89,7 +95,10 @@ public class ContratoController extends HttpServlet {
             throws ServletException, IOException, CadastroException {
 
         consumirMensagemSessao(request);
-        request.setAttribute("contratos", contratoBO.listarTodos());
+        String statusFiltro = obterParametroFiltro(request, "status");
+        request.setAttribute("contratos", contratoBO.listarComFiltros(obterStatus(statusFiltro)));
+        request.setAttribute("statusFiltro", statusFiltro);
+        request.setAttribute("statusContratos", StatusContrato.values());
         request.setAttribute("podeGerenciarContratos", usuarioPodeGerenciar(obterUsuarioLogado(request)));
         request.getRequestDispatcher(VIEW_LISTA).forward(request, response);
     }
@@ -98,7 +107,10 @@ public class ContratoController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            request.setAttribute("contratos", contratoBO.listarTodos());
+            String statusFiltro = obterParametroFiltro(request, "status");
+            request.setAttribute("contratos", contratoBO.listarComFiltros(obterStatus(statusFiltro)));
+            request.setAttribute("statusFiltro", statusFiltro);
+            request.setAttribute("statusContratos", StatusContrato.values());
         } catch (CadastroException e) {
             request.setAttribute("mensagemErro", e.getMessage());
         }
@@ -162,6 +174,33 @@ public class ContratoController extends HttpServlet {
             request.setAttribute("contrato", contrato);
             prepararFormulario(request, "Editar contrato", request.getContextPath() + "/contratos/atualizar");
             request.getRequestDispatcher(VIEW_FORMULARIO).forward(request, response);
+        }
+    }
+
+    private void inativarContrato(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            contratoBO.inativar(obterId(request));
+            redirecionarComMensagem(request, response, "Contrato encerrado com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
+        }
+    }
+
+    private void suspenderContrato(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            contratoBO.suspender(obterId(request));
+            redirecionarComMensagem(request, response, "Contrato suspenso com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
+        }
+    }
+
+    private void cancelarContrato(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            contratoBO.cancelar(obterId(request));
+            redirecionarComMensagem(request, response, "Contrato cancelado com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
         }
     }
 
@@ -250,6 +289,13 @@ public class ContratoController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/contratos");
     }
 
+    private void redirecionarComErro(HttpServletRequest request, HttpServletResponse response, String mensagem)
+            throws IOException {
+
+        request.getSession().setAttribute("mensagemErro", mensagem);
+        response.sendRedirect(request.getContextPath() + "/contratos");
+    }
+
     private void consumirMensagemSessao(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
@@ -273,6 +319,16 @@ public class ContratoController extends HttpServlet {
     private String obterRota(HttpServletRequest request) {
         String pathInfo = request.getPathInfo();
         return pathInfo == null ? "" : pathInfo;
+    }
+
+    private String obterParametroFiltro(HttpServletRequest request, String nome) {
+        String valor = request.getParameter(nome);
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
     }
 
     private Long obterId(HttpServletRequest request) {

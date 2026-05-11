@@ -47,6 +47,14 @@ public class ContratoBO {
         }
     }
 
+    public List<Contrato> listarComFiltros(StatusContrato status) throws CadastroException {
+        try {
+            return contratoDAO.listarComFiltros(status);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar os contratos.");
+        }
+    }
+
     public Contrato buscarPorId(Long id) throws CadastroException {
         if (id == null || id <= 0) {
             throw new CadastroException("Contrato inválido.");
@@ -82,6 +90,56 @@ public class ContratoBO {
             gerarNotificacoesAutomaticasSemBloquear();
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível atualizar o contrato.");
+        }
+    }
+
+    public void inativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Contrato inválido.");
+        }
+
+        try {
+            if (contratoDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Contrato não encontrado.");
+            }
+
+            contratoDAO.inativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível encerrar o contrato.");
+        }
+    }
+
+    public void suspender(Long id) throws CadastroException {
+        alterarStatus(id, StatusContrato.SUSPENSO, "suspender");
+    }
+
+    public void cancelar(Long id) throws CadastroException {
+        alterarStatus(id, StatusContrato.CANCELADO, "cancelar");
+    }
+
+    private void alterarStatus(Long id, StatusContrato status, String acao) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Contrato inválido.");
+        }
+
+        try {
+            Contrato contrato = contratoDAO.buscarPorId(id);
+            if (contrato == null) {
+                throw new CadastroException("Contrato não encontrado.");
+            }
+
+            if (contrato.getStatus() == StatusContrato.CANCELADO || contrato.getStatus() == StatusContrato.ENCERRADO) {
+                throw new CadastroException("Contrato " + contrato.getStatus().getDescricao().toLowerCase()
+                        + " não pode ter o status alterado por ação rápida.");
+            }
+
+            if (status == StatusContrato.SUSPENSO) {
+                contratoDAO.suspender(id);
+            } else if (status == StatusContrato.CANCELADO) {
+                contratoDAO.cancelar(id);
+            }
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível " + acao + " o contrato.");
         }
     }
 

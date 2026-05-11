@@ -59,6 +59,10 @@ public class UsuarioController extends HttpServlet {
             salvarUsuario(request, response);
         } else if ("/atualizar".equals(rota)) {
             atualizarUsuario(request, response);
+        } else if ("/inativar".equals(rota)) {
+            inativarUsuario(request, response);
+        } else if ("/ativar".equals(rota)) {
+            ativarUsuario(request, response);
         } else {
             response.sendRedirect(request.getContextPath() + "/usuarios");
         }
@@ -152,6 +156,24 @@ public class UsuarioController extends HttpServlet {
         }
     }
 
+    private void inativarUsuario(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            usuarioBO.inativar(obterId(request));
+            redirecionarComMensagem(request, response, "Usuário desativado com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
+        }
+    }
+
+    private void ativarUsuario(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            usuarioBO.ativar(obterId(request));
+            redirecionarComMensagem(request, response, "Usuário ativado com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
+        }
+    }
+
     private Usuario montarUsuarioFormulario(HttpServletRequest request) {
         Usuario usuario = new Usuario();
         usuario.setNome(request.getParameter("nome"));
@@ -200,6 +222,13 @@ public class UsuarioController extends HttpServlet {
             throws IOException {
 
         request.getSession().setAttribute("mensagemSucesso", mensagem);
+        response.sendRedirect(request.getContextPath() + "/usuarios");
+    }
+
+    private void redirecionarComErro(HttpServletRequest request, HttpServletResponse response, String mensagem)
+            throws IOException {
+
+        request.getSession().setAttribute("mensagemErro", mensagem);
         response.sendRedirect(request.getContextPath() + "/usuarios");
     }
 

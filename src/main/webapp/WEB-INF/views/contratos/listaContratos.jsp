@@ -40,6 +40,26 @@
                 <p class="message message-error" role="alert">${mensagemErro}</p>
             </c:if>
 
+            <section class="content-card filter-panel" aria-label="Filtros de contratos">
+                <form class="report-filters-form" action="${pageContext.request.contextPath}/contratos" method="get">
+                    <div class="form-grid report-filters-grid">
+                        <div class="form-field">
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                <option value="">Ativos por padrão</option>
+                                <c:forEach var="status" items="${statusContratos}">
+                                    <option value="${status.name()}" ${statusFiltro == status.name() ? 'selected' : ''}>${status.descricao}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="report-filters-actions">
+                        <button class="button button-primary" type="submit">Consultar</button>
+                        <a class="button button-secondary" href="${pageContext.request.contextPath}/contratos">Limpar filtros</a>
+                    </div>
+                </form>
+            </section>
+
             <section class="content-card" aria-label="Lista de contratos">
                 <div class="table-wrap">
                     <table class="data-table">
@@ -89,7 +109,48 @@
                                     </td>
                                     <c:if test="${podeGerenciarContratos}">
                                         <td>
-                                            <a class="button button-secondary" href="${pageContext.request.contextPath}/contratos/editar?id=${contrato.id}">Editar</a>
+                                            <div class="row-actions">
+                                                <a class="button button-secondary" href="${pageContext.request.contextPath}/contratos/editar?id=${contrato.id}">Editar</a>
+                                                <c:if test="${contrato.status.name() == 'ATIVO'}">
+                                                    <button class="button button-secondary" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/contratos/suspender"
+                                                            data-id="${contrato.id}"
+                                                            data-title="Suspender contrato"
+                                                            data-message="Deseja suspender o contrato ${contrato.numero}?"
+                                                            data-submit="Suspender">Suspender</button>
+                                                    <button class="button button-danger" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/contratos/encerrar"
+                                                            data-id="${contrato.id}"
+                                                            data-title="Encerrar contrato"
+                                                            data-message="Deseja encerrar o contrato ${contrato.numero}?"
+                                                            data-submit="Encerrar">Encerrar</button>
+                                                    <button class="button button-danger" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/contratos/cancelar"
+                                                            data-id="${contrato.id}"
+                                                            data-title="Cancelar contrato"
+                                                            data-message="Deseja cancelar o contrato ${contrato.numero}?"
+                                                            data-submit="Cancelar">Cancelar</button>
+                                                </c:if>
+                                                <c:if test="${contrato.status.name() == 'SUSPENSO'}">
+                                                    <button class="button button-danger" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/contratos/encerrar"
+                                                            data-id="${contrato.id}"
+                                                            data-title="Encerrar contrato"
+                                                            data-message="Deseja encerrar o contrato ${contrato.numero}?"
+                                                            data-submit="Encerrar">Encerrar</button>
+                                                    <button class="button button-danger" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/contratos/cancelar"
+                                                            data-id="${contrato.id}"
+                                                            data-title="Cancelar contrato"
+                                                            data-message="Deseja cancelar o contrato ${contrato.numero}?"
+                                                            data-submit="Cancelar">Cancelar</button>
+                                                </c:if>
+                                            </div>
                                         </td>
                                     </c:if>
                                 </tr>
@@ -107,5 +168,6 @@
             </section>
         </section>
     </main>
+    <jsp:include page="/WEB-INF/views/includes/confirmacaoExclusao.jsp" />
 </body>
 </html>

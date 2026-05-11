@@ -36,7 +36,7 @@ public class ClienteDAO {
     public List<Cliente> listarTodos() throws SQLException {
         String sql = "SELECT id, nome, tipo, cpf_cnpj, email, telefone, contato, endereco, cidade, estado, cep, "
                 + "status, data_criacao "
-                + "FROM cliente ORDER BY nome";
+                + "FROM cliente WHERE status = TRUE ORDER BY nome";
 
         List<Cliente> clientes = new ArrayList<>();
 
@@ -82,6 +82,8 @@ public class ClienteDAO {
         if (status != null) {
             sql.append(" AND status = ?");
             parametros.add(status);
+        } else {
+            sql.append(" AND status = TRUE");
         }
 
         sql.append(" ORDER BY nome");
@@ -139,6 +141,28 @@ public class ClienteDAO {
 
             preencherParametrosCliente(stmt, cliente);
             stmt.setLong(12, cliente.getId());
+            stmt.executeUpdate();
+        }
+    }
+
+    public void inativar(Long id) throws SQLException {
+        String sql = "UPDATE cliente SET status = FALSE WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void ativar(Long id) throws SQLException {
+        String sql = "UPDATE cliente SET status = TRUE WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
             stmt.executeUpdate();
         }
     }

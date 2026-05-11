@@ -124,6 +124,10 @@ public class NotificacaoDAO {
         }
     }
 
+    public void inativar(Long id) throws SQLException {
+        arquivar(id);
+    }
+
     private List<Notificacao> listarPorSql(String sql) throws SQLException {
         List<Notificacao> notificacoes = new ArrayList<>();
 

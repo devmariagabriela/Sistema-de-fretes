@@ -82,6 +82,10 @@ public class FaturaController extends HttpServlet {
             salvarFatura(request, response);
         } else if ("/atualizar".equals(rota)) {
             atualizarFatura(request, response);
+        } else if ("/cancelar".equals(rota) || "/inativar".equals(rota)) {
+            inativarFatura(request, response);
+        } else if ("/pagar".equals(rota)) {
+            marcarFaturaComoPaga(request, response);
         } else {
             response.sendRedirect(request.getContextPath() + "/financeiro");
         }
@@ -91,7 +95,10 @@ public class FaturaController extends HttpServlet {
             throws ServletException, IOException, CadastroException {
 
         consumirMensagemSessao(request);
-        request.setAttribute("faturas", faturaBO.listarTodos());
+        String statusFiltro = obterParametroFiltro(request, "status");
+        request.setAttribute("faturas", faturaBO.listarComFiltros(obterStatus(statusFiltro)));
+        request.setAttribute("statusFiltro", statusFiltro);
+        request.setAttribute("statusFaturas", StatusFatura.values());
         request.setAttribute("podeGerenciarFaturas", usuarioPodeGerenciar(obterUsuarioLogado(request)));
         request.getRequestDispatcher(VIEW_LISTA).forward(request, response);
     }
@@ -100,7 +107,10 @@ public class FaturaController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            request.setAttribute("faturas", faturaBO.listarTodos());
+            String statusFiltro = obterParametroFiltro(request, "status");
+            request.setAttribute("faturas", faturaBO.listarComFiltros(obterStatus(statusFiltro)));
+            request.setAttribute("statusFiltro", statusFiltro);
+            request.setAttribute("statusFaturas", StatusFatura.values());
         } catch (CadastroException e) {
             request.setAttribute("mensagemErro", e.getMessage());
         }
@@ -164,6 +174,24 @@ public class FaturaController extends HttpServlet {
             request.setAttribute("fatura", fatura);
             prepararFormularioComTratamento(request, "Editar fatura", request.getContextPath() + "/financeiro/atualizar");
             request.getRequestDispatcher(VIEW_FORMULARIO).forward(request, response);
+        }
+    }
+
+    private void inativarFatura(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            faturaBO.inativar(obterId(request));
+            redirecionarComMensagem(request, response, "Fatura cancelada com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
+        }
+    }
+
+    private void marcarFaturaComoPaga(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            faturaBO.marcarComoPago(obterId(request));
+            redirecionarComMensagem(request, response, "Fatura marcada como paga com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
         }
     }
 
@@ -269,6 +297,13 @@ public class FaturaController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/financeiro");
     }
 
+    private void redirecionarComErro(HttpServletRequest request, HttpServletResponse response, String mensagem)
+            throws IOException {
+
+        request.getSession().setAttribute("mensagemErro", mensagem);
+        response.sendRedirect(request.getContextPath() + "/financeiro");
+    }
+
     private void consumirMensagemSessao(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
@@ -292,6 +327,16 @@ public class FaturaController extends HttpServlet {
     private String obterRota(HttpServletRequest request) {
         String pathInfo = request.getPathInfo();
         return pathInfo == null ? "" : pathInfo;
+    }
+
+    private String obterParametroFiltro(HttpServletRequest request, String nome) {
+        String valor = request.getParameter(nome);
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
     }
 
     private Long obterId(HttpServletRequest request) {

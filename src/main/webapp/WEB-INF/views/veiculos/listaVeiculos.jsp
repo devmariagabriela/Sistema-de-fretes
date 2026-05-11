@@ -130,6 +130,24 @@
                                         <td>
                                             <div class="row-actions">
                                                 <a class="button button-secondary" href="${pageContext.request.contextPath}/veiculos/editar?id=${veiculo.id}">Editar</a>
+                                                <c:if test="${veiculo.status.name() != 'INATIVO'}">
+                                                    <button class="button button-danger" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/veiculos/inativar"
+                                                            data-id="${veiculo.id}"
+                                                            data-title="Inativar veículo"
+                                                            data-message="Deseja inativar o veículo ${veiculo.placa}?"
+                                                            data-submit="Inativar">Inativar</button>
+                                                </c:if>
+                                                <c:if test="${veiculo.status.name() == 'INATIVO'}">
+                                                    <button class="button button-secondary" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/veiculos/ativar"
+                                                            data-id="${veiculo.id}"
+                                                            data-title="Ativar veículo"
+                                                            data-message="Deseja ativar o veículo ${veiculo.placa} como disponível?"
+                                                            data-submit="Ativar">Ativar</button>
+                                                </c:if>
                                             </div>
                                         </td>
                                     </c:if>
@@ -148,5 +166,6 @@
             </section>
         </section>
     </main>
+    <jsp:include page="/WEB-INF/views/includes/confirmacaoExclusao.jsp" />
 </body>
 </html>

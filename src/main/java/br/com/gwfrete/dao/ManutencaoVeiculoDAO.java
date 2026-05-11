@@ -40,7 +40,8 @@ public class ManutencaoVeiculoDAO {
     }
 
     public List<ManutencaoVeiculo> listarTodos() throws SQLException {
-        String sql = sqlBase() + " ORDER BY mv.data_agendada DESC, mv.data_criacao DESC";
+        String sql = sqlBase() + " WHERE mv.status <> 'CANCELADA'::status_manutencao_enum "
+                + "ORDER BY mv.data_agendada DESC, mv.data_criacao DESC";
         List<ManutencaoVeiculo> manutencoes = new ArrayList<>();
 
         try (Connection conn = ConexaoFactory.obterConexao();
@@ -49,6 +50,38 @@ public class ManutencaoVeiculoDAO {
 
             while (rs.next()) {
                 manutencoes.add(mapearManutencao(rs));
+            }
+        }
+
+        return manutencoes;
+    }
+
+    public List<ManutencaoVeiculo> listarComFiltros(StatusManutencao status) throws SQLException {
+        StringBuilder sql = new StringBuilder(sqlBase());
+        List<Object> parametros = new ArrayList<>();
+
+        if (status != null) {
+            sql.append(" WHERE mv.status = ?::status_manutencao_enum");
+            parametros.add(status.name());
+        } else {
+            sql.append(" WHERE mv.status <> 'CANCELADA'::status_manutencao_enum");
+        }
+
+        sql.append(" ORDER BY mv.data_agendada DESC, mv.data_criacao DESC");
+
+        List<ManutencaoVeiculo> manutencoes = new ArrayList<>();
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < parametros.size(); i++) {
+                stmt.setObject(i + 1, parametros.get(i));
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    manutencoes.add(mapearManutencao(rs));
+                }
             }
         }
 
@@ -85,6 +118,17 @@ public class ManutencaoVeiculoDAO {
 
             preencherParametrosManutencao(stmt, manutencao);
             stmt.setLong(11, manutencao.getId());
+            stmt.executeUpdate();
+        }
+    }
+
+    public void inativar(Long id) throws SQLException {
+        String sql = "UPDATE manutencao_veiculo SET status = 'CANCELADA'::status_manutencao_enum WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
             stmt.executeUpdate();
         }
     }

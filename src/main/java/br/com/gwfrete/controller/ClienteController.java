@@ -72,6 +72,10 @@ public class ClienteController extends HttpServlet {
             salvarCliente(request, response);
         } else if ("/atualizar".equals(rota)) {
             atualizarCliente(request, response);
+        } else if ("/inativar".equals(rota)) {
+            inativarCliente(request, response);
+        } else if ("/ativar".equals(rota)) {
+            ativarCliente(request, response);
         } else {
             response.sendRedirect(request.getContextPath() + "/clientes");
         }
@@ -172,6 +176,24 @@ public class ClienteController extends HttpServlet {
         }
     }
 
+    private void inativarCliente(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            clienteBO.inativar(obterId(request));
+            redirecionarComMensagem(request, response, "Cliente inativado com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
+        }
+    }
+
+    private void ativarCliente(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            clienteBO.ativar(obterId(request));
+            redirecionarComMensagem(request, response, "Cliente ativado com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
+        }
+    }
+
     private Cliente montarClienteFormulario(HttpServletRequest request) {
         Cliente cliente = new Cliente();
         cliente.setNome(request.getParameter("nome"));
@@ -249,6 +271,13 @@ public class ClienteController extends HttpServlet {
             throws IOException {
 
         request.getSession().setAttribute("mensagemSucesso", mensagem);
+        response.sendRedirect(request.getContextPath() + "/clientes");
+    }
+
+    private void redirecionarComErro(HttpServletRequest request, HttpServletResponse response, String mensagem)
+            throws IOException {
+
+        request.getSession().setAttribute("mensagemErro", mensagem);
         response.sendRedirect(request.getContextPath() + "/clientes");
     }
 

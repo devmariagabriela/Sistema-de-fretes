@@ -132,7 +132,27 @@
                                     </td>
                                     <c:if test="${podeGerenciarClientes}">
                                         <td>
-                                            <a class="button button-secondary" href="${pageContext.request.contextPath}/clientes/editar?id=${cliente.id}">Editar</a>
+                                            <div class="row-actions">
+                                                <a class="button button-secondary" href="${pageContext.request.contextPath}/clientes/editar?id=${cliente.id}">Editar</a>
+                                                <c:if test="${cliente.status}">
+                                                    <button class="button button-danger" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/clientes/inativar"
+                                                            data-id="${cliente.id}"
+                                                            data-title="Inativar cliente"
+                                                            data-message="Deseja inativar o cliente ${cliente.nome}?"
+                                                            data-submit="Inativar">Inativar</button>
+                                                </c:if>
+                                                <c:if test="${!cliente.status}">
+                                                    <button class="button button-secondary" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/clientes/ativar"
+                                                            data-id="${cliente.id}"
+                                                            data-title="Ativar cliente"
+                                                            data-message="Deseja ativar o cliente ${cliente.nome}?"
+                                                            data-submit="Ativar">Ativar</button>
+                                                </c:if>
+                                            </div>
                                         </td>
                                     </c:if>
                                 </tr>
@@ -150,5 +170,6 @@
             </section>
         </section>
     </main>
+    <jsp:include page="/WEB-INF/views/includes/confirmacaoExclusao.jsp" />
 </body>
 </html>

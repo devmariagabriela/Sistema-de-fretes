@@ -40,7 +40,7 @@ public class MotoristaDAO {
     public List<Motorista> listarTodos() throws SQLException {
         String sql = "SELECT id, nome, cpf, data_nascimento, telefone, cnh_numero, cnh_categoria, "
                 + "cnh_validade, tipo_vinculo, status, data_criacao "
-                + "FROM motorista ORDER BY nome";
+                + "FROM motorista WHERE status <> 'INATIVO'::status_motorista_enum ORDER BY nome";
 
         List<Motorista> motoristas = new ArrayList<>();
 
@@ -87,6 +87,8 @@ public class MotoristaDAO {
         if (status != null) {
             sql.append(" AND status = ?::status_motorista_enum");
             parametros.add(status.name());
+        } else {
+            sql.append(" AND status <> 'INATIVO'::status_motorista_enum");
         }
 
         sql.append(" ORDER BY nome");
@@ -165,6 +167,28 @@ public class MotoristaDAO {
 
             preencherParametrosMotorista(stmt, motorista);
             stmt.setLong(10, motorista.getId());
+            stmt.executeUpdate();
+        }
+    }
+
+    public void inativar(Long id) throws SQLException {
+        String sql = "UPDATE motorista SET status = 'INATIVO'::status_motorista_enum WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void ativar(Long id) throws SQLException {
+        String sql = "UPDATE motorista SET status = 'ATIVO'::status_motorista_enum WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
             stmt.executeUpdate();
         }
     }

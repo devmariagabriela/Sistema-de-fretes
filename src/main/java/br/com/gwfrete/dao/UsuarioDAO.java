@@ -134,6 +134,40 @@ public class UsuarioDAO {
         }
     }
 
+    public void inativar(Long id) throws SQLException {
+        String sql = "UPDATE usuario SET status = 'INATIVO'::status_usuario_enum WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void ativar(Long id) throws SQLException {
+        String sql = "UPDATE usuario SET status = 'ATIVO'::status_usuario_enum WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void atualizarSenha(Long id, String senhaCriptografada) throws SQLException {
+        String sql = "UPDATE usuario SET senha = ? WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, senhaCriptografada);
+            stmt.setLong(2, id);
+            stmt.executeUpdate();
+        }
+    }
+
     private void preencherParametrosUsuario(PreparedStatement stmt, Usuario usuario) throws SQLException {
         stmt.setString(1, usuario.getNome());
         stmt.setString(2, usuario.getEmail());
