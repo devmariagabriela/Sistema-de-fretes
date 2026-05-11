@@ -78,12 +78,12 @@
 
                         <div class="form-field">
                             <label for="dataInicio">Data de início</label>
-                            <input id="dataInicio" name="dataInicio" type="date" value="${manutencao.dataInicio}">
+                            <input id="dataInicio" name="dataInicio" type="date" value="${manutencao.dataInicio}" data-min-from="dataAgendada">
                         </div>
 
                         <div class="form-field">
                             <label for="dataConclusao">Data de conclusão</label>
-                            <input id="dataConclusao" name="dataConclusao" type="date" value="${manutencao.dataConclusao}">
+                            <input id="dataConclusao" name="dataConclusao" type="date" value="${manutencao.dataConclusao}" data-min-from="dataInicio" data-fallback-min-from="dataAgendada">
                         </div>
 
                         <div class="form-field">
@@ -93,7 +93,7 @@
 
                         <div class="form-field">
                             <label for="custo">Custo</label>
-                            <input id="custo" name="custo" type="number" value="${manutencao.custo}" min="0" step="0.01">
+                            <input id="custo" name="custo" type="text" inputmode="decimal" value="${manutencao.custo}">
                         </div>
 
                         <div class="form-field">

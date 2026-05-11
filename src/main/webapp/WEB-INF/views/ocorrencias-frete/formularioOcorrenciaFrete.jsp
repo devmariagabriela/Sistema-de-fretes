@@ -59,7 +59,7 @@
 
                         <div class="form-field">
                             <label for="dataHora">Data/hora</label>
-                            <input id="dataHora" name="dataHora" type="datetime-local" value="${ocorrencia.dataHora}" required>
+                            <input id="dataHora" name="dataHora" type="datetime-local" value="${ocorrencia.dataHora}" data-max-now="true" required>
                         </div>
 
                         <div class="form-field">
@@ -73,14 +73,26 @@
                             <span class="field-help">Obrigatória para avaria, extravio e outros.</span>
                         </div>
 
-                        <div class="form-field">
+                        <div class="form-field" data-delivery-receiver-field ${ocorrencia.tipo != 'ENTREGA_REALIZADA' ? 'hidden' : ''}>
                             <label for="nomeRecebedor">Nome recebedor</label>
                             <input id="nomeRecebedor" name="nomeRecebedor" type="text" value="${ocorrencia.nomeRecebedor}" maxlength="150">
                         </div>
 
-                        <div class="form-field">
+                        <div class="form-field" data-delivery-receiver-field ${ocorrencia.tipo != 'ENTREGA_REALIZADA' ? 'hidden' : ''}>
+                            <label for="tipoDocumentoRecebedor">Tipo documento</label>
+                            <select id="tipoDocumentoRecebedor" name="tipoDocumentoRecebedor">
+                                <option value="">Selecione</option>
+                                <c:forEach var="tipoDocumento" items="${tiposDocumentoRecebedor}">
+                                    <option value="${tipoDocumento}" ${ocorrencia.tipoDocumentoRecebedor == tipoDocumento ? 'selected' : ''}>
+                                        ${tipoDocumento.descricao}
+                                    </option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="form-field" data-delivery-receiver-field ${ocorrencia.tipo != 'ENTREGA_REALIZADA' ? 'hidden' : ''}>
                             <label for="documentoRecebedor">Documento recebedor</label>
-                            <input id="documentoRecebedor" name="documentoRecebedor" type="text" value="${ocorrencia.documentoRecebedor}" maxlength="50">
+                            <input id="documentoRecebedor" name="documentoRecebedor" type="text" value="${ocorrencia.documentoRecebedor}" maxlength="50" data-mask="document-by-select" data-mask-type-source="tipoDocumentoRecebedor">
                         </div>
                     </div>
 
@@ -92,5 +104,40 @@
             </section>
         </section>
     </main>
+    <script>
+        (function () {
+            var tipo = document.getElementById("tipo");
+            var receiverFields = document.querySelectorAll("[data-delivery-receiver-field]");
+            var nomeRecebedor = document.getElementById("nomeRecebedor");
+            var tipoDocumentoRecebedor = document.getElementById("tipoDocumentoRecebedor");
+            var documentoRecebedor = document.getElementById("documentoRecebedor");
+
+            if (!tipo || !receiverFields.length) {
+                return;
+            }
+
+            function setRequired(field, required) {
+                if (field) {
+                    field.required = required;
+                    field.disabled = !required;
+                }
+            }
+
+            function updateReceiverFields() {
+                var isEntregaRealizada = tipo.value === "ENTREGA_REALIZADA";
+
+                receiverFields.forEach(function (field) {
+                    field.hidden = !isEntregaRealizada;
+                });
+
+                setRequired(nomeRecebedor, isEntregaRealizada);
+                setRequired(tipoDocumentoRecebedor, isEntregaRealizada);
+                setRequired(documentoRecebedor, isEntregaRealizada);
+            }
+
+            tipo.addEventListener("change", updateReceiverFields);
+            updateReceiverFields();
+        })();
+    </script>
 </body>
 </html>

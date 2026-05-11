@@ -9,6 +9,7 @@ import br.com.gwfrete.motorista.Motorista;
 import br.com.gwfrete.motorista.StatusMotorista;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -169,6 +170,10 @@ public class MotoristaBO {
 
         if (motorista.getDataNascimento() == null) {
             throw new CadastroException("Data de nascimento é obrigatória.");
+        }
+
+        if (motorista.getDataNascimento().isAfter(LocalDate.now())) {
+            throw new CadastroException("Data de nascimento não pode ser futura.");
         }
 
         if (motorista.getCnhNumero() == null || motorista.getCnhNumero().trim().isEmpty()) {

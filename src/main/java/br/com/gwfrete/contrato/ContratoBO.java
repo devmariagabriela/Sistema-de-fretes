@@ -26,9 +26,11 @@ public class ContratoBO {
 
     public void salvar(Contrato contrato) throws CadastroException {
         aplicarPadroesCadastro(contrato);
-        validarCadastro(contrato);
 
         try {
+            gerarNumeroSeNecessario(contrato);
+            validarCadastro(contrato);
+
             if (contratoDAO.buscarPorNumero(contrato.getNumero()) != null) {
                 throw new CadastroException("Já existe contrato cadastrado com este número.");
             }
@@ -189,6 +191,10 @@ public class ContratoBO {
         if (contrato.getStatus() == StatusContrato.ENCERRADO && contrato.getDataFim() == null) {
             throw new CadastroException("Contrato encerrado deve possuir data de fim.");
         }
+
+        if (contrato.getDataFim() != null && contrato.getDataFim().isBefore(contrato.getDataInicio())) {
+            throw new CadastroException("Data de fim não pode ser anterior à data de início.");
+        }
     }
 
     private void validarTransicaoStatus(Contrato contratoAtual, Contrato contratoAtualizado) throws CadastroException {
@@ -239,6 +245,22 @@ public class ContratoBO {
 
         contrato.setDescricao(normalizarTexto(contrato.getDescricao()));
         contrato.setObservacao(normalizarTexto(contrato.getObservacao()));
+    }
+
+    private void gerarNumeroSeNecessario(Contrato contrato) throws SQLException, CadastroException {
+        if (contrato == null || contrato.getNumero() != null && !contrato.getNumero().trim().isEmpty()) {
+            return;
+        }
+
+        for (int tentativa = 0; tentativa < 5; tentativa++) {
+            String numero = contratoDAO.gerarNumeroAutomatico();
+            if (contratoDAO.buscarPorNumero(numero) == null) {
+                contrato.setNumero(numero);
+                return;
+            }
+        }
+
+        throw new CadastroException("Não foi possível gerar um número único para o contrato.");
     }
 
     private String normalizarTexto(String valor) {

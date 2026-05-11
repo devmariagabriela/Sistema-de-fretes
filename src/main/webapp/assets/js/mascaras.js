@@ -1,4 +1,9 @@
 (function () {
+    if (window.GWFreteMascarasLoaded) {
+        return;
+    }
+    window.GWFreteMascarasLoaded = true;
+
     function onlyDigits(value) {
         return (value || "").replace(/\D/g, "");
     }
@@ -34,6 +39,100 @@
 
     function maskCep(value) {
         return onlyDigits(value).slice(0, 8).replace(/^(\d{5})(\d)/, "$1-$2");
+    }
+
+    function maskPlate(value) {
+        var raw = (value || "").replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 7);
+        if (raw.length <= 3) {
+            return raw;
+        }
+        return raw.slice(0, 3) + "-" + raw.slice(3);
+    }
+
+    function maskInteger(value, maxLength) {
+        var digits = onlyDigits(value);
+        return maxLength ? digits.slice(0, maxLength) : digits;
+    }
+
+    function maskDecimal(value) {
+        var normalized = (value || "").replace(/[^\d,.]/g, "").replace(/\./g, ",");
+        var parts = normalized.split(",");
+        var integerPart = parts.shift() || "";
+        var decimalPart = parts.join("").slice(0, 2);
+        return decimalPart ? integerPart + "," + decimalPart : integerPart;
+    }
+
+    function maskMoney(value) {
+        var digits = onlyDigits(value);
+        if (!digits) {
+            return "";
+        }
+
+        while (digits.length < 3) {
+            digits = "0" + digits;
+        }
+
+        var integerPart = digits.slice(0, -2).replace(/^0+(?=\d)/, "");
+        var decimalPart = digits.slice(-2);
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        return integerPart + "," + decimalPart;
+    }
+
+    function getDocumentType(input) {
+        var sourceId = input.getAttribute("data-mask-type-source");
+        var source = sourceId ? document.getElementById(sourceId) : null;
+        return source ? source.value : "";
+    }
+
+    function maskDocumentBySelect(input) {
+        var type = getDocumentType(input);
+
+        if (type === "CPF") {
+            return maskCpf(input.value);
+        }
+
+        if (type === "CNPJ") {
+            return maskCnpj(input.value);
+        }
+
+        if (type === "OUTRO") {
+            return (input.value || "").slice(0, 50);
+        }
+
+        return onlyDigits(input.value).length > 11 ? maskCnpj(input.value) : maskCpf(input.value);
+    }
+
+    function configureDocumentBySelect(input) {
+        var type = getDocumentType(input);
+
+        if (type === "CPF") {
+            input.inputMode = "numeric";
+            input.maxLength = 14;
+            input.placeholder = "000.000.000-00";
+        } else if (type === "CNPJ") {
+            input.inputMode = "numeric";
+            input.maxLength = 18;
+            input.placeholder = "00.000.000/0000-00";
+        } else if (type === "OUTRO") {
+            input.inputMode = "text";
+            input.maxLength = 50;
+            input.placeholder = "RG, passaporte ou outro";
+        } else {
+            input.inputMode = "numeric";
+            input.maxLength = 18;
+            input.placeholder = "Selecione o tipo primeiro";
+        }
+
+        input.value = maskDocumentBySelect(input);
+    }
+
+    function normalizeDecimal(value) {
+        var masked = maskDecimal(value);
+        return masked.replace(",", ".");
+    }
+
+    function normalizeMoney(value) {
+        return (value || "").replace(/\./g, "").replace(",", ".");
     }
 
     function showFieldMessage(field, message, isError) {
@@ -191,7 +290,217 @@
         configureCpfCnpj({ clear: false });
     }
 
+    function inferMask(input) {
+        var type = (input.type || "").toLowerCase();
+        if (type === "date" || type === "datetime-local" || type === "time"
+                || type === "month" || type === "week" || type === "hidden"
+                || type === "password") {
+            return "";
+        }
+
+        var explicitMask = input.getAttribute("data-mask");
+        if (explicitMask) {
+            return explicitMask;
+        }
+
+        var id = (input.id || "").toLowerCase();
+        var name = (input.name || "").toLowerCase();
+        var key = id + " " + name;
+
+        if (key.indexOf("cpfcnpj") >= 0 || key.indexOf("cpf_cnpj") >= 0) {
+            return "document";
+        }
+        if (key.indexOf("cpf") >= 0) {
+            return "cpf";
+        }
+        if (key.indexOf("cnpj") >= 0) {
+            return "cnpj";
+        }
+        if (key.indexOf("telefone") >= 0) {
+            return "phone";
+        }
+        if (key.indexOf("cep") >= 0) {
+            return "cep";
+        }
+        if (key.indexOf("placa") >= 0) {
+            return "plate";
+        }
+        if (key.indexOf("cnh") >= 0 || key.indexOf("quilometragem") >= 0) {
+            return "integer";
+        }
+        if (key.indexOf("ano") >= 0) {
+            return "year";
+        }
+        if (key.indexOf("valor") >= 0 || key.indexOf("custo") >= 0) {
+            return "money";
+        }
+        if (key.indexOf("peso") >= 0 || key.indexOf("capacidade") >= 0
+                || key.indexOf("reajuste") >= 0) {
+            return "decimal";
+        }
+
+        return "";
+    }
+
+    function applyMask(input, mask) {
+        if (!mask) {
+            return;
+        }
+
+        if (mask === "cpf") {
+            input.value = maskCpf(input.value);
+        } else if (mask === "cnpj") {
+            input.value = maskCnpj(input.value);
+        } else if (mask === "document") {
+            input.value = onlyDigits(input.value).length > 11 ? maskCnpj(input.value) : maskCpf(input.value);
+        } else if (mask === "document-by-select") {
+            input.value = maskDocumentBySelect(input);
+        } else if (mask === "phone") {
+            input.value = maskPhone(input.value);
+        } else if (mask === "cep") {
+            input.value = maskCep(input.value);
+        } else if (mask === "plate") {
+            input.value = maskPlate(input.value);
+        } else if (mask === "integer") {
+            input.value = maskInteger(input.value);
+        } else if (mask === "year") {
+            input.value = maskInteger(input.value, 4);
+        } else if (mask === "decimal") {
+            input.value = maskDecimal(input.value);
+        } else if (mask === "money") {
+            input.value = maskMoney(input.value);
+        }
+    }
+
+    function configureGenericInput(input) {
+        if (input.dataset.maskConfigured === "true") {
+            return;
+        }
+
+        var mask = inferMask(input);
+        if (!mask) {
+            return;
+        }
+
+        input.dataset.maskConfigured = "true";
+
+        if (mask === "cpf" || mask === "cnpj" || mask === "document" || mask === "document-by-select" || mask === "phone"
+                || mask === "cep" || mask === "integer" || mask === "year") {
+            input.inputMode = "numeric";
+        }
+
+        if (mask === "decimal" || mask === "money") {
+            input.inputMode = "decimal";
+        }
+
+        if (mask === "money" && !input.placeholder) {
+            input.placeholder = "0,00";
+        }
+
+        if (mask === "plate") {
+            input.maxLength = 8;
+            if (!input.placeholder) {
+                input.placeholder = "ABC-1234";
+            }
+        }
+
+        if (mask === "document-by-select") {
+            var source = document.getElementById(input.getAttribute("data-mask-type-source"));
+            if (source) {
+                source.addEventListener("change", function () {
+                    configureDocumentBySelect(input);
+                    input.focus();
+                });
+            }
+            configureDocumentBySelect(input);
+        }
+
+        input.addEventListener("input", function () {
+            if (mask === "document-by-select") {
+                configureDocumentBySelect(input);
+                return;
+            }
+
+            applyMask(input, mask);
+        });
+
+        applyMask(input, mask);
+    }
+
+    function configureGenericMasks() {
+        document.querySelectorAll("input").forEach(configureGenericInput);
+
+        document.querySelectorAll("form").forEach(function (form) {
+            if (form.dataset.maskSubmitConfigured === "true") {
+                return;
+            }
+
+            form.dataset.maskSubmitConfigured = "true";
+            form.addEventListener("submit", function () {
+                form.querySelectorAll("input").forEach(function (input) {
+                    var mask = inferMask(input);
+                    if (mask === "cpf" || mask === "cnpj" || mask === "document"
+                            || mask === "cep" || mask === "integer" || mask === "year") {
+                        input.value = onlyDigits(input.value);
+                    } else if (mask === "document-by-select") {
+                        var documentType = getDocumentType(input);
+                        input.value = documentType === "CPF" || documentType === "CNPJ"
+                                ? onlyDigits(input.value)
+                                : (input.value || "").trim();
+                    } else if (mask === "decimal") {
+                        input.value = normalizeDecimal(input.value);
+                    } else if (mask === "money") {
+                        input.value = normalizeMoney(input.value);
+                    }
+                });
+            });
+        });
+    }
+
+    function todayDateValue() {
+        return new Date().toISOString().slice(0, 10);
+    }
+
+    function nowDateTimeValue() {
+        var now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        return now.toISOString().slice(0, 16);
+    }
+
+    function configureDateRules() {
+        document.querySelectorAll("input[data-max-today='true']").forEach(function (input) {
+            input.max = todayDateValue();
+        });
+
+        document.querySelectorAll("input[data-max-now='true']").forEach(function (input) {
+            input.max = nowDateTimeValue();
+        });
+
+        document.querySelectorAll("input[data-min-from]").forEach(function (input) {
+            var source = document.getElementById(input.getAttribute("data-min-from"));
+            var fallback = document.getElementById(input.getAttribute("data-fallback-min-from"));
+
+            function updateMin() {
+                input.min = source && source.value ? source.value : fallback && fallback.value ? fallback.value : "";
+            }
+
+            if (source) {
+                source.addEventListener("change", updateMin);
+                source.addEventListener("input", updateMin);
+            }
+
+            if (fallback) {
+                fallback.addEventListener("change", updateMin);
+                fallback.addEventListener("input", updateMin);
+            }
+
+            updateMin();
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll("[data-mask-form='cliente']").forEach(configureClienteForm);
+        configureGenericMasks();
+        configureDateRules();
     });
 })();

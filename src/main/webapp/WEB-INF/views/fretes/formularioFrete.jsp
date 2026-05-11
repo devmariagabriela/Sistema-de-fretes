@@ -55,6 +55,26 @@
                         </div>
 
                         <div class="form-field">
+                            <label for="remetenteId">Remetente</label>
+                            <select id="remetenteId" name="remetenteId" required>
+                                <option value="">Selecione</option>
+                                <c:forEach var="cliente" items="${clientes}">
+                                    <option value="${cliente.id}" ${frete.remetente.id == cliente.id ? 'selected' : ''}>${cliente.nome}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="destinatarioId">Destinatário</label>
+                            <select id="destinatarioId" name="destinatarioId" required>
+                                <option value="">Selecione</option>
+                                <c:forEach var="cliente" items="${clientes}">
+                                    <option value="${cliente.id}" ${frete.destinatario.id == cliente.id ? 'selected' : ''}>${cliente.nome}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
                             <label for="origem">Origem</label>
                             <input id="origem" name="origem" type="text" value="${frete.origem}" maxlength="255" required>
                         </div>
@@ -71,12 +91,12 @@
 
                         <div class="form-field">
                             <label for="pesoKg">Peso em kg</label>
-                            <input id="pesoKg" name="pesoKg" type="number" value="${frete.pesoKg}" min="0" step="0.01">
+                            <input id="pesoKg" name="pesoKg" type="text" inputmode="decimal" value="${frete.pesoKg}">
                         </div>
 
                         <div class="form-field">
                             <label for="valorFrete">Valor do frete</label>
-                            <input id="valorFrete" name="valorFrete" type="number" value="${frete.valorFrete}" min="0" step="0.01">
+                            <input id="valorFrete" name="valorFrete" type="text" inputmode="decimal" value="${frete.valorFrete}">
                         </div>
 
                         <div class="form-field">
@@ -106,7 +126,7 @@
 
                         <div class="form-field">
                             <label for="dataEntrega">Data entrega</label>
-                            <input id="dataEntrega" name="dataEntrega" type="datetime-local" value="${frete.dataEntrega}">
+                            <input id="dataEntrega" name="dataEntrega" type="datetime-local" value="${frete.dataEntrega}" data-min-from="dataSaida">
                         </div>
                     </div>
 

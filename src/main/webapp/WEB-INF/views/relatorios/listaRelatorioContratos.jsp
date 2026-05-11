@@ -29,7 +29,6 @@
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios">Central de relatórios</a>
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/fretes">Relatório de fretes</a>
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/contratos">Contratos</a>
-                    <a class="button button-secondary" href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
                 </div>
             </header>
 

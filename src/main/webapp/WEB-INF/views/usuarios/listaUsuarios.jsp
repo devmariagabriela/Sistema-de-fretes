@@ -25,7 +25,6 @@
                 </div>
                 <div class="page-actions">
                     <jsp:include page="/WEB-INF/views/includes/header.jsp" />
-                    <a class="button button-secondary" href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
                     <a class="button button-primary" href="${pageContext.request.contextPath}/usuarios/novo">Novo usuário</a>
                 </div>
             </header>

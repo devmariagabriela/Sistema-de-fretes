@@ -26,7 +26,6 @@
                 </div>
                 <div class="page-actions">
                     <jsp:include page="/WEB-INF/views/includes/header.jsp" />
-                    <a class="button button-secondary" href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
                     <c:if test="${podeGerenciarFretes}">
                         <a class="button button-primary" href="${pageContext.request.contextPath}/fretes/novo">Novo frete</a>
                     </c:if>
@@ -101,6 +100,8 @@
                         <thead>
                             <tr>
                                 <th>Código</th>
+                                <th>Remetente</th>
+                                <th>Destinatário</th>
                                 <th>Origem</th>
                                 <th>Destino</th>
                                 <th>Motorista</th>
@@ -120,6 +121,8 @@
                                     <td>
                                         <strong class="freight-code">${frete.codigo}</strong>
                                     </td>
+                                    <td class="text-muted">${frete.remetente.nome}</td>
+                                    <td class="text-muted">${frete.destinatario.nome}</td>
                                     <td>${frete.origem}</td>
                                     <td>${frete.destino}</td>
                                     <td class="text-muted">${frete.motorista.nome}</td>
@@ -161,7 +164,7 @@
                             </c:forEach>
                             <c:if test="${empty fretes}">
                                 <tr>
-                                    <td colspan="${podeGerenciarFretes ? 10 : 9}">
+                                    <td colspan="${podeGerenciarFretes ? 12 : 11}">
                                         <div class="empty-state">Nenhum frete cadastrado.</div>
                                     </td>
                                 </tr>

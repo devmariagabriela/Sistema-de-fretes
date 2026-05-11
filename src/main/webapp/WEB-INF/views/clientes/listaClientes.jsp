@@ -28,7 +28,6 @@
                     <c:if test="${podeGerenciarClientes}">
                         <a class="button button-primary" href="${pageContext.request.contextPath}/clientes/novo">Novo cliente</a>
                     </c:if>
-                    <a class="button button-secondary" href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
                 </div>
             </header>
 

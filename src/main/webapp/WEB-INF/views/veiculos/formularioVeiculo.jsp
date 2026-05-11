@@ -71,7 +71,7 @@
 
                         <div class="form-field">
                             <label for="capacidadeKg">Capacidade em kg</label>
-                            <input id="capacidadeKg" name="capacidadeKg" type="number" value="${veiculo.capacidadeKg}" min="0.01" step="0.01" required>
+                            <input id="capacidadeKg" name="capacidadeKg" type="text" inputmode="decimal" value="${veiculo.capacidadeKg}" required>
                         </div>
 
                         <div class="form-field">

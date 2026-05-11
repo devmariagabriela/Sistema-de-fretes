@@ -10,6 +10,7 @@ import br.com.gwfrete.notificacao.TipoNotificacao;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 public class FaturaBO {
@@ -23,9 +24,11 @@ public class FaturaBO {
 
     public void salvar(Fatura fatura) throws CadastroException {
         aplicarPadroesCadastro(fatura);
-        validarCadastro(fatura);
 
         try {
+            gerarNumeroSeNecessario(fatura);
+            validarCadastro(fatura);
+
             if (faturaDAO.buscarPorNumero(fatura.getNumero()) != null) {
                 throw new CadastroException("Já existe fatura cadastrada com este número.");
             }
@@ -171,6 +174,22 @@ public class FaturaBO {
             throw new CadastroException("Data de vencimento é obrigatória.");
         }
 
+        if (fatura.getDataEmissao().isAfter(LocalDate.now())) {
+            throw new CadastroException("Data de emissão não pode ser futura.");
+        }
+
+        if (fatura.getDataVencimento().isBefore(fatura.getDataEmissao())) {
+            throw new CadastroException("Data de vencimento não pode ser anterior à data de emissão.");
+        }
+
+        if (fatura.getDataPagamento() != null && fatura.getDataPagamento().isBefore(fatura.getDataEmissao())) {
+            throw new CadastroException("Data de pagamento não pode ser anterior à data de emissão.");
+        }
+
+        if (fatura.getDataPagamento() != null && fatura.getDataPagamento().isAfter(LocalDate.now())) {
+            throw new CadastroException("Data de pagamento não pode ser futura.");
+        }
+
         if (fatura.getStatus() == null) {
             throw new CadastroException("Status da fatura é obrigatório.");
         }
@@ -220,6 +239,22 @@ public class FaturaBO {
             String observacao = fatura.getObservacao().trim();
             fatura.setObservacao(observacao.isEmpty() ? null : observacao);
         }
+    }
+
+    private void gerarNumeroSeNecessario(Fatura fatura) throws SQLException, CadastroException {
+        if (fatura == null || fatura.getNumero() != null && !fatura.getNumero().trim().isEmpty()) {
+            return;
+        }
+
+        for (int tentativa = 0; tentativa < 5; tentativa++) {
+            String numero = faturaDAO.gerarNumeroAutomatico();
+            if (faturaDAO.buscarPorNumero(numero) == null) {
+                fatura.setNumero(numero);
+                return;
+            }
+        }
+
+        throw new CadastroException("Não foi possível gerar um número único para a fatura.");
     }
 
     private void registrarNotificacaoFatura(Fatura fatura) {

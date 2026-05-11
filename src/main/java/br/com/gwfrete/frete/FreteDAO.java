@@ -1,5 +1,6 @@
 package br.com.gwfrete.frete;
 
+import br.com.gwfrete.cliente.Cliente;
 import br.com.gwfrete.frete.Frete;
 import br.com.gwfrete.motorista.Motorista;
 import br.com.gwfrete.frete.StatusFrete;
@@ -18,9 +19,9 @@ import java.util.List;
 public class FreteDAO {
 
     public void salvar(Frete frete) throws SQLException {
-        String sql = "INSERT INTO frete (codigo, origem, destino, descricao_carga, peso_kg, valor_frete, "
-                + "data_saida, data_entrega, status, motorista_id, veiculo_id) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::status_frete_enum, ?, ?)";
+        String sql = "INSERT INTO frete (codigo, remetente_id, destinatario_id, origem, destino, descricao_carga, "
+                + "peso_kg, valor_frete, data_saida, data_entrega, status, motorista_id, veiculo_id) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::status_frete_enum, ?, ?)";
 
         try (Connection conn = ConexaoFactory.obterConexao();
              PreparedStatement stmt = conn.prepareStatement(sql, new String[]{"id"})) {
@@ -37,12 +38,16 @@ public class FreteDAO {
     }
 
     public List<Frete> listarTodos() throws SQLException {
-        String sql = "SELECT f.id, f.codigo, f.origem, f.destino, f.descricao_carga, f.peso_kg, "
+        String sql = "SELECT f.id, f.codigo, f.remetente_id, remetente.nome AS remetente_nome, "
+                + "f.destinatario_id, destinatario.nome AS destinatario_nome, "
+                + "f.origem, f.destino, f.descricao_carga, f.peso_kg, "
                 + "f.valor_frete, f.data_saida, f.data_entrega, f.status, f.motorista_id, f.veiculo_id, "
                 + "f.data_criacao, m.nome AS motorista_nome, v.placa AS veiculo_placa, v.modelo AS veiculo_modelo "
                 + "FROM frete f "
                 + "INNER JOIN motorista m ON m.id = f.motorista_id "
                 + "INNER JOIN veiculo v ON v.id = f.veiculo_id "
+                + "LEFT JOIN cliente remetente ON remetente.id = f.remetente_id "
+                + "LEFT JOIN cliente destinatario ON destinatario.id = f.destinatario_id "
                 + "ORDER BY f.data_criacao DESC";
 
         List<Frete> fretes = new ArrayList<>();
@@ -62,13 +67,17 @@ public class FreteDAO {
     public List<Frete> listarComFiltros(String codigo, String origem, String destino, String motorista,
             String veiculo, StatusFrete status) throws SQLException {
 
-        StringBuilder sql = new StringBuilder("SELECT f.id, f.codigo, f.origem, f.destino, f.descricao_carga, "
+        StringBuilder sql = new StringBuilder("SELECT f.id, f.codigo, f.remetente_id, "
+                + "remetente.nome AS remetente_nome, f.destinatario_id, destinatario.nome AS destinatario_nome, "
+                + "f.origem, f.destino, f.descricao_carga, "
                 + "f.peso_kg, f.valor_frete, f.data_saida, f.data_entrega, f.status, f.motorista_id, "
                 + "f.veiculo_id, f.data_criacao, m.nome AS motorista_nome, v.placa AS veiculo_placa, "
                 + "v.modelo AS veiculo_modelo "
                 + "FROM frete f "
                 + "INNER JOIN motorista m ON m.id = f.motorista_id "
                 + "INNER JOIN veiculo v ON v.id = f.veiculo_id "
+                + "LEFT JOIN cliente remetente ON remetente.id = f.remetente_id "
+                + "LEFT JOIN cliente destinatario ON destinatario.id = f.destinatario_id "
                 + "WHERE 1 = 1");
         List<Object> parametros = new ArrayList<>();
 
@@ -108,12 +117,16 @@ public class FreteDAO {
     }
 
     public Frete buscarPorId(Long id) throws SQLException {
-        String sql = "SELECT f.id, f.codigo, f.origem, f.destino, f.descricao_carga, f.peso_kg, "
+        String sql = "SELECT f.id, f.codigo, f.remetente_id, remetente.nome AS remetente_nome, "
+                + "f.destinatario_id, destinatario.nome AS destinatario_nome, "
+                + "f.origem, f.destino, f.descricao_carga, f.peso_kg, "
                 + "f.valor_frete, f.data_saida, f.data_entrega, f.status, f.motorista_id, f.veiculo_id, "
                 + "f.data_criacao, m.nome AS motorista_nome, v.placa AS veiculo_placa, v.modelo AS veiculo_modelo "
                 + "FROM frete f "
                 + "INNER JOIN motorista m ON m.id = f.motorista_id "
                 + "INNER JOIN veiculo v ON v.id = f.veiculo_id "
+                + "LEFT JOIN cliente remetente ON remetente.id = f.remetente_id "
+                + "LEFT JOIN cliente destinatario ON destinatario.id = f.destinatario_id "
                 + "WHERE f.id = ?";
 
         try (Connection conn = ConexaoFactory.obterConexao();
@@ -132,12 +145,16 @@ public class FreteDAO {
     }
 
     public Frete buscarPorCodigo(String codigo) throws SQLException {
-        String sql = "SELECT f.id, f.codigo, f.origem, f.destino, f.descricao_carga, f.peso_kg, "
+        String sql = "SELECT f.id, f.codigo, f.remetente_id, remetente.nome AS remetente_nome, "
+                + "f.destinatario_id, destinatario.nome AS destinatario_nome, "
+                + "f.origem, f.destino, f.descricao_carga, f.peso_kg, "
                 + "f.valor_frete, f.data_saida, f.data_entrega, f.status, f.motorista_id, f.veiculo_id, "
                 + "f.data_criacao, m.nome AS motorista_nome, v.placa AS veiculo_placa, v.modelo AS veiculo_modelo "
                 + "FROM frete f "
                 + "INNER JOIN motorista m ON m.id = f.motorista_id "
                 + "INNER JOIN veiculo v ON v.id = f.veiculo_id "
+                + "LEFT JOIN cliente remetente ON remetente.id = f.remetente_id "
+                + "LEFT JOIN cliente destinatario ON destinatario.id = f.destinatario_id "
                 + "WHERE UPPER(f.codigo) = UPPER(?)";
 
         try (Connection conn = ConexaoFactory.obterConexao();
@@ -175,15 +192,16 @@ public class FreteDAO {
 
     public void atualizar(Frete frete) throws SQLException {
         String sql = "UPDATE frete "
-                + "SET codigo = ?, origem = ?, destino = ?, descricao_carga = ?, peso_kg = ?, valor_frete = ?, "
-                + "data_saida = ?, data_entrega = ?, status = ?::status_frete_enum, motorista_id = ?, veiculo_id = ? "
+                + "SET codigo = ?, remetente_id = ?, destinatario_id = ?, origem = ?, destino = ?, "
+                + "descricao_carga = ?, peso_kg = ?, valor_frete = ?, data_saida = ?, data_entrega = ?, "
+                + "status = ?::status_frete_enum, motorista_id = ?, veiculo_id = ? "
                 + "WHERE id = ?";
 
         try (Connection conn = ConexaoFactory.obterConexao();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             preencherParametrosFrete(stmt, frete);
-            stmt.setLong(12, frete.getId());
+            stmt.setLong(14, frete.getId());
             stmt.executeUpdate();
         }
     }
@@ -201,16 +219,18 @@ public class FreteDAO {
 
     private void preencherParametrosFrete(PreparedStatement stmt, Frete frete) throws SQLException {
         stmt.setString(1, frete.getCodigo());
-        stmt.setString(2, frete.getOrigem());
-        stmt.setString(3, frete.getDestino());
-        stmt.setString(4, frete.getDescricaoCarga());
-        stmt.setBigDecimal(5, frete.getPesoKg());
-        stmt.setBigDecimal(6, frete.getValorFrete());
-        preencherTimestamp(stmt, 7, frete.getDataSaida());
-        preencherTimestamp(stmt, 8, frete.getDataEntrega());
-        stmt.setString(9, frete.getStatus().name());
-        stmt.setLong(10, frete.getMotorista().getId());
-        stmt.setLong(11, frete.getVeiculo().getId());
+        stmt.setLong(2, frete.getRemetente().getId());
+        stmt.setLong(3, frete.getDestinatario().getId());
+        stmt.setString(4, frete.getOrigem());
+        stmt.setString(5, frete.getDestino());
+        stmt.setString(6, frete.getDescricaoCarga());
+        stmt.setBigDecimal(7, frete.getPesoKg());
+        stmt.setBigDecimal(8, frete.getValorFrete());
+        preencherTimestamp(stmt, 9, frete.getDataSaida());
+        preencherTimestamp(stmt, 10, frete.getDataEntrega());
+        stmt.setString(11, frete.getStatus().name());
+        stmt.setLong(12, frete.getMotorista().getId());
+        stmt.setLong(13, frete.getVeiculo().getId());
     }
 
     private void preencherTimestamp(PreparedStatement stmt, int indice, java.time.LocalDateTime data)
@@ -252,6 +272,8 @@ public class FreteDAO {
         Frete frete = new Frete();
         frete.setId(rs.getLong("id"));
         frete.setCodigo(rs.getString("codigo"));
+        frete.setRemetente(mapearClienteBasico(rs, "remetente_id", "remetente_nome"));
+        frete.setDestinatario(mapearClienteBasico(rs, "destinatario_id", "destinatario_nome"));
         frete.setOrigem(rs.getString("origem"));
         frete.setDestino(rs.getString("destino"));
         frete.setDescricaoCarga(rs.getString("descricao_carga"));
@@ -286,5 +308,17 @@ public class FreteDAO {
         frete.setVeiculo(veiculo);
 
         return frete;
+    }
+
+    private Cliente mapearClienteBasico(ResultSet rs, String colunaId, String colunaNome) throws SQLException {
+        long id = rs.getLong(colunaId);
+        if (rs.wasNull()) {
+            return null;
+        }
+
+        Cliente cliente = new Cliente();
+        cliente.setId(id);
+        cliente.setNome(rs.getString(colunaNome));
+        return cliente;
     }
 }

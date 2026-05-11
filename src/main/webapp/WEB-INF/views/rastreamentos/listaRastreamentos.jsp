@@ -36,7 +36,6 @@
                             </c:otherwise>
                         </c:choose>
                     </c:if>
-                    <a class="button button-secondary" href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
                 </div>
             </header>
 

@@ -3,6 +3,7 @@ package br.com.gwfrete.ocorrencia;
 import br.com.gwfrete.frete.Frete;
 import br.com.gwfrete.ocorrencia.OcorrenciaFrete;
 import br.com.gwfrete.frete.StatusFrete;
+import br.com.gwfrete.ocorrencia.TipoDocumentoRecebedor;
 import br.com.gwfrete.ocorrencia.TipoOcorrenciaFrete;
 import br.com.gwfrete.util.ConexaoFactory;
 
@@ -18,8 +19,8 @@ public class OcorrenciaFreteDAO {
 
     public void salvar(OcorrenciaFrete ocorrencia) throws SQLException {
         String sql = "INSERT INTO ocorrencia_frete (frete_id, tipo, data_hora, localizacao, descricao, "
-                + "nome_recebedor, documento_recebedor) "
-                + "VALUES (?, ?::tipo_ocorrencia_frete_enum, ?, ?, ?, ?, ?)";
+                + "nome_recebedor, tipo_documento_recebedor, documento_recebedor) "
+                + "VALUES (?, ?::tipo_ocorrencia_frete_enum, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = ConexaoFactory.obterConexao();
              PreparedStatement stmt = conn.prepareStatement(sql, new String[]{"id"})) {
@@ -37,7 +38,8 @@ public class OcorrenciaFreteDAO {
 
     public List<OcorrenciaFrete> listarPorFrete(Long freteId) throws SQLException {
         String sql = "SELECT o.id, o.frete_id, o.tipo, o.data_hora, o.localizacao, o.descricao, "
-                + "o.nome_recebedor, o.documento_recebedor, o.data_criacao, f.codigo AS frete_codigo, "
+                + "o.nome_recebedor, o.tipo_documento_recebedor, o.documento_recebedor, "
+                + "o.data_criacao, f.codigo AS frete_codigo, "
                 + "f.status AS frete_status "
                 + "FROM ocorrencia_frete o "
                 + "INNER JOIN frete f ON f.id = o.frete_id "
@@ -63,7 +65,8 @@ public class OcorrenciaFreteDAO {
 
     public OcorrenciaFrete buscarPorId(Long id) throws SQLException {
         String sql = "SELECT o.id, o.frete_id, o.tipo, o.data_hora, o.localizacao, o.descricao, "
-                + "o.nome_recebedor, o.documento_recebedor, o.data_criacao, f.codigo AS frete_codigo, "
+                + "o.nome_recebedor, o.tipo_documento_recebedor, o.documento_recebedor, "
+                + "o.data_criacao, f.codigo AS frete_codigo, "
                 + "f.status AS frete_status "
                 + "FROM ocorrencia_frete o "
                 + "INNER JOIN frete f ON f.id = o.frete_id "
@@ -93,7 +96,9 @@ public class OcorrenciaFreteDAO {
         stmt.setString(4, ocorrencia.getLocalizacao());
         stmt.setString(5, ocorrencia.getDescricao());
         stmt.setString(6, ocorrencia.getNomeRecebedor());
-        stmt.setString(7, ocorrencia.getDocumentoRecebedor());
+        stmt.setString(7, ocorrencia.getTipoDocumentoRecebedor() == null
+                ? null : ocorrencia.getTipoDocumentoRecebedor().name());
+        stmt.setString(8, ocorrencia.getDocumentoRecebedor());
     }
 
     private OcorrenciaFrete mapearOcorrencia(ResultSet rs) throws SQLException {
@@ -103,6 +108,10 @@ public class OcorrenciaFreteDAO {
         ocorrencia.setLocalizacao(rs.getString("localizacao"));
         ocorrencia.setDescricao(rs.getString("descricao"));
         ocorrencia.setNomeRecebedor(rs.getString("nome_recebedor"));
+        String tipoDocumento = rs.getString("tipo_documento_recebedor");
+        if (tipoDocumento != null && !tipoDocumento.trim().isEmpty()) {
+            ocorrencia.setTipoDocumentoRecebedor(TipoDocumentoRecebedor.valueOf(tipoDocumento));
+        }
         ocorrencia.setDocumentoRecebedor(rs.getString("documento_recebedor"));
 
         Timestamp dataHora = rs.getTimestamp("data_hora");

@@ -22,6 +22,8 @@ final class RelatorioExcelUtil {
     static byte[] gerarFretes(List<RelatorioFreteDTO> fretes) {
         return gerar("Fretes", Arrays.asList(
                 coluna("Código", new Valor<RelatorioFreteDTO>() { public Object obter(RelatorioFreteDTO item) { return item.getCodigo(); } }),
+                coluna("Remetente", new Valor<RelatorioFreteDTO>() { public Object obter(RelatorioFreteDTO item) { return item.getRemetente(); } }),
+                coluna("Destinatário", new Valor<RelatorioFreteDTO>() { public Object obter(RelatorioFreteDTO item) { return item.getDestinatario(); } }),
                 coluna("Origem", new Valor<RelatorioFreteDTO>() { public Object obter(RelatorioFreteDTO item) { return item.getOrigem(); } }),
                 coluna("Destino", new Valor<RelatorioFreteDTO>() { public Object obter(RelatorioFreteDTO item) { return item.getDestino(); } }),
                 coluna("Motorista", new Valor<RelatorioFreteDTO>() { public Object obter(RelatorioFreteDTO item) { return item.getMotorista(); } }),

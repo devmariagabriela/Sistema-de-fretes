@@ -157,6 +157,21 @@ public class ManutencaoVeiculoBO {
         if (manutencao.getStatus() == StatusManutencao.CONCLUIDA && manutencao.getDataConclusao() == null) {
             throw new CadastroException("Manutenção concluída deve possuir data de conclusão.");
         }
+
+        if (manutencao.getDataInicio() != null
+                && manutencao.getDataInicio().isBefore(manutencao.getDataAgendada())) {
+            throw new CadastroException("Data de início não pode ser anterior à data agendada.");
+        }
+
+        if (manutencao.getDataConclusao() != null && manutencao.getDataInicio() != null
+                && manutencao.getDataConclusao().isBefore(manutencao.getDataInicio())) {
+            throw new CadastroException("Data de conclusão não pode ser anterior à data de início.");
+        }
+
+        if (manutencao.getDataConclusao() != null && manutencao.getDataInicio() == null
+                && manutencao.getDataConclusao().isBefore(manutencao.getDataAgendada())) {
+            throw new CadastroException("Data de conclusão não pode ser anterior à data agendada.");
+        }
     }
 
     private void validarTransicaoStatus(ManutencaoVeiculo manutencaoAtual, ManutencaoVeiculo manutencaoAtualizada)

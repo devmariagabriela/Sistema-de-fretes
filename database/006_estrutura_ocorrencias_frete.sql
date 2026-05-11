@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS ocorrencia_frete (
     localizacao VARCHAR(255) NOT NULL,
     descricao TEXT,
     nome_recebedor VARCHAR(150),
+    tipo_documento_recebedor VARCHAR(20),
     documento_recebedor VARCHAR(50),
     data_criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

@@ -41,7 +41,7 @@
                     <div class="form-grid">
                         <div class="form-field">
                             <label for="numero">Número</label>
-                            <input id="numero" name="numero" type="text" value="${contrato.numero}" maxlength="30" required>
+                            <input id="numero" name="numero" type="text" value="${contrato.numero}" maxlength="30" placeholder="Gerado automaticamente" readonly>
                         </div>
 
                         <div class="form-field">
@@ -56,7 +56,7 @@
 
                         <div class="form-field">
                             <label for="valorMensal">Valor mensal</label>
-                            <input id="valorMensal" name="valorMensal" type="number" min="0.01" step="0.01" value="${contrato.valorMensal}" required>
+                            <input id="valorMensal" name="valorMensal" type="text" inputmode="decimal" value="${contrato.valorMensal}" required>
                         </div>
 
                         <div class="form-field">
@@ -66,12 +66,12 @@
 
                         <div class="form-field">
                             <label for="dataFim">Data de fim</label>
-                            <input id="dataFim" name="dataFim" type="date" value="${contrato.dataFim}">
+                            <input id="dataFim" name="dataFim" type="date" value="${contrato.dataFim}" data-min-from="dataInicio">
                         </div>
 
                         <div class="form-field">
                             <label for="reajustePercentual">Reajuste %</label>
-                            <input id="reajustePercentual" name="reajustePercentual" type="number" step="0.01" value="${contrato.reajustePercentual}">
+                            <input id="reajustePercentual" name="reajustePercentual" type="text" inputmode="decimal" value="${contrato.reajustePercentual}">
                         </div>
 
                         <div class="form-field">
@@ -82,11 +82,6 @@
                                     <option value="${status}" ${contrato.status == status ? 'selected' : ''}>${status.descricao}</option>
                                 </c:forEach>
                             </select>
-                        </div>
-
-                        <div class="form-field form-field-wide">
-                            <label for="descricao">Descrição</label>
-                            <textarea id="descricao" name="descricao" rows="3">${contrato.descricao}</textarea>
                         </div>
 
                         <div class="form-field form-field-wide">

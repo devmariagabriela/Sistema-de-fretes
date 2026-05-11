@@ -29,7 +29,6 @@
                     <c:if test="${podeGerenciarContratos}">
                         <a class="button button-primary" href="${pageContext.request.contextPath}/contratos/novo">Novo contrato</a>
                     </c:if>
-                    <a class="button button-secondary" href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
                 </div>
             </header>
 

@@ -99,7 +99,10 @@
                                         <p class="text-muted">
                                             <c:choose>
                                                 <c:when test="${not empty ocorrencia.nomeRecebedor}">
-                                                    ${ocorrencia.nomeRecebedor} · ${ocorrencia.documentoRecebedor}
+                                                    ${ocorrencia.nomeRecebedor}
+                                                    <c:if test="${not empty ocorrencia.documentoRecebedor}">
+                                                        · ${ocorrencia.tipoDocumentoRecebedor.descricao} ${ocorrencia.documentoRecebedor}
+                                                    </c:if>
                                                 </c:when>
                                                 <c:otherwise>Não informado.</c:otherwise>
                                             </c:choose>

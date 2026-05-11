@@ -29,7 +29,6 @@
                     <c:if test="${podeGerenciarFaturas}">
                         <a class="button button-primary" href="${pageContext.request.contextPath}/financeiro/nova">Nova fatura</a>
                     </c:if>
-                    <a class="button button-secondary" href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
                 </div>
             </header>
 
