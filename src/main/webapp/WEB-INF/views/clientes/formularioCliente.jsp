@@ -81,8 +81,8 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="contato">Contato</label>
-                            <input id="contato" name="contato" type="text" value="${cliente.contato}" maxlength="100">
+                            <label for="contato">Responsável</label>
+                            <input id="contato" name="contato" type="text" value="${cliente.contato}" maxlength="100" placeholder="Nome da pessoa responsável">
                         </div>
 
                         <div class="form-field form-field-wide">
