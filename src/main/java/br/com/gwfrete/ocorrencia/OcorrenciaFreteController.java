@@ -5,6 +5,7 @@ import br.com.gwfrete.frete.FreteDAO;
 import br.com.gwfrete.exception.CadastroException;
 import br.com.gwfrete.frete.Frete;
 import br.com.gwfrete.ocorrencia.OcorrenciaFrete;
+import br.com.gwfrete.ocorrencia.TipoDocumentoRecebedor;
 import br.com.gwfrete.usuario.PerfilUsuario;
 import br.com.gwfrete.ocorrencia.TipoOcorrenciaFrete;
 import br.com.gwfrete.usuario.Usuario;
@@ -159,6 +160,7 @@ public class OcorrenciaFreteController extends HttpServlet {
         request.setAttribute("tituloFormulario", titulo);
         request.setAttribute("acaoFormulario", acao);
         request.setAttribute("tiposOcorrencia", TipoOcorrenciaFrete.values());
+        request.setAttribute("tiposDocumentoRecebedor", TipoDocumentoRecebedor.values());
         prepararFretes(request);
     }
 
@@ -194,6 +196,8 @@ public class OcorrenciaFreteController extends HttpServlet {
         ocorrencia.setLocalizacao(request.getParameter("localizacao"));
         ocorrencia.setDescricao(request.getParameter("descricao"));
         ocorrencia.setNomeRecebedor(request.getParameter("nomeRecebedor"));
+        ocorrencia.setTipoDocumentoRecebedor(obterTipoDocumentoRecebedor(
+                request.getParameter("tipoDocumentoRecebedor")));
         ocorrencia.setDocumentoRecebedor(request.getParameter("documentoRecebedor"));
         return ocorrencia;
     }
@@ -293,6 +297,14 @@ public class OcorrenciaFreteController extends HttpServlet {
     private TipoOcorrenciaFrete obterTipo(String valor) {
         try {
             return valor == null || valor.trim().isEmpty() ? null : TipoOcorrenciaFrete.valueOf(valor);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    private TipoDocumentoRecebedor obterTipoDocumentoRecebedor(String valor) {
+        try {
+            return valor == null || valor.trim().isEmpty() ? null : TipoDocumentoRecebedor.valueOf(valor);
         } catch (IllegalArgumentException e) {
             return null;
         }

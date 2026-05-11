@@ -17,6 +17,7 @@ public class OcorrenciaFrete implements Serializable {
     private String localizacao;
     private String descricao;
     private String nomeRecebedor;
+    private TipoDocumentoRecebedor tipoDocumentoRecebedor;
     private String documentoRecebedor;
     private LocalDateTime dataCriacao;
 
@@ -74,6 +75,14 @@ public class OcorrenciaFrete implements Serializable {
 
     public void setNomeRecebedor(String nomeRecebedor) {
         this.nomeRecebedor = nomeRecebedor;
+    }
+
+    public TipoDocumentoRecebedor getTipoDocumentoRecebedor() {
+        return tipoDocumentoRecebedor;
+    }
+
+    public void setTipoDocumentoRecebedor(TipoDocumentoRecebedor tipoDocumentoRecebedor) {
+        this.tipoDocumentoRecebedor = tipoDocumentoRecebedor;
     }
 
     public String getDocumentoRecebedor() {
