@@ -82,6 +82,7 @@
                     </div>
 
                     <div class="report-filters-actions">
+                        <button class="button button-primary" type="submit">Filtrar</button>
                         <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/fretes">Limpar filtros</a>
                         <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/fretes/pdf${queryStringFiltros}" target="_blank" rel="noopener">Exportar PDF</a>
                         <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/fretes/excel${queryStringFiltros}">Exportar Excel</a>
