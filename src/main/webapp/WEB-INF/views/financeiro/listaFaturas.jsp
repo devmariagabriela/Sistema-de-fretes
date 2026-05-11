@@ -7,9 +7,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GW FRETE | Financeiro</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css?v=app-20260510-theme">
+    <script defer src="${pageContext.request.contextPath}/assets/js/theme.js?v=theme-20260510-ui"></script>
 </head>
-<body>
+<body class="theme-dark">
     <fmt:setLocale value="pt_BR"/>
     <main class="app-shell">
         <jsp:include page="/WEB-INF/views/includes/sidebar.jsp">
@@ -38,6 +39,26 @@
             <c:if test="${not empty mensagemErro}">
                 <p class="message message-error" role="alert">${mensagemErro}</p>
             </c:if>
+
+            <section class="content-card filter-panel" aria-label="Filtros de faturas">
+                <form class="report-filters-form" action="${pageContext.request.contextPath}/financeiro" method="get">
+                    <div class="form-grid report-filters-grid">
+                        <div class="form-field">
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                <option value="">Não canceladas por padrão</option>
+                                <c:forEach var="status" items="${statusFaturas}">
+                                    <option value="${status.name()}" ${statusFiltro == status.name() ? 'selected' : ''}>${status.descricao}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="report-filters-actions">
+                        <button class="button button-primary" type="submit">Consultar</button>
+                        <a class="button button-secondary" href="${pageContext.request.contextPath}/financeiro">Limpar filtros</a>
+                    </div>
+                </form>
+            </section>
 
             <section class="content-card" aria-label="Lista de faturas">
                 <div class="table-wrap">
@@ -80,7 +101,25 @@
                                     </td>
                                     <c:if test="${podeGerenciarFaturas}">
                                         <td>
-                                            <a class="button button-secondary" href="${pageContext.request.contextPath}/financeiro/editar?id=${fatura.id}">Editar</a>
+                                            <div class="row-actions">
+                                                <a class="button button-secondary" href="${pageContext.request.contextPath}/financeiro/editar?id=${fatura.id}">Editar</a>
+                                                <c:if test="${fatura.status.name() != 'PAGO' && fatura.status.name() != 'CANCELADO'}">
+                                                    <button class="button button-secondary" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/financeiro/pagar"
+                                                            data-id="${fatura.id}"
+                                                            data-title="Marcar fatura como paga"
+                                                            data-message="Deseja marcar a fatura ${fatura.numero} como paga?"
+                                                            data-submit="Marcar como pago">Marcar como Pago</button>
+                                                    <button class="button button-danger" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/financeiro/cancelar"
+                                                            data-id="${fatura.id}"
+                                                            data-title="Cancelar fatura"
+                                                            data-message="Deseja cancelar a fatura ${fatura.numero}?"
+                                                            data-submit="Cancelar">Cancelar</button>
+                                                </c:if>
+                                            </div>
                                         </td>
                                     </c:if>
                                 </tr>
@@ -98,5 +137,6 @@
             </section>
         </section>
     </main>
+    <jsp:include page="/WEB-INF/views/includes/confirmacaoExclusao.jsp" />
 </body>
 </html>

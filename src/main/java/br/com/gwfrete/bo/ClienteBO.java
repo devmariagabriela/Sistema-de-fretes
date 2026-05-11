@@ -3,6 +3,7 @@ package br.com.gwfrete.bo;
 import br.com.gwfrete.dao.ClienteDAO;
 import br.com.gwfrete.exception.CadastroException;
 import br.com.gwfrete.model.Cliente;
+import br.com.gwfrete.model.TipoCliente;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -40,6 +41,16 @@ public class ClienteBO {
         }
     }
 
+    public List<Cliente> listarComFiltros(String nome, String cpfCnpj, TipoCliente tipo, String cidade, Boolean status)
+            throws CadastroException {
+        try {
+            return clienteDAO.listarComFiltros(normalizarTexto(nome), normalizarDocumentoFiltro(cpfCnpj), tipo,
+                    normalizarTexto(cidade), status);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar os clientes.");
+        }
+    }
+
     public Cliente buscarPorId(Long id) throws CadastroException {
         if (id == null || id <= 0) {
             throw new CadastroException("Cliente inválido.");
@@ -72,6 +83,38 @@ public class ClienteBO {
             clienteDAO.atualizar(cliente);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível atualizar o cliente.");
+        }
+    }
+
+    public void inativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Cliente inválido.");
+        }
+
+        try {
+            if (clienteDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Cliente não encontrado.");
+            }
+
+            clienteDAO.inativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível inativar o cliente.");
+        }
+    }
+
+    public void ativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Cliente inválido.");
+        }
+
+        try {
+            if (clienteDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Cliente não encontrado.");
+            }
+
+            clienteDAO.ativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível ativar o cliente.");
         }
     }
 
@@ -158,5 +201,14 @@ public class ClienteBO {
 
     private String removerCaracteresNaoNumericos(String valor) {
         return SOMENTE_DIGITOS.matcher(valor.trim()).replaceAll("");
+    }
+
+    private String normalizarDocumentoFiltro(String valor) {
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = SOMENTE_DIGITOS.matcher(valor.trim()).replaceAll("");
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
     }
 }

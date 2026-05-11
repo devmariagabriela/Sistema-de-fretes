@@ -40,7 +40,7 @@ public class MotoristaDAO {
     public List<Motorista> listarTodos() throws SQLException {
         String sql = "SELECT id, nome, cpf, data_nascimento, telefone, cnh_numero, cnh_categoria, "
                 + "cnh_validade, tipo_vinculo, status, data_criacao "
-                + "FROM motorista ORDER BY nome";
+                + "FROM motorista WHERE status <> 'INATIVO'::status_motorista_enum ORDER BY nome";
 
         List<Motorista> motoristas = new ArrayList<>();
 
@@ -54,6 +54,45 @@ public class MotoristaDAO {
         }
 
         return motoristas;
+    }
+
+    public List<Motorista> listarComFiltros(String nome, String cpf, String cnhNumero, CategoriaCNH categoriaCnh,
+            StatusMotorista status) throws SQLException {
+
+        StringBuilder sql = new StringBuilder("SELECT id, nome, cpf, data_nascimento, telefone, cnh_numero, "
+                + "cnh_categoria, cnh_validade, tipo_vinculo, status, data_criacao "
+                + "FROM motorista WHERE 1 = 1");
+        List<Object> parametros = new ArrayList<>();
+
+        if (textoPreenchido(nome)) {
+            sql.append(" AND LOWER(nome) LIKE LOWER(?)");
+            parametros.add("%" + nome.trim() + "%");
+        }
+
+        if (textoPreenchido(cpf)) {
+            sql.append(" AND cpf LIKE ?");
+            parametros.add("%" + cpf.trim() + "%");
+        }
+
+        if (textoPreenchido(cnhNumero)) {
+            sql.append(" AND cnh_numero LIKE ?");
+            parametros.add("%" + cnhNumero.trim() + "%");
+        }
+
+        if (categoriaCnh != null) {
+            sql.append(" AND cnh_categoria = ?::categoria_cnh_enum");
+            parametros.add(categoriaCnh.name());
+        }
+
+        if (status != null) {
+            sql.append(" AND status = ?::status_motorista_enum");
+            parametros.add(status.name());
+        } else {
+            sql.append(" AND status <> 'INATIVO'::status_motorista_enum");
+        }
+
+        sql.append(" ORDER BY nome");
+        return executarConsultaMotoristas(sql.toString(), parametros);
     }
 
     public Motorista buscarPorId(Long id) throws SQLException {
@@ -132,6 +171,28 @@ public class MotoristaDAO {
         }
     }
 
+    public void inativar(Long id) throws SQLException {
+        String sql = "UPDATE motorista SET status = 'INATIVO'::status_motorista_enum WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void ativar(Long id) throws SQLException {
+        String sql = "UPDATE motorista SET status = 'ATIVO'::status_motorista_enum WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        }
+    }
+
     private void preencherParametrosMotorista(PreparedStatement stmt, Motorista motorista) throws SQLException {
         stmt.setString(1, motorista.getNome());
         stmt.setString(2, motorista.getCpf());
@@ -142,6 +203,30 @@ public class MotoristaDAO {
         stmt.setDate(7, Date.valueOf(motorista.getCnhValidade()));
         stmt.setString(8, motorista.getTipoVinculo().name());
         stmt.setString(9, motorista.getStatus().name());
+    }
+
+    private List<Motorista> executarConsultaMotoristas(String sql, List<Object> parametros) throws SQLException {
+        List<Motorista> motoristas = new ArrayList<>();
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < parametros.size(); i++) {
+                stmt.setObject(i + 1, parametros.get(i));
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    motoristas.add(mapearMotorista(rs));
+                }
+            }
+        }
+
+        return motoristas;
+    }
+
+    private boolean textoPreenchido(String valor) {
+        return valor != null && !valor.trim().isEmpty();
     }
 
     private Motorista mapearMotorista(ResultSet rs) throws SQLException {

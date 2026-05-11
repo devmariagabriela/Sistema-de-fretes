@@ -7,9 +7,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GW FRETE | Rastreamentos</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css?v=app-20260510-tracking">
+    <script defer src="${pageContext.request.contextPath}/assets/js/theme.js?v=theme-20260510-ui"></script>
 </head>
-<body>
+<body class="theme-dark">
     <main class="app-shell">
         <jsp:include page="/WEB-INF/views/includes/sidebar.jsp">
             <jsp:param name="ativo" value="rastreamentos" />
@@ -65,6 +67,37 @@
                 </form>
             </section>
 
+            <section class="content-card tracking-map-card" aria-label="Mapa de rastreamento">
+                <div class="tracking-map-header">
+                    <div>
+                        <span class="summary-label">Mapa de rastreamento</span>
+                        <h2>Mapa de rastreamento</h2>
+                    </div>
+                    <div class="tracking-map-meta">
+                        <span class="tracking-map-status" id="trackingMapStatus">Aguardando coordenadas</span>
+                        <span class="tracking-map-warning" id="trackingMapWarning" hidden>Coordenada próxima de 0,0. Confira latitude e longitude cadastradas.</span>
+                    </div>
+                </div>
+                <div class="tracking-map-frame">
+                    <div id="trackingMap" class="tracking-map" role="img" aria-label="Mapa com a localização do frete selecionado"></div>
+                    <div id="trackingMapEmpty" class="tracking-map-empty" hidden>Nenhuma coordenada disponível para este frete</div>
+                </div>
+                <div id="trackingMapData" hidden>
+                    <c:forEach var="rastreamento" items="${rastreamentos}">
+                        <c:if test="${not empty rastreamento.latitude and not empty rastreamento.longitude}">
+                            <span class="tracking-point"
+                                  data-lat="${rastreamento.latitude}"
+                                  data-lng="${rastreamento.longitude}">
+                                <span class="tracking-point-frete"><c:out value="${rastreamento.frete.codigo}"/></span>
+                                <span class="tracking-point-localizacao"><c:out value="${rastreamento.localizacao}"/></span>
+                                <span class="tracking-point-data-hora"><fmt:formatDate value="${rastreamento.dataHoraFormatada}" pattern="dd/MM/yyyy HH:mm"/></span>
+                                <span class="tracking-point-observacao"><c:out value="${rastreamento.observacao}"/></span>
+                            </span>
+                        </c:if>
+                    </c:forEach>
+                </div>
+            </section>
+
             <section class="content-card" aria-label="Lista de rastreamentos">
                 <div class="table-wrap">
                     <table class="data-table">
@@ -104,5 +137,166 @@
             </section>
         </section>
     </main>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        (function () {
+            var mapElement = document.getElementById("trackingMap");
+            var emptyElement = document.getElementById("trackingMapEmpty");
+            var statusElement = document.getElementById("trackingMapStatus");
+            var warningElement = document.getElementById("trackingMapWarning");
+            var dataElement = document.getElementById("trackingMapData");
+
+            if (!mapElement || !emptyElement || !dataElement || typeof L === "undefined") {
+                return;
+            }
+
+            var points = Array.prototype.slice.call(dataElement.querySelectorAll(".tracking-point"))
+                .map(function (element) {
+                    return {
+                        lat: Number(element.dataset.lat),
+                        lng: Number(element.dataset.lng),
+                        frete: obterTexto(element, ".tracking-point-frete") || "-",
+                        localizacao: obterTexto(element, ".tracking-point-localizacao") || "Não informada",
+                        dataHora: obterTexto(element, ".tracking-point-data-hora") || "-",
+                        observacao: obterTexto(element, ".tracking-point-observacao") || "Sem observação"
+                    };
+                })
+                .filter(function (point) {
+                    return Number.isFinite(point.lat) && Number.isFinite(point.lng);
+                });
+
+            if (!points.length) {
+                emptyElement.hidden = false;
+                mapElement.classList.add("tracking-map-muted");
+                if (statusElement) {
+                    statusElement.textContent = "Sem coordenadas";
+                }
+                return;
+            }
+
+            var hasSuspiciousOriginPoint = points.some(function (point) {
+                return Math.abs(point.lat) < 0.01 && Math.abs(point.lng) < 0.01;
+            });
+
+            if (warningElement && hasSuspiciousOriginPoint) {
+                warningElement.hidden = false;
+            }
+
+            resolverPontosSuspeitos(points).then(function (resolvedPoints) {
+                emptyElement.hidden = true;
+                if (statusElement) {
+                    statusElement.textContent = resolvedPoints.length > 1 ? resolvedPoints.length + " pontos na rota" : "Última posição";
+                }
+
+                var latestPoint = resolvedPoints[resolvedPoints.length - 1];
+                var map = L.map(mapElement, {
+                    zoomControl: true,
+                    scrollWheelZoom: false
+                }).setView([latestPoint.lat, latestPoint.lng], latestPoint.aproximado ? 12 : 13);
+
+                L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                    maxZoom: 19,
+                    attribution: "&copy; OpenStreetMap"
+                }).addTo(map);
+
+                var bounds = [];
+
+                resolvedPoints.forEach(function (point, index) {
+                    var marker = L.marker([point.lat, point.lng]).addTo(map);
+                    marker.bindPopup(criarPopup(point, index === resolvedPoints.length - 1));
+                    bounds.push([point.lat, point.lng]);
+
+                    if (index === resolvedPoints.length - 1) {
+                        marker.openPopup();
+                    }
+                });
+
+                if (resolvedPoints.length > 1) {
+                    L.polyline(bounds, {
+                        color: "#00C6FF",
+                        weight: 4,
+                        opacity: 0.86,
+                        lineJoin: "round"
+                    }).addTo(map);
+                    map.fitBounds(bounds, { padding: [28, 28] });
+                }
+
+                setTimeout(function () {
+                    map.invalidateSize();
+                }, 120);
+            });
+
+            function criarPopup(point, principal) {
+                var wrapper = document.createElement("div");
+                wrapper.className = "tracking-popup";
+
+                adicionarLinha(wrapper, principal ? "Frete principal" : "Frete", point.frete);
+                adicionarLinha(wrapper, "Localização", point.localizacao);
+                adicionarLinha(wrapper, "Data/hora", point.dataHora);
+                adicionarLinha(wrapper, "Observação", point.observacao);
+                if (point.aproximado) {
+                    adicionarLinha(wrapper, "Mapa", "Posição aproximada pela localização informada");
+                }
+
+                return wrapper;
+            }
+
+            function adicionarLinha(wrapper, label, value) {
+                var row = document.createElement("p");
+                var strong = document.createElement("strong");
+                var span = document.createElement("span");
+
+                strong.textContent = label;
+                span.textContent = value;
+                row.appendChild(strong);
+                row.appendChild(span);
+                wrapper.appendChild(row);
+            }
+
+            function obterTexto(element, selector) {
+                var child = element.querySelector(selector);
+                return child ? child.textContent.trim() : "";
+            }
+
+            function resolverPontosSuspeitos(points) {
+                if (typeof fetch !== "function") {
+                    return Promise.resolve(points);
+                }
+
+                return Promise.all(points.map(function (point) {
+                    if (Math.abs(point.lat) >= 0.01 || Math.abs(point.lng) >= 0.01 || !point.localizacao) {
+                        return Promise.resolve(point);
+                    }
+
+                    var query = point.localizacao + ", Brasil";
+                    var url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&q="
+                        + encodeURIComponent(query);
+
+                    return fetch(url, {
+                        headers: {
+                            "Accept": "application/json"
+                        }
+                    })
+                        .then(function (response) {
+                            return response.ok ? response.json() : [];
+                        })
+                        .then(function (results) {
+                            if (!results.length) {
+                                return point;
+                            }
+
+                            return Object.assign({}, point, {
+                                lat: Number(results[0].lat),
+                                lng: Number(results[0].lon),
+                                aproximado: true
+                            });
+                        })
+                        .catch(function () {
+                            return point;
+                        });
+                }));
+            }
+        })();
+    </script>
 </body>
 </html>

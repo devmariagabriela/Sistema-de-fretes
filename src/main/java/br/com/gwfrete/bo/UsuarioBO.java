@@ -82,6 +82,22 @@ public class UsuarioBO {
         }
     }
 
+    public List<Usuario> listarComFiltros(String nome, String email, PerfilUsuario perfil, StatusUsuario status)
+            throws CadastroException {
+        try {
+            List<Usuario> usuarios = usuarioDAO.listarComFiltros(normalizarFiltro(nome), normalizarFiltro(email),
+                    perfil, status);
+
+            for (Usuario usuario : usuarios) {
+                usuario.setSenha(null);
+            }
+
+            return usuarios;
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar os usuários.");
+        }
+    }
+
     public Usuario buscarPorId(Long id) throws CadastroException {
         if (id == null || id <= 0) {
             throw new CadastroException("Usuário inválido.");
@@ -127,6 +143,38 @@ public class UsuarioBO {
             usuario.setSenha(null);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível atualizar o usuário.");
+        }
+    }
+
+    public void inativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Usuário inválido.");
+        }
+
+        try {
+            if (usuarioDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Usuário não encontrado.");
+            }
+
+            usuarioDAO.inativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível desativar o usuário.");
+        }
+    }
+
+    public void ativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Usuário inválido.");
+        }
+
+        try {
+            if (usuarioDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Usuário não encontrado.");
+            }
+
+            usuarioDAO.ativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível ativar o usuário.");
         }
     }
 
@@ -196,6 +244,15 @@ public class UsuarioBO {
     private void prepararDadosUsuario(Usuario usuario) {
         usuario.setNome(usuario.getNome().trim());
         usuario.setEmail(usuario.getEmail().trim().toLowerCase());
+    }
+
+    private String normalizarFiltro(String valor) {
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
     }
 
     private enum PermissaoSistema {

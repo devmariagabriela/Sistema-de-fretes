@@ -59,6 +59,54 @@ public class FreteDAO {
         return fretes;
     }
 
+    public List<Frete> listarComFiltros(String codigo, String origem, String destino, String motorista,
+            String veiculo, StatusFrete status) throws SQLException {
+
+        StringBuilder sql = new StringBuilder("SELECT f.id, f.codigo, f.origem, f.destino, f.descricao_carga, "
+                + "f.peso_kg, f.valor_frete, f.data_saida, f.data_entrega, f.status, f.motorista_id, "
+                + "f.veiculo_id, f.data_criacao, m.nome AS motorista_nome, v.placa AS veiculo_placa, "
+                + "v.modelo AS veiculo_modelo "
+                + "FROM frete f "
+                + "INNER JOIN motorista m ON m.id = f.motorista_id "
+                + "INNER JOIN veiculo v ON v.id = f.veiculo_id "
+                + "WHERE 1 = 1");
+        List<Object> parametros = new ArrayList<>();
+
+        if (textoPreenchido(codigo)) {
+            sql.append(" AND UPPER(f.codigo) LIKE UPPER(?)");
+            parametros.add("%" + codigo.trim() + "%");
+        }
+
+        if (textoPreenchido(origem)) {
+            sql.append(" AND LOWER(f.origem) LIKE LOWER(?)");
+            parametros.add("%" + origem.trim() + "%");
+        }
+
+        if (textoPreenchido(destino)) {
+            sql.append(" AND LOWER(f.destino) LIKE LOWER(?)");
+            parametros.add("%" + destino.trim() + "%");
+        }
+
+        if (textoPreenchido(motorista)) {
+            sql.append(" AND LOWER(m.nome) LIKE LOWER(?)");
+            parametros.add("%" + motorista.trim() + "%");
+        }
+
+        if (textoPreenchido(veiculo)) {
+            sql.append(" AND (UPPER(v.placa) LIKE UPPER(?) OR LOWER(v.modelo) LIKE LOWER(?))");
+            parametros.add("%" + veiculo.trim() + "%");
+            parametros.add("%" + veiculo.trim() + "%");
+        }
+
+        if (status != null) {
+            sql.append(" AND f.status = ?::status_frete_enum");
+            parametros.add(status.name());
+        }
+
+        sql.append(" ORDER BY f.data_criacao DESC");
+        return executarConsultaFretes(sql.toString(), parametros);
+    }
+
     public Frete buscarPorId(Long id) throws SQLException {
         String sql = "SELECT f.id, f.codigo, f.origem, f.destino, f.descricao_carga, f.peso_kg, "
                 + "f.valor_frete, f.data_saida, f.data_entrega, f.status, f.motorista_id, f.veiculo_id, "
@@ -107,6 +155,24 @@ public class FreteDAO {
         return null;
     }
 
+    public String buscarUltimoCodigoSequencial() throws SQLException {
+        String sql = "SELECT codigo FROM frete "
+                + "WHERE codigo ~ '^FRT-[0-9]+$' "
+                + "ORDER BY CAST(SUBSTRING(codigo FROM 5) AS INTEGER) DESC "
+                + "LIMIT 1";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getString("codigo");
+            }
+        }
+
+        return null;
+    }
+
     public void atualizar(Frete frete) throws SQLException {
         String sql = "UPDATE frete "
                 + "SET codigo = ?, origem = ?, destino = ?, descricao_carga = ?, peso_kg = ?, valor_frete = ?, "
@@ -118,6 +184,17 @@ public class FreteDAO {
 
             preencherParametrosFrete(stmt, frete);
             stmt.setLong(12, frete.getId());
+            stmt.executeUpdate();
+        }
+    }
+
+    public void inativar(Long id) throws SQLException {
+        String sql = "UPDATE frete SET status = 'CANCELADO'::status_frete_enum WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
             stmt.executeUpdate();
         }
     }
@@ -145,6 +222,30 @@ public class FreteDAO {
         }
 
         stmt.setTimestamp(indice, Timestamp.valueOf(data));
+    }
+
+    private List<Frete> executarConsultaFretes(String sql, List<Object> parametros) throws SQLException {
+        List<Frete> fretes = new ArrayList<>();
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < parametros.size(); i++) {
+                stmt.setObject(i + 1, parametros.get(i));
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    fretes.add(mapearFrete(rs));
+                }
+            }
+        }
+
+        return fretes;
+    }
+
+    private boolean textoPreenchido(String valor) {
+        return valor != null && !valor.trim().isEmpty();
     }
 
     private Frete mapearFrete(ResultSet rs) throws SQLException {

@@ -1,16 +1,16 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GW FRETE | Fretes</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css?v=app-20260510-theme">
+    <script defer src="${pageContext.request.contextPath}/assets/js/theme.js?v=theme-20260510-ui"></script>
 </head>
-<body>
+<body class="theme-dark">
     <fmt:setLocale value="pt_BR"/>
     <main class="app-shell">
         <jsp:include page="/WEB-INF/views/includes/sidebar.jsp">
@@ -41,22 +41,58 @@
                 <p class="message message-error" role="alert">${mensagemErro}</p>
             </c:if>
 
-            <section class="summary-grid" aria-label="Resumo operacional de fretes">
-                <article class="summary-card">
-                    <span class="summary-label">Fretes cadastrados</span>
-                    <strong>${fn:length(fretes)}</strong>
-                    <small>Operações registradas no TMS</small>
-                </article>
-                <article class="summary-card">
-                    <span class="summary-label">Fluxo operacional</span>
-                    <strong>6 status</strong>
-                    <small>Agendamento, coleta, trânsito e entrega</small>
-                </article>
-                <article class="summary-card">
-                    <span class="summary-label">Recursos vinculados</span>
-                    <strong>Frota + motorista</strong>
-                    <small>Fretes sempre ligados à operação</small>
-                </article>
+            <section class="content-card filter-panel" aria-label="Filtros de fretes">
+                <div class="filter-panel-header">
+                    <div>
+                        <span class="summary-label">Filtros</span>
+                        <h2>Consultar fretes</h2>
+                    </div>
+                    <p>Localize operações por código, rota, recurso vinculado ou status logístico.</p>
+                </div>
+
+                <form class="report-filters-form" action="${pageContext.request.contextPath}/fretes" method="get">
+                    <div class="form-grid report-filters-grid">
+                        <div class="form-field">
+                            <label for="codigo">Código</label>
+                            <input id="codigo" name="codigo" type="text" value="${codigoFiltro}" placeholder="FRT-001">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="origem">Origem</label>
+                            <input id="origem" name="origem" type="text" value="${origemFiltro}" placeholder="Origem">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="destino">Destino</label>
+                            <input id="destino" name="destino" type="text" value="${destinoFiltro}" placeholder="Destino">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="motorista">Motorista</label>
+                            <input id="motorista" name="motorista" type="text" value="${motoristaFiltro}" placeholder="Nome do motorista">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="veiculo">Veículo</label>
+                            <input id="veiculo" name="veiculo" type="text" value="${veiculoFiltro}" placeholder="Placa ou modelo">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                <option value="">Todos os status</option>
+                                <c:forEach var="status" items="${statusFrete}">
+                                    <option value="${status.name()}" ${statusFiltro == status.name() ? 'selected' : ''}>${status.descricao}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="report-filters-actions">
+                        <button class="button button-primary" type="submit">Consultar</button>
+                        <a class="button button-secondary" href="${pageContext.request.contextPath}/fretes">Limpar filtros</a>
+                    </div>
+                </form>
             </section>
 
             <section class="content-card" aria-label="Fretes cadastrados">
@@ -109,6 +145,15 @@
                                         <td>
                                             <div class="row-actions">
                                                 <a class="button button-secondary" href="${pageContext.request.contextPath}/fretes/editar?id=${frete.id}">Editar</a>
+                                                <c:if test="${frete.status.name() != 'CANCELADO' && frete.status.name() != 'ENTREGUE'}">
+                                                    <button class="button button-danger" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/fretes/cancelar"
+                                                            data-id="${frete.id}"
+                                                            data-title="Cancelar frete"
+                                                            data-message="Deseja cancelar o frete ${frete.codigo}?"
+                                                            data-submit="Cancelar">Cancelar</button>
+                                                </c:if>
                                             </div>
                                         </td>
                                     </c:if>
@@ -127,5 +172,6 @@
             </section>
         </section>
     </main>
+    <jsp:include page="/WEB-INF/views/includes/confirmacaoExclusao.jsp" />
 </body>
 </html>

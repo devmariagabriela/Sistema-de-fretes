@@ -7,9 +7,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GW FRETE | Clientes</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css?v=app-20260510-theme">
+    <script defer src="${pageContext.request.contextPath}/assets/js/theme.js?v=theme-20260510-ui"></script>
 </head>
-<body>
+<body class="theme-dark">
     <main class="app-shell">
         <jsp:include page="/WEB-INF/views/includes/sidebar.jsp">
             <jsp:param name="ativo" value="clientes" />
@@ -37,6 +38,59 @@
             <c:if test="${not empty mensagemErro}">
                 <p class="message message-error" role="alert">${mensagemErro}</p>
             </c:if>
+
+            <section class="content-card filter-panel" aria-label="Filtros de clientes">
+                <div class="filter-panel-header">
+                    <div>
+                        <span class="summary-label">Filtros</span>
+                        <h2>Consultar clientes</h2>
+                    </div>
+                    <p>Refine a base por nome, documento, tipo, cidade ou status cadastral.</p>
+                </div>
+
+                <form class="report-filters-form" action="${pageContext.request.contextPath}/clientes" method="get">
+                    <div class="form-grid report-filters-grid">
+                        <div class="form-field">
+                            <label for="nome">Nome</label>
+                            <input id="nome" name="nome" type="text" value="${nomeFiltro}" placeholder="Nome do cliente">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="cpfCnpj">CPF/CNPJ</label>
+                            <input id="cpfCnpj" name="cpfCnpj" type="text" value="${cpfCnpjFiltro}" placeholder="Documento">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="tipo">Tipo</label>
+                            <select id="tipo" name="tipo">
+                                <option value="">Todos os tipos</option>
+                                <c:forEach var="tipo" items="${tiposCliente}">
+                                    <option value="${tipo.name()}" ${tipoFiltro == tipo.name() ? 'selected' : ''}>${tipo.descricao}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="cidade">Cidade</label>
+                            <input id="cidade" name="cidade" type="text" value="${cidadeFiltro}" placeholder="Cidade">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                <option value="">Todos os status</option>
+                                <option value="true" ${statusFiltro == 'true' ? 'selected' : ''}>Ativo</option>
+                                <option value="false" ${statusFiltro == 'false' ? 'selected' : ''}>Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="report-filters-actions">
+                        <button class="button button-primary" type="submit">Consultar</button>
+                        <a class="button button-secondary" href="${pageContext.request.contextPath}/clientes">Limpar filtros</a>
+                    </div>
+                </form>
+            </section>
 
             <section class="content-card" aria-label="Lista de clientes">
                 <div class="table-wrap">
@@ -78,7 +132,27 @@
                                     </td>
                                     <c:if test="${podeGerenciarClientes}">
                                         <td>
-                                            <a class="button button-secondary" href="${pageContext.request.contextPath}/clientes/editar?id=${cliente.id}">Editar</a>
+                                            <div class="row-actions">
+                                                <a class="button button-secondary" href="${pageContext.request.contextPath}/clientes/editar?id=${cliente.id}">Editar</a>
+                                                <c:if test="${cliente.status}">
+                                                    <button class="button button-danger" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/clientes/inativar"
+                                                            data-id="${cliente.id}"
+                                                            data-title="Inativar cliente"
+                                                            data-message="Deseja inativar o cliente ${cliente.nome}?"
+                                                            data-submit="Inativar">Inativar</button>
+                                                </c:if>
+                                                <c:if test="${!cliente.status}">
+                                                    <button class="button button-secondary" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/clientes/ativar"
+                                                            data-id="${cliente.id}"
+                                                            data-title="Ativar cliente"
+                                                            data-message="Deseja ativar o cliente ${cliente.nome}?"
+                                                            data-submit="Ativar">Ativar</button>
+                                                </c:if>
+                                            </div>
                                         </td>
                                     </c:if>
                                 </tr>
@@ -96,5 +170,6 @@
             </section>
         </section>
     </main>
+    <jsp:include page="/WEB-INF/views/includes/confirmacaoExclusao.jsp" />
 </body>
 </html>

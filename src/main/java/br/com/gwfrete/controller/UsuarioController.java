@@ -59,6 +59,10 @@ public class UsuarioController extends HttpServlet {
             salvarUsuario(request, response);
         } else if ("/atualizar".equals(rota)) {
             atualizarUsuario(request, response);
+        } else if ("/inativar".equals(rota)) {
+            inativarUsuario(request, response);
+        } else if ("/ativar".equals(rota)) {
+            ativarUsuario(request, response);
         } else {
             response.sendRedirect(request.getContextPath() + "/usuarios");
         }
@@ -68,7 +72,14 @@ public class UsuarioController extends HttpServlet {
             throws ServletException, IOException, CadastroException {
 
         consumirMensagemSessao(request);
-        request.setAttribute("usuarios", usuarioBO.listarTodos());
+        String nomeFiltro = obterParametroFiltro(request, "nome");
+        String emailFiltro = obterParametroFiltro(request, "email");
+        String perfilFiltro = obterParametroFiltro(request, "perfil");
+        String statusFiltro = obterParametroFiltro(request, "status");
+
+        request.setAttribute("usuarios", usuarioBO.listarComFiltros(nomeFiltro, emailFiltro,
+                obterPerfil(perfilFiltro), obterStatus(statusFiltro)));
+        prepararFiltrosLista(request, nomeFiltro, emailFiltro, perfilFiltro, statusFiltro);
         request.getRequestDispatcher(VIEW_LISTA).forward(request, response);
     }
 
@@ -76,7 +87,14 @@ public class UsuarioController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            request.setAttribute("usuarios", usuarioBO.listarTodos());
+            String nomeFiltro = obterParametroFiltro(request, "nome");
+            String emailFiltro = obterParametroFiltro(request, "email");
+            String perfilFiltro = obterParametroFiltro(request, "perfil");
+            String statusFiltro = obterParametroFiltro(request, "status");
+
+            request.setAttribute("usuarios", usuarioBO.listarComFiltros(nomeFiltro, emailFiltro,
+                    obterPerfil(perfilFiltro), obterStatus(statusFiltro)));
+            prepararFiltrosLista(request, nomeFiltro, emailFiltro, perfilFiltro, statusFiltro);
         } catch (CadastroException e) {
             request.setAttribute("mensagemErro", e.getMessage());
         }
@@ -138,6 +156,24 @@ public class UsuarioController extends HttpServlet {
         }
     }
 
+    private void inativarUsuario(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            usuarioBO.inativar(obterId(request));
+            redirecionarComMensagem(request, response, "Usuário desativado com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
+        }
+    }
+
+    private void ativarUsuario(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            usuarioBO.ativar(obterId(request));
+            redirecionarComMensagem(request, response, "Usuário ativado com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
+        }
+    }
+
     private Usuario montarUsuarioFormulario(HttpServletRequest request) {
         Usuario usuario = new Usuario();
         usuario.setNome(request.getParameter("nome"));
@@ -151,6 +187,16 @@ public class UsuarioController extends HttpServlet {
     private void prepararFormulario(HttpServletRequest request, String titulo, String acao) {
         request.setAttribute("tituloFormulario", titulo);
         request.setAttribute("acaoFormulario", acao);
+        request.setAttribute("perfis", PerfilUsuario.values());
+        request.setAttribute("statusUsuarios", StatusUsuario.values());
+    }
+
+    private void prepararFiltrosLista(HttpServletRequest request, String nomeFiltro, String emailFiltro,
+            String perfilFiltro, String statusFiltro) {
+        request.setAttribute("nomeFiltro", nomeFiltro);
+        request.setAttribute("emailFiltro", emailFiltro);
+        request.setAttribute("perfilFiltro", perfilFiltro);
+        request.setAttribute("statusFiltro", statusFiltro);
         request.setAttribute("perfis", PerfilUsuario.values());
         request.setAttribute("statusUsuarios", StatusUsuario.values());
     }
@@ -179,6 +225,13 @@ public class UsuarioController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/usuarios");
     }
 
+    private void redirecionarComErro(HttpServletRequest request, HttpServletResponse response, String mensagem)
+            throws IOException {
+
+        request.getSession().setAttribute("mensagemErro", mensagem);
+        response.sendRedirect(request.getContextPath() + "/usuarios");
+    }
+
     private void consumirMensagemSessao(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
@@ -197,6 +250,16 @@ public class UsuarioController extends HttpServlet {
     private String obterRota(HttpServletRequest request) {
         String pathInfo = request.getPathInfo();
         return pathInfo == null ? "" : pathInfo;
+    }
+
+    private String obterParametroFiltro(HttpServletRequest request, String nome) {
+        String valor = request.getParameter(nome);
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
     }
 
     private Long obterId(HttpServletRequest request) {

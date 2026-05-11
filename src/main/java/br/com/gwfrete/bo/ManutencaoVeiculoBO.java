@@ -11,9 +11,11 @@ import java.util.List;
 
 public class ManutencaoVeiculoBO {
     private final ManutencaoVeiculoDAO manutencaoVeiculoDAO;
+    private final NotificacaoBO notificacaoBO;
 
     public ManutencaoVeiculoBO() {
         this.manutencaoVeiculoDAO = new ManutencaoVeiculoDAO();
+        this.notificacaoBO = new NotificacaoBO();
     }
 
     public void salvar(ManutencaoVeiculo manutencao) throws CadastroException {
@@ -22,6 +24,7 @@ public class ManutencaoVeiculoBO {
 
         try {
             manutencaoVeiculoDAO.salvar(manutencao);
+            gerarNotificacoesAutomaticasSemBloquear();
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível salvar a manutenção do veículo.");
         }
@@ -30,6 +33,14 @@ public class ManutencaoVeiculoBO {
     public List<ManutencaoVeiculo> listarTodos() throws CadastroException {
         try {
             return manutencaoVeiculoDAO.listarTodos();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar as manutenções de veículos.");
+        }
+    }
+
+    public List<ManutencaoVeiculo> listarComFiltros(StatusManutencao status) throws CadastroException {
+        try {
+            return manutencaoVeiculoDAO.listarComFiltros(status);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível listar as manutenções de veículos.");
         }
@@ -61,8 +72,26 @@ public class ManutencaoVeiculoBO {
 
             validarTransicaoStatus(manutencaoAtual, manutencao);
             manutencaoVeiculoDAO.atualizar(manutencao);
+            gerarNotificacoesAutomaticasSemBloquear();
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível atualizar a manutenção do veículo.");
+        }
+    }
+
+    public void inativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Manutenção inválida.");
+        }
+
+        try {
+            if (manutencaoVeiculoDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Manutenção não encontrada.");
+            }
+
+            manutencaoVeiculoDAO.inativar(id);
+            gerarNotificacoesAutomaticasSemBloquear();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível cancelar a manutenção.");
         }
     }
 
@@ -173,5 +202,13 @@ public class ManutencaoVeiculoBO {
 
         String valorNormalizado = valor.trim();
         return valorNormalizado.isEmpty() ? null : valorNormalizado;
+    }
+
+    private void gerarNotificacoesAutomaticasSemBloquear() {
+        try {
+            notificacaoBO.gerarNotificacoesAutomaticas();
+        } catch (CadastroException e) {
+            // Notificações não devem impedir o fluxo de manutenção.
+        }
     }
 }

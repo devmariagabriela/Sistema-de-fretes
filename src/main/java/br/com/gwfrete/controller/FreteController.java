@@ -82,6 +82,8 @@ public class FreteController extends HttpServlet {
             salvarFrete(request, response);
         } else if ("/atualizar".equals(rota)) {
             atualizarFrete(request, response);
+        } else if ("/cancelar".equals(rota)) {
+            cancelarFrete(request, response);
         } else {
             response.sendRedirect(request.getContextPath() + "/fretes");
         }
@@ -91,8 +93,18 @@ public class FreteController extends HttpServlet {
             throws ServletException, IOException, CadastroException {
 
         consumirMensagemSessao(request);
-        request.setAttribute("fretes", freteBO.listarTodos());
+        String codigoFiltro = obterParametroFiltro(request, "codigo");
+        String origemFiltro = obterParametroFiltro(request, "origem");
+        String destinoFiltro = obterParametroFiltro(request, "destino");
+        String motoristaFiltro = obterParametroFiltro(request, "motorista");
+        String veiculoFiltro = obterParametroFiltro(request, "veiculo");
+        String statusFiltro = obterParametroFiltro(request, "status");
+
+        request.setAttribute("fretes", freteBO.listarComFiltros(codigoFiltro, origemFiltro, destinoFiltro,
+                motoristaFiltro, veiculoFiltro, obterStatus(statusFiltro)));
         request.setAttribute("podeGerenciarFretes", usuarioPodeGerenciar(obterUsuarioLogado(request)));
+        prepararFiltrosLista(request, codigoFiltro, origemFiltro, destinoFiltro, motoristaFiltro, veiculoFiltro,
+                statusFiltro);
         request.getRequestDispatcher(VIEW_LISTA).forward(request, response);
     }
 
@@ -100,7 +112,17 @@ public class FreteController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            request.setAttribute("fretes", freteBO.listarTodos());
+            String codigoFiltro = obterParametroFiltro(request, "codigo");
+            String origemFiltro = obterParametroFiltro(request, "origem");
+            String destinoFiltro = obterParametroFiltro(request, "destino");
+            String motoristaFiltro = obterParametroFiltro(request, "motorista");
+            String veiculoFiltro = obterParametroFiltro(request, "veiculo");
+            String statusFiltro = obterParametroFiltro(request, "status");
+
+            request.setAttribute("fretes", freteBO.listarComFiltros(codigoFiltro, origemFiltro, destinoFiltro,
+                    motoristaFiltro, veiculoFiltro, obterStatus(statusFiltro)));
+            prepararFiltrosLista(request, codigoFiltro, origemFiltro, destinoFiltro, motoristaFiltro, veiculoFiltro,
+                    statusFiltro);
         } catch (CadastroException e) {
             request.setAttribute("mensagemErro", e.getMessage());
         }
@@ -109,10 +131,22 @@ public class FreteController extends HttpServlet {
         request.getRequestDispatcher(VIEW_LISTA).forward(request, response);
     }
 
+    private void prepararFiltrosLista(HttpServletRequest request, String codigoFiltro, String origemFiltro,
+            String destinoFiltro, String motoristaFiltro, String veiculoFiltro, String statusFiltro) {
+        request.setAttribute("codigoFiltro", codigoFiltro);
+        request.setAttribute("origemFiltro", origemFiltro);
+        request.setAttribute("destinoFiltro", destinoFiltro);
+        request.setAttribute("motoristaFiltro", motoristaFiltro);
+        request.setAttribute("veiculoFiltro", veiculoFiltro);
+        request.setAttribute("statusFiltro", statusFiltro);
+        request.setAttribute("statusFrete", StatusFrete.values());
+    }
+
     private void abrirFormularioNovo(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, CadastroException {
 
         Frete frete = new Frete();
+        frete.setCodigo(freteBO.gerarProximoCodigo());
         frete.setStatus(StatusFrete.AGENDADO);
         frete.setMotorista(new Motorista());
         frete.setVeiculo(new Veiculo());
@@ -165,6 +199,15 @@ public class FreteController extends HttpServlet {
             request.setAttribute("frete", frete);
             prepararFormularioComTratamento(request, "Editar frete", request.getContextPath() + "/fretes/atualizar");
             request.getRequestDispatcher(VIEW_FORMULARIO).forward(request, response);
+        }
+    }
+
+    private void cancelarFrete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            freteBO.inativar(obterId(request));
+            redirecionarComMensagem(request, response, "Frete cancelado com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
         }
     }
 
@@ -265,6 +308,13 @@ public class FreteController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/fretes");
     }
 
+    private void redirecionarComErro(HttpServletRequest request, HttpServletResponse response, String mensagem)
+            throws IOException {
+
+        request.getSession().setAttribute("mensagemErro", mensagem);
+        response.sendRedirect(request.getContextPath() + "/fretes");
+    }
+
     private void consumirMensagemSessao(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
@@ -288,6 +338,16 @@ public class FreteController extends HttpServlet {
     private String obterRota(HttpServletRequest request) {
         String pathInfo = request.getPathInfo();
         return pathInfo == null ? "" : pathInfo;
+    }
+
+    private String obterParametroFiltro(HttpServletRequest request, String nome) {
+        String valor = request.getParameter(nome);
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
     }
 
     private Long obterId(HttpServletRequest request) {

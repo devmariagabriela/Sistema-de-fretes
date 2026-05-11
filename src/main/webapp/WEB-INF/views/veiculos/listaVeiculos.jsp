@@ -7,9 +7,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GW FRETE | Veículos</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css?v=app-20260510-theme">
+    <script defer src="${pageContext.request.contextPath}/assets/js/theme.js?v=theme-20260510-ui"></script>
 </head>
-<body>
+<body class="theme-dark">
     <main class="app-shell">
         <jsp:include page="/WEB-INF/views/includes/sidebar.jsp">
             <jsp:param name="ativo" value="veiculos" />
@@ -38,6 +39,55 @@
             <c:if test="${not empty mensagemErro}">
                 <p class="message message-error" role="alert">${mensagemErro}</p>
             </c:if>
+
+            <section class="content-card filter-panel" aria-label="Filtros de veículos">
+                <div class="filter-panel-header">
+                    <div>
+                        <span class="summary-label">Filtros</span>
+                        <h2>Consultar veículos</h2>
+                    </div>
+                    <p>Localize veículos por placa, modelo, tipo ou status operacional.</p>
+                </div>
+
+                <form class="report-filters-form" action="${pageContext.request.contextPath}/veiculos" method="get">
+                    <div class="form-grid report-filters-grid">
+                        <div class="form-field">
+                            <label for="placa">Placa</label>
+                            <input id="placa" name="placa" type="text" value="${placaFiltro}" placeholder="ABC-1234">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="modelo">Modelo</label>
+                            <input id="modelo" name="modelo" type="text" value="${modeloFiltro}" placeholder="Modelo">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="tipo">Tipo</label>
+                            <select id="tipo" name="tipo">
+                                <option value="">Todos os tipos</option>
+                                <c:forEach var="tipo" items="${tiposVeiculo}">
+                                    <option value="${tipo.name()}" ${tipoFiltro == tipo.name() ? 'selected' : ''}>${tipo.descricao}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                <option value="">Todos os status</option>
+                                <c:forEach var="status" items="${statusVeiculo}">
+                                    <option value="${status.name()}" ${statusFiltro == status.name() ? 'selected' : ''}>${status.descricao}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="report-filters-actions">
+                        <button class="button button-primary" type="submit">Consultar</button>
+                        <a class="button button-secondary" href="${pageContext.request.contextPath}/veiculos">Limpar filtros</a>
+                    </div>
+                </form>
+            </section>
 
             <section class="content-card" aria-label="Veículos cadastrados">
                 <div class="table-wrap">
@@ -80,6 +130,24 @@
                                         <td>
                                             <div class="row-actions">
                                                 <a class="button button-secondary" href="${pageContext.request.contextPath}/veiculos/editar?id=${veiculo.id}">Editar</a>
+                                                <c:if test="${veiculo.status.name() != 'INATIVO'}">
+                                                    <button class="button button-danger" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/veiculos/inativar"
+                                                            data-id="${veiculo.id}"
+                                                            data-title="Inativar veículo"
+                                                            data-message="Deseja inativar o veículo ${veiculo.placa}?"
+                                                            data-submit="Inativar">Inativar</button>
+                                                </c:if>
+                                                <c:if test="${veiculo.status.name() == 'INATIVO'}">
+                                                    <button class="button button-secondary" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/veiculos/ativar"
+                                                            data-id="${veiculo.id}"
+                                                            data-title="Ativar veículo"
+                                                            data-message="Deseja ativar o veículo ${veiculo.placa} como disponível?"
+                                                            data-submit="Ativar">Ativar</button>
+                                                </c:if>
                                             </div>
                                         </td>
                                     </c:if>
@@ -98,5 +166,6 @@
             </section>
         </section>
     </main>
+    <jsp:include page="/WEB-INF/views/includes/confirmacaoExclusao.jsp" />
 </body>
 </html>

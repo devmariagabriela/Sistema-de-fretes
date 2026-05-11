@@ -38,7 +38,7 @@ public class ContratoDAO {
     }
 
     public List<Contrato> listarTodos() throws SQLException {
-        String sql = sqlBase() + " ORDER BY co.data_criacao DESC";
+        String sql = sqlBase() + " WHERE co.status = 'ATIVO'::status_contrato_enum ORDER BY co.data_criacao DESC";
         List<Contrato> contratos = new ArrayList<>();
 
         try (Connection conn = ConexaoFactory.obterConexao();
@@ -47,6 +47,38 @@ public class ContratoDAO {
 
             while (rs.next()) {
                 contratos.add(mapearContrato(rs));
+            }
+        }
+
+        return contratos;
+    }
+
+    public List<Contrato> listarComFiltros(StatusContrato status) throws SQLException {
+        StringBuilder sql = new StringBuilder(sqlBase());
+        List<Object> parametros = new ArrayList<>();
+
+        if (status != null) {
+            sql.append(" WHERE co.status = ?::status_contrato_enum");
+            parametros.add(status.name());
+        } else {
+            sql.append(" WHERE co.status = 'ATIVO'::status_contrato_enum");
+        }
+
+        sql.append(" ORDER BY co.data_criacao DESC");
+
+        List<Contrato> contratos = new ArrayList<>();
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < parametros.size(); i++) {
+                stmt.setObject(i + 1, parametros.get(i));
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    contratos.add(mapearContrato(rs));
+                }
             }
         }
 
@@ -100,6 +132,41 @@ public class ContratoDAO {
 
             preencherParametrosContrato(stmt, contrato);
             stmt.setLong(10, contrato.getId());
+            stmt.executeUpdate();
+        }
+    }
+
+    public void inativar(Long id) throws SQLException {
+        String sql = "UPDATE contrato "
+                + "SET status = 'ENCERRADO'::status_contrato_enum, data_fim = COALESCE(data_fim, CURRENT_DATE) "
+                + "WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void suspender(Long id) throws SQLException {
+        alterarStatus(id, StatusContrato.SUSPENSO, false);
+    }
+
+    public void cancelar(Long id) throws SQLException {
+        alterarStatus(id, StatusContrato.CANCELADO, true);
+    }
+
+    private void alterarStatus(Long id, StatusContrato status, boolean preencherDataFim) throws SQLException {
+        String sql = preencherDataFim
+                ? "UPDATE contrato SET status = ?::status_contrato_enum, data_fim = COALESCE(data_fim, CURRENT_DATE) WHERE id = ?"
+                : "UPDATE contrato SET status = ?::status_contrato_enum WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, status.name());
+            stmt.setLong(2, id);
             stmt.executeUpdate();
         }
     }

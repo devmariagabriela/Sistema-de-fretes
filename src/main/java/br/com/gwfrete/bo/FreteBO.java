@@ -9,6 +9,7 @@ import br.com.gwfrete.model.Motorista;
 import br.com.gwfrete.model.StatusFrete;
 import br.com.gwfrete.model.StatusMotorista;
 import br.com.gwfrete.model.StatusVeiculo;
+import br.com.gwfrete.model.TipoNotificacao;
 import br.com.gwfrete.model.Veiculo;
 
 import java.sql.SQLException;
@@ -18,24 +19,32 @@ public class FreteBO {
     private final FreteDAO freteDAO;
     private final MotoristaDAO motoristaDAO;
     private final VeiculoDAO veiculoDAO;
+    private final NotificacaoBO notificacaoBO;
 
     public FreteBO() {
         this.freteDAO = new FreteDAO();
         this.motoristaDAO = new MotoristaDAO();
         this.veiculoDAO = new VeiculoDAO();
+        this.notificacaoBO = new NotificacaoBO();
     }
 
     public void salvar(Frete frete) throws CadastroException {
         aplicarPadroesCadastro(frete);
-        validarCadastro(frete);
 
         try {
+            if (frete.getCodigo() == null || frete.getCodigo().trim().isEmpty()) {
+                frete.setCodigo(gerarProximoCodigoComTratamento());
+            }
+
+            validarCadastro(frete);
+
             if (freteDAO.buscarPorCodigo(frete.getCodigo()) != null) {
                 throw new CadastroException("Já existe frete cadastrado com este código.");
             }
 
             validarRecursosOperacionais(frete);
             freteDAO.salvar(frete);
+            registrarNotificacaoFrete(frete);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível salvar o frete.");
         }
@@ -44,6 +53,16 @@ public class FreteBO {
     public List<Frete> listarTodos() throws CadastroException {
         try {
             return freteDAO.listarTodos();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar os fretes.");
+        }
+    }
+
+    public List<Frete> listarComFiltros(String codigo, String origem, String destino, String motorista,
+            String veiculo, StatusFrete status) throws CadastroException {
+        try {
+            return freteDAO.listarComFiltros(normalizarFiltro(codigo), normalizarFiltro(origem),
+                    normalizarFiltro(destino), normalizarFiltro(motorista), normalizarFiltro(veiculo), status);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível listar os fretes.");
         }
@@ -61,10 +80,17 @@ public class FreteBO {
         }
     }
 
+    public String gerarProximoCodigo() throws CadastroException {
+        try {
+            return gerarProximoCodigoComTratamento();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível gerar o próximo código do frete.");
+        }
+    }
+
     public void atualizar(Frete frete) throws CadastroException {
         validarIdentificador(frete);
         aplicarPadroesAtualizacao(frete);
-        validarCamposComuns(frete);
 
         try {
             Frete freteAtual = freteDAO.buscarPorId(frete.getId());
@@ -72,6 +98,9 @@ public class FreteBO {
             if (freteAtual == null) {
                 throw new CadastroException("Frete não encontrado.");
             }
+
+            frete.setCodigo(freteAtual.getCodigo());
+            validarCamposComuns(frete);
 
             validarAlteracaoStatus(freteAtual, frete);
 
@@ -82,8 +111,37 @@ public class FreteBO {
 
             validarRecursosOperacionais(frete);
             freteDAO.atualizar(frete);
+            registrarNotificacaoFrete(frete);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível atualizar o frete.");
+        }
+    }
+
+    public void inativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Frete inválido.");
+        }
+
+        try {
+            Frete frete = freteDAO.buscarPorId(id);
+
+            if (frete == null) {
+                throw new CadastroException("Frete não encontrado.");
+            }
+
+            if (frete.getStatus() == StatusFrete.CANCELADO) {
+                throw new CadastroException("Frete já está cancelado.");
+            }
+
+            if (frete.getStatus() == StatusFrete.ENTREGUE) {
+                throw new CadastroException("Frete entregue não pode ser cancelado.");
+            }
+
+            freteDAO.inativar(id);
+            frete.setStatus(StatusFrete.CANCELADO);
+            registrarNotificacaoFrete(frete);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível cancelar o frete.");
         }
     }
 
@@ -166,6 +224,30 @@ public class FreteBO {
         }
     }
 
+    private String normalizarFiltro(String valor) {
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
+    }
+
+    private String gerarProximoCodigoComTratamento() throws SQLException {
+        String ultimoCodigo = freteDAO.buscarUltimoCodigoSequencial();
+        int proximoNumero = 1;
+
+        if (ultimoCodigo != null && ultimoCodigo.startsWith("FRT-")) {
+            try {
+                proximoNumero = Integer.parseInt(ultimoCodigo.substring(4)) + 1;
+            } catch (NumberFormatException e) {
+                proximoNumero = 1;
+            }
+        }
+
+        return String.format("FRT-%03d", proximoNumero);
+    }
+
     private void validarRecursosOperacionais(Frete frete) throws SQLException, CadastroException {
         Motorista motorista = motoristaDAO.buscarPorId(frete.getMotorista().getId());
         if (motorista == null) {
@@ -197,6 +279,22 @@ public class FreteBO {
         if (freteAtual.getStatus() == StatusFrete.ENTREGUE
                 && freteAtualizado.getStatus() == StatusFrete.EM_TRANSITO) {
             throw new CadastroException("Frete entregue não pode voltar para em trânsito.");
+        }
+    }
+
+    private void registrarNotificacaoFrete(Frete frete) {
+        try {
+            if (frete.getStatus() == StatusFrete.CANCELADO) {
+                notificacaoBO.registrarEvento(TipoNotificacao.FRETE_CANCELADO, "Frete cancelado",
+                        "Frete " + frete.getCodigo() + " foi cancelado.", frete.getId(), "FRETE");
+            } else if (frete.getStatus() == StatusFrete.ENTREGUE) {
+                notificacaoBO.registrarEvento(TipoNotificacao.OUTROS, "Frete entregue",
+                        "Frete " + frete.getCodigo() + " foi entregue.", frete.getId(), "FRETE");
+            }
+
+            notificacaoBO.gerarNotificacoesAutomaticas();
+        } catch (CadastroException e) {
+            // Notificações não devem impedir o fluxo operacional principal.
         }
     }
 }

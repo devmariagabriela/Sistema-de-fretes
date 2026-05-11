@@ -7,9 +7,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GW FRETE | Relatório de Fretes</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css?v=app-20260510-theme">
+    <script defer src="${pageContext.request.contextPath}/assets/js/theme.js?v=theme-20260510-ui"></script>
 </head>
-<body>
+<body class="theme-dark">
     <fmt:setLocale value="pt_BR"/>
     <main class="app-shell">
         <jsp:include page="/WEB-INF/views/includes/sidebar.jsp">
@@ -25,8 +26,7 @@
                 </div>
                 <div class="page-actions">
                     <jsp:include page="/WEB-INF/views/includes/header.jsp" />
-                    <button class="button button-primary" type="submit" form="relatorio-filtros-form">Gerar relatório</button>
-                    <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/fretes/pdf${queryStringFiltros}" target="_blank" rel="noopener">Exportar PDF</a>
+                    <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios">Central de relatórios</a>
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/fretes">Fretes</a>
                 </div>
@@ -82,8 +82,8 @@
                     </div>
 
                     <div class="report-filters-actions">
-                        <button class="button button-primary" type="submit">Gerar relatório</button>
                         <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/fretes">Limpar filtros</a>
+                        <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/fretes/pdf${queryStringFiltros}" target="_blank" rel="noopener">Exportar PDF</a>
                     </div>
                 </form>
             </section>

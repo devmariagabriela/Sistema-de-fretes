@@ -2,6 +2,7 @@ package br.com.gwfrete.bo;
 
 import br.com.gwfrete.dao.MotoristaDAO;
 import br.com.gwfrete.exception.CadastroException;
+import br.com.gwfrete.model.CategoriaCNH;
 import br.com.gwfrete.model.Motorista;
 import br.com.gwfrete.model.StatusMotorista;
 
@@ -13,9 +14,11 @@ public class MotoristaBO {
     private static final Pattern SOMENTE_DIGITOS = Pattern.compile("\\D");
 
     private final MotoristaDAO motoristaDAO;
+    private final NotificacaoBO notificacaoBO;
 
     public MotoristaBO() {
         this.motoristaDAO = new MotoristaDAO();
+        this.notificacaoBO = new NotificacaoBO();
     }
 
     public void salvar(Motorista motorista) throws CadastroException {
@@ -32,6 +35,7 @@ public class MotoristaBO {
             }
 
             motoristaDAO.salvar(motorista);
+            gerarNotificacoesAutomaticasSemBloquear();
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível salvar o motorista.");
         }
@@ -40,6 +44,16 @@ public class MotoristaBO {
     public List<Motorista> listarTodos() throws CadastroException {
         try {
             return motoristaDAO.listarTodos();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar os motoristas.");
+        }
+    }
+
+    public List<Motorista> listarComFiltros(String nome, String cpf, String cnhNumero, CategoriaCNH categoriaCnh,
+            StatusMotorista status) throws CadastroException {
+        try {
+            return motoristaDAO.listarComFiltros(normalizarFiltro(nome), normalizarDocumentoFiltro(cpf),
+                    normalizarDocumentoFiltro(cnhNumero), categoriaCnh, status);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível listar os motoristas.");
         }
@@ -80,8 +94,43 @@ public class MotoristaBO {
             }
 
             motoristaDAO.atualizar(motorista);
+            gerarNotificacoesAutomaticasSemBloquear();
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível atualizar o motorista.");
+        }
+    }
+
+    public void inativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Motorista inválido.");
+        }
+
+        try {
+            if (motoristaDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Motorista não encontrado.");
+            }
+
+            motoristaDAO.inativar(id);
+            gerarNotificacoesAutomaticasSemBloquear();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível inativar o motorista.");
+        }
+    }
+
+    public void ativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Motorista inválido.");
+        }
+
+        try {
+            if (motoristaDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Motorista não encontrado.");
+            }
+
+            motoristaDAO.ativar(id);
+            gerarNotificacoesAutomaticasSemBloquear();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível ativar o motorista.");
         }
     }
 
@@ -182,5 +231,31 @@ public class MotoristaBO {
 
     private String removerCaracteresNaoNumericos(String valor) {
         return SOMENTE_DIGITOS.matcher(valor.trim()).replaceAll("");
+    }
+
+    private String normalizarFiltro(String valor) {
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
+    }
+
+    private String normalizarDocumentoFiltro(String valor) {
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = SOMENTE_DIGITOS.matcher(valor.trim()).replaceAll("");
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
+    }
+
+    private void gerarNotificacoesAutomaticasSemBloquear() {
+        try {
+            notificacaoBO.gerarNotificacoesAutomaticas();
+        } catch (CadastroException e) {
+            // Notificações não devem impedir o fluxo de motoristas.
+        }
     }
 }

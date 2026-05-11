@@ -4,6 +4,7 @@ import br.com.gwfrete.dao.FaturaDAO;
 import br.com.gwfrete.exception.CadastroException;
 import br.com.gwfrete.model.Fatura;
 import br.com.gwfrete.model.StatusFatura;
+import br.com.gwfrete.model.TipoNotificacao;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -11,9 +12,11 @@ import java.util.List;
 
 public class FaturaBO {
     private final FaturaDAO faturaDAO;
+    private final NotificacaoBO notificacaoBO;
 
     public FaturaBO() {
         this.faturaDAO = new FaturaDAO();
+        this.notificacaoBO = new NotificacaoBO();
     }
 
     public void salvar(Fatura fatura) throws CadastroException {
@@ -26,6 +29,7 @@ public class FaturaBO {
             }
 
             faturaDAO.salvar(fatura);
+            registrarNotificacaoFatura(fatura);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível salvar a fatura.");
         }
@@ -34,6 +38,14 @@ public class FaturaBO {
     public List<Fatura> listarTodos() throws CadastroException {
         try {
             return faturaDAO.listarTodos();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar as faturas.");
+        }
+    }
+
+    public List<Fatura> listarComFiltros(StatusFatura status) throws CadastroException {
+        try {
+            return faturaDAO.listarComFiltros(status);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível listar as faturas.");
         }
@@ -70,8 +82,47 @@ public class FaturaBO {
 
             validarTransicaoPagamento(faturaAtual, fatura);
             faturaDAO.atualizar(fatura);
+            registrarNotificacaoFatura(fatura);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível atualizar a fatura.");
+        }
+    }
+
+    public void inativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Fatura inválida.");
+        }
+
+        try {
+            if (faturaDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Fatura não encontrada.");
+            }
+
+            faturaDAO.inativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível cancelar a fatura.");
+        }
+    }
+
+    public void marcarComoPago(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Fatura inválida.");
+        }
+
+        try {
+            Fatura fatura = faturaDAO.buscarPorId(id);
+
+            if (fatura == null) {
+                throw new CadastroException("Fatura não encontrada.");
+            }
+
+            if (fatura.getStatus() == StatusFatura.CANCELADO) {
+                throw new CadastroException("Fatura cancelada não pode ser marcada como paga.");
+            }
+
+            faturaDAO.marcarComoPago(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível marcar a fatura como paga.");
         }
     }
 
@@ -166,6 +217,22 @@ public class FaturaBO {
         if (fatura.getObservacao() != null) {
             String observacao = fatura.getObservacao().trim();
             fatura.setObservacao(observacao.isEmpty() ? null : observacao);
+        }
+    }
+
+    private void registrarNotificacaoFatura(Fatura fatura) {
+        try {
+            if (fatura.getStatus() == StatusFatura.PAGO) {
+                notificacaoBO.registrarEvento(TipoNotificacao.OUTROS, "Fatura paga",
+                        "Fatura " + fatura.getNumero() + " foi marcada como paga.", fatura.getId(), "FATURA");
+            } else if (fatura.getStatus() == StatusFatura.VENCIDO) {
+                notificacaoBO.registrarEvento(TipoNotificacao.FATURA_VENCIDA, "Fatura vencida",
+                        "Fatura " + fatura.getNumero() + " está vencida.", fatura.getId(), "FATURA");
+            }
+
+            notificacaoBO.gerarNotificacoesAutomaticas();
+        } catch (CadastroException e) {
+            // Notificações não devem impedir o fluxo financeiro principal.
         }
     }
 }

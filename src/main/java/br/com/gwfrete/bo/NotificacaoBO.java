@@ -4,6 +4,7 @@ import br.com.gwfrete.dao.NotificacaoDAO;
 import br.com.gwfrete.exception.CadastroException;
 import br.com.gwfrete.model.Notificacao;
 import br.com.gwfrete.model.StatusNotificacao;
+import br.com.gwfrete.model.TipoNotificacao;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -20,14 +21,34 @@ public class NotificacaoBO {
         validarCamposObrigatorios(notificacao);
 
         try {
-            notificacaoDAO.salvar(notificacao);
+            notificacaoDAO.salvarSeNaoExistir(notificacao);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível salvar a notificação.");
         }
     }
 
+    public void registrarEvento(TipoNotificacao tipo, String titulo, String mensagem, Long referenciaId,
+            String referenciaTipo) throws CadastroException {
+        Notificacao notificacao = new Notificacao();
+        notificacao.setTipo(tipo);
+        notificacao.setTitulo(titulo);
+        notificacao.setMensagem(mensagem);
+        notificacao.setReferenciaId(referenciaId);
+        notificacao.setReferenciaTipo(referenciaTipo);
+        salvar(notificacao);
+    }
+
+    public void gerarNotificacoesAutomaticas() throws CadastroException {
+        try {
+            notificacaoDAO.gerarNotificacoesAutomaticasPorDatas();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível gerar notificações automáticas.");
+        }
+    }
+
     public List<Notificacao> listarTodas() throws CadastroException {
         try {
+            notificacaoDAO.gerarNotificacoesAutomaticasPorDatas();
             return notificacaoDAO.listarTodas();
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível listar as notificações.");
@@ -36,6 +57,7 @@ public class NotificacaoBO {
 
     public List<Notificacao> listarNaoLidas() throws CadastroException {
         try {
+            notificacaoDAO.gerarNotificacoesAutomaticasPorDatas();
             return notificacaoDAO.listarNaoLidas();
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível listar as notificações não lidas.");
@@ -82,6 +104,10 @@ public class NotificacaoBO {
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível arquivar a notificação.");
         }
+    }
+
+    public void inativar(Long id) throws CadastroException {
+        arquivar(id);
     }
 
     private void validarCamposObrigatorios(Notificacao notificacao) throws CadastroException {

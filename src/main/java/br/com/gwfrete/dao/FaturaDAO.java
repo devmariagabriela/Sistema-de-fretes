@@ -40,7 +40,7 @@ public class FaturaDAO {
     }
 
     public List<Fatura> listarTodos() throws SQLException {
-        String sql = sqlBase() + " ORDER BY fa.data_criacao DESC";
+        String sql = sqlBase() + " WHERE fa.status <> 'CANCELADO'::status_fatura_enum ORDER BY fa.data_criacao DESC";
 
         List<Fatura> faturas = new ArrayList<>();
 
@@ -50,6 +50,38 @@ public class FaturaDAO {
 
             while (rs.next()) {
                 faturas.add(mapearFatura(rs));
+            }
+        }
+
+        return faturas;
+    }
+
+    public List<Fatura> listarComFiltros(StatusFatura status) throws SQLException {
+        StringBuilder sql = new StringBuilder(sqlBase());
+        List<Object> parametros = new ArrayList<>();
+
+        if (status != null) {
+            sql.append(" WHERE fa.status = ?::status_fatura_enum");
+            parametros.add(status.name());
+        } else {
+            sql.append(" WHERE fa.status <> 'CANCELADO'::status_fatura_enum");
+        }
+
+        sql.append(" ORDER BY fa.data_criacao DESC");
+
+        List<Fatura> faturas = new ArrayList<>();
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < parametros.size(); i++) {
+                stmt.setObject(i + 1, parametros.get(i));
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    faturas.add(mapearFatura(rs));
+                }
             }
         }
 
@@ -103,6 +135,30 @@ public class FaturaDAO {
 
             preencherParametrosFatura(stmt, fatura);
             stmt.setLong(10, fatura.getId());
+            stmt.executeUpdate();
+        }
+    }
+
+    public void inativar(Long id) throws SQLException {
+        String sql = "UPDATE fatura SET status = 'CANCELADO'::status_fatura_enum WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void marcarComoPago(Long id) throws SQLException {
+        String sql = "UPDATE fatura "
+                + "SET status = 'PAGO'::status_fatura_enum, data_pagamento = COALESCE(data_pagamento, CURRENT_DATE) "
+                + "WHERE id = ?";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
             stmt.executeUpdate();
         }
     }

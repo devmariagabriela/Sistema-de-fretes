@@ -55,6 +55,8 @@ public class NotificacaoController extends HttpServlet {
             marcarComoLida(request, response);
         } else if ("/arquivar".equals(rota)) {
             arquivar(request, response);
+        } else if ("/inativar".equals(rota)) {
+            inativarNotificacao(request, response);
         } else {
             response.sendRedirect(request.getContextPath() + "/notificacoes");
         }
@@ -95,6 +97,15 @@ public class NotificacaoController extends HttpServlet {
         try {
             notificacaoBO.arquivar(obterId(request));
             redirecionarComMensagem(request, response, "Notificação arquivada com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
+        }
+    }
+
+    private void inativarNotificacao(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            notificacaoBO.inativar(obterId(request));
+            redirecionarComMensagem(request, response, "Notificação excluída com sucesso.");
         } catch (CadastroException e) {
             redirecionarComErro(request, response, e.getMessage());
         }

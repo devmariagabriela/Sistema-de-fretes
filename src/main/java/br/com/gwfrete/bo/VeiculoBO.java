@@ -3,6 +3,7 @@ package br.com.gwfrete.bo;
 import br.com.gwfrete.dao.VeiculoDAO;
 import br.com.gwfrete.exception.CadastroException;
 import br.com.gwfrete.model.StatusVeiculo;
+import br.com.gwfrete.model.TipoVeiculo;
 import br.com.gwfrete.model.Veiculo;
 
 import java.math.BigDecimal;
@@ -44,6 +45,15 @@ public class VeiculoBO {
         }
     }
 
+    public List<Veiculo> listarComFiltros(String placa, TipoVeiculo tipo, StatusVeiculo status, String modelo)
+            throws CadastroException {
+        try {
+            return veiculoDAO.listarComFiltros(normalizarFiltro(placa), tipo, status, normalizarFiltro(modelo));
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar os veículos.");
+        }
+    }
+
     public Veiculo buscarPorId(Long id) throws CadastroException {
         if (id == null || id <= 0) {
             throw new CadastroException("Veículo inválido.");
@@ -77,6 +87,38 @@ public class VeiculoBO {
             veiculoDAO.atualizar(veiculo);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível atualizar o veículo.");
+        }
+    }
+
+    public void inativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Veículo inválido.");
+        }
+
+        try {
+            if (veiculoDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Veículo não encontrado.");
+            }
+
+            veiculoDAO.inativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível inativar o veículo.");
+        }
+    }
+
+    public void ativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Veículo inválido.");
+        }
+
+        try {
+            if (veiculoDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Veículo não encontrado.");
+            }
+
+            veiculoDAO.ativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível ativar o veículo.");
         }
     }
 
@@ -185,6 +227,15 @@ public class VeiculoBO {
         if (veiculo.getMarca() != null) {
             veiculo.setMarca(veiculo.getMarca().trim());
         }
+    }
+
+    private String normalizarFiltro(String valor) {
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
     }
 
     private void validarTransicaoManutencao(Veiculo veiculoAtual, Veiculo veiculoAtualizado) throws CadastroException {

@@ -14,10 +14,12 @@ import java.util.List;
 public class ContratoBO {
     private final ContratoDAO contratoDAO;
     private final ClienteDAO clienteDAO;
+    private final NotificacaoBO notificacaoBO;
 
     public ContratoBO() {
         this.contratoDAO = new ContratoDAO();
         this.clienteDAO = new ClienteDAO();
+        this.notificacaoBO = new NotificacaoBO();
     }
 
     public void salvar(Contrato contrato) throws CadastroException {
@@ -31,6 +33,7 @@ public class ContratoBO {
 
             carregarCliente(contrato);
             contratoDAO.salvar(contrato);
+            gerarNotificacoesAutomaticasSemBloquear();
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível salvar o contrato.");
         }
@@ -39,6 +42,14 @@ public class ContratoBO {
     public List<Contrato> listarTodos() throws CadastroException {
         try {
             return contratoDAO.listarTodos();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar os contratos.");
+        }
+    }
+
+    public List<Contrato> listarComFiltros(StatusContrato status) throws CadastroException {
+        try {
+            return contratoDAO.listarComFiltros(status);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível listar os contratos.");
         }
@@ -76,8 +87,59 @@ public class ContratoBO {
             validarTransicaoStatus(contratoAtual, contrato);
             carregarCliente(contrato);
             contratoDAO.atualizar(contrato);
+            gerarNotificacoesAutomaticasSemBloquear();
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível atualizar o contrato.");
+        }
+    }
+
+    public void inativar(Long id) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Contrato inválido.");
+        }
+
+        try {
+            if (contratoDAO.buscarPorId(id) == null) {
+                throw new CadastroException("Contrato não encontrado.");
+            }
+
+            contratoDAO.inativar(id);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível encerrar o contrato.");
+        }
+    }
+
+    public void suspender(Long id) throws CadastroException {
+        alterarStatus(id, StatusContrato.SUSPENSO, "suspender");
+    }
+
+    public void cancelar(Long id) throws CadastroException {
+        alterarStatus(id, StatusContrato.CANCELADO, "cancelar");
+    }
+
+    private void alterarStatus(Long id, StatusContrato status, String acao) throws CadastroException {
+        if (id == null || id <= 0) {
+            throw new CadastroException("Contrato inválido.");
+        }
+
+        try {
+            Contrato contrato = contratoDAO.buscarPorId(id);
+            if (contrato == null) {
+                throw new CadastroException("Contrato não encontrado.");
+            }
+
+            if (contrato.getStatus() == StatusContrato.CANCELADO || contrato.getStatus() == StatusContrato.ENCERRADO) {
+                throw new CadastroException("Contrato " + contrato.getStatus().getDescricao().toLowerCase()
+                        + " não pode ter o status alterado por ação rápida.");
+            }
+
+            if (status == StatusContrato.SUSPENSO) {
+                contratoDAO.suspender(id);
+            } else if (status == StatusContrato.CANCELADO) {
+                contratoDAO.cancelar(id);
+            }
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível " + acao + " o contrato.");
         }
     }
 
@@ -184,5 +246,13 @@ public class ContratoBO {
 
         String valorNormalizado = valor.trim();
         return valorNormalizado.isEmpty() ? null : valorNormalizado;
+    }
+
+    private void gerarNotificacoesAutomaticasSemBloquear() {
+        try {
+            notificacaoBO.gerarNotificacoesAutomaticas();
+        } catch (CadastroException e) {
+            // Notificações não devem impedir o fluxo de contratos.
+        }
     }
 }

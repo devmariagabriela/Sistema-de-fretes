@@ -72,6 +72,10 @@ public class ClienteController extends HttpServlet {
             salvarCliente(request, response);
         } else if ("/atualizar".equals(rota)) {
             atualizarCliente(request, response);
+        } else if ("/inativar".equals(rota)) {
+            inativarCliente(request, response);
+        } else if ("/ativar".equals(rota)) {
+            ativarCliente(request, response);
         } else {
             response.sendRedirect(request.getContextPath() + "/clientes");
         }
@@ -81,8 +85,16 @@ public class ClienteController extends HttpServlet {
             throws ServletException, IOException, CadastroException {
 
         consumirMensagemSessao(request);
-        request.setAttribute("clientes", clienteBO.listarTodos());
+        String nomeFiltro = obterParametroFiltro(request, "nome");
+        String cpfCnpjFiltro = obterParametroFiltro(request, "cpfCnpj");
+        String tipoFiltro = obterParametroFiltro(request, "tipo");
+        String cidadeFiltro = obterParametroFiltro(request, "cidade");
+        String statusFiltro = obterParametroFiltro(request, "status");
+
+        request.setAttribute("clientes", clienteBO.listarComFiltros(nomeFiltro, cpfCnpjFiltro,
+                obterTipoCliente(tipoFiltro), cidadeFiltro, obterStatusFiltro(statusFiltro)));
         request.setAttribute("podeGerenciarClientes", usuarioPodeGerenciar(obterUsuarioLogado(request)));
+        prepararFiltrosLista(request, nomeFiltro, cpfCnpjFiltro, tipoFiltro, cidadeFiltro, statusFiltro);
         request.getRequestDispatcher(VIEW_LISTA).forward(request, response);
     }
 
@@ -90,7 +102,15 @@ public class ClienteController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            request.setAttribute("clientes", clienteBO.listarTodos());
+            String nomeFiltro = obterParametroFiltro(request, "nome");
+            String cpfCnpjFiltro = obterParametroFiltro(request, "cpfCnpj");
+            String tipoFiltro = obterParametroFiltro(request, "tipo");
+            String cidadeFiltro = obterParametroFiltro(request, "cidade");
+            String statusFiltro = obterParametroFiltro(request, "status");
+
+            request.setAttribute("clientes", clienteBO.listarComFiltros(nomeFiltro, cpfCnpjFiltro,
+                    obterTipoCliente(tipoFiltro), cidadeFiltro, obterStatusFiltro(statusFiltro)));
+            prepararFiltrosLista(request, nomeFiltro, cpfCnpjFiltro, tipoFiltro, cidadeFiltro, statusFiltro);
         } catch (CadastroException e) {
             request.setAttribute("mensagemErro", e.getMessage());
         }
@@ -156,6 +176,24 @@ public class ClienteController extends HttpServlet {
         }
     }
 
+    private void inativarCliente(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            clienteBO.inativar(obterId(request));
+            redirecionarComMensagem(request, response, "Cliente inativado com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
+        }
+    }
+
+    private void ativarCliente(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            clienteBO.ativar(obterId(request));
+            redirecionarComMensagem(request, response, "Cliente ativado com sucesso.");
+        } catch (CadastroException e) {
+            redirecionarComErro(request, response, e.getMessage());
+        }
+    }
+
     private Cliente montarClienteFormulario(HttpServletRequest request) {
         Cliente cliente = new Cliente();
         cliente.setNome(request.getParameter("nome"));
@@ -175,6 +213,16 @@ public class ClienteController extends HttpServlet {
     private void prepararFormulario(HttpServletRequest request, String titulo, String acao) {
         request.setAttribute("tituloFormulario", titulo);
         request.setAttribute("acaoFormulario", acao);
+        request.setAttribute("tiposCliente", TipoCliente.values());
+    }
+
+    private void prepararFiltrosLista(HttpServletRequest request, String nomeFiltro, String cpfCnpjFiltro,
+            String tipoFiltro, String cidadeFiltro, String statusFiltro) {
+        request.setAttribute("nomeFiltro", nomeFiltro);
+        request.setAttribute("cpfCnpjFiltro", cpfCnpjFiltro);
+        request.setAttribute("tipoFiltro", tipoFiltro);
+        request.setAttribute("cidadeFiltro", cidadeFiltro);
+        request.setAttribute("statusFiltro", statusFiltro);
         request.setAttribute("tiposCliente", TipoCliente.values());
     }
 
@@ -226,6 +274,13 @@ public class ClienteController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/clientes");
     }
 
+    private void redirecionarComErro(HttpServletRequest request, HttpServletResponse response, String mensagem)
+            throws IOException {
+
+        request.getSession().setAttribute("mensagemErro", mensagem);
+        response.sendRedirect(request.getContextPath() + "/clientes");
+    }
+
     private void consumirMensagemSessao(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
@@ -251,6 +306,16 @@ public class ClienteController extends HttpServlet {
         return pathInfo == null ? "" : pathInfo;
     }
 
+    private String obterParametroFiltro(HttpServletRequest request, String nome) {
+        String valor = request.getParameter(nome);
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
+    }
+
     private Long obterId(HttpServletRequest request) {
         try {
             String id = request.getParameter("id");
@@ -271,6 +336,14 @@ public class ClienteController extends HttpServlet {
     private Boolean obterStatus(String valor) {
         if (valor == null || valor.trim().isEmpty()) {
             return Boolean.TRUE;
+        }
+
+        return Boolean.valueOf(valor);
+    }
+
+    private Boolean obterStatusFiltro(String valor) {
+        if (valor == null || valor.trim().isEmpty()) {
+            return null;
         }
 
         return Boolean.valueOf(valor);
