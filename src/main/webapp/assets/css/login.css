@@ -1873,6 +1873,7 @@ a {
 }
 
 .sidebar-brand svg,
+.dashboard-sidebar svg,
 .dashboard-topbar svg,
 .live-badge svg,
 .kpi-icon svg,
@@ -1945,20 +1946,31 @@ a {
     background: var(--dash-accent);
 }
 
-.dashboard-sidebar .nav-mark {
-    width: 15px;
-    height: 15px;
-    border: 1.7px solid currentColor;
-    border-radius: 4px;
-    opacity: 0.9;
+.dashboard-sidebar .nav-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+    color: currentColor;
+    opacity: 0.82;
+    transition: color 0.15s ease, opacity 0.15s ease, transform 0.15s ease;
 }
 
-.app-sidebar .nav-mark {
-    display: none;
+.dashboard-sidebar .nav-icon svg {
+    width: 18px;
+    height: 18px;
 }
 
-.dashboard-sidebar a.active .nav-mark {
+.dashboard-sidebar a.active .nav-icon,
+.dashboard-sidebar a:hover .nav-icon {
     color: var(--dash-accent);
+    opacity: 1;
+}
+
+.dashboard-sidebar a:hover .nav-icon {
+    transform: translateX(1px);
 }
 
 .sidebar-footer {

@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GW FRETE | Dashboard</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css?v=dashboard-20260510-theme">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css?v=dashboard-20260511-nav-icons">
     <script defer src="${pageContext.request.contextPath}/assets/js/theme.js?v=theme-20260510-ui"></script>
 </head>
 <body class="dashboard-page theme-dark">

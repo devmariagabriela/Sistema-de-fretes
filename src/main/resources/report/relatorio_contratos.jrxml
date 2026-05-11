@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+    name="relatorio_contratos" pageWidth="842" pageHeight="595" orientation="Landscape"
+    columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20"
+    uuid="ad68c335-66f5-4ce4-b7ed-6eb041758ccd">
+
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+
+    <parameter name="GERADO_EM" class="java.lang.String"/>
+
+    <field name="numero" class="java.lang.String"/>
+    <field name="cliente" class="java.lang.String"/>
+    <field name="valorMensal" class="java.math.BigDecimal"/>
+    <field name="dataInicioFormatada" class="java.util.Date"/>
+    <field name="dataFimFormatada" class="java.util.Date"/>
+    <field name="status" class="br.com.gwfrete.model.StatusContrato"/>
+
+    <title>
+        <band height="62">
+            <textField>
+                <reportElement x="0" y="0" width="520" height="30" forecolor="#0B2344" uuid="c735a373-92d8-496b-bdbc-c47bb2b5a451"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="19" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Relatório Gerencial de Contratos"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="34" width="520" height="18" forecolor="#6B7280" uuid="4218f5fa-a18c-4e80-98fe-5316975837d4"/>
+                <textElement>
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["GW FRETE - visão consolidada da carteira contratual"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="522" y="8" width="280" height="20" forecolor="#1F2937" uuid="9c0cf13e-2a4a-4933-9d6e-12001ebda8ac"/>
+                <textElement textAlignment="Right">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Gerado em: " + $P{GERADO_EM}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="24">
+            <staticText>
+                <reportElement mode="Opaque" x="0" y="0" width="95" height="24" backcolor="#0B2344" forecolor="#FFFFFF" uuid="15680beb-b171-43b0-9f58-6df46f146624"/>
+                <box leftPadding="6" rightPadding="6"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[NÚMERO]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="95" y="0" width="255" height="24" backcolor="#0B2344" forecolor="#FFFFFF" uuid="9795a373-c3b6-48fd-8e31-507849319c6d"/>
+                <box leftPadding="6" rightPadding="6"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[CLIENTE]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="350" y="0" width="110" height="24" backcolor="#0B2344" forecolor="#FFFFFF" uuid="8a36ff90-f68f-4cb0-afb9-d87b30476ec4"/>
+                <box leftPadding="6" rightPadding="6"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[VALOR MENSAL]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="460" y="0" width="105" height="24" backcolor="#0B2344" forecolor="#FFFFFF" uuid="174fda60-74c0-4f28-90d9-8c3965bd0a58"/>
+                <box leftPadding="6" rightPadding="6"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[DATA INÍCIO]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="565" y="0" width="105" height="24" backcolor="#0B2344" forecolor="#FFFFFF" uuid="bb3d60fd-f955-4072-91a5-b50818b29d2f"/>
+                <box leftPadding="6" rightPadding="6"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[DATA FIM]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="670" y="0" width="132" height="24" backcolor="#0B2344" forecolor="#FFFFFF" uuid="ee168173-d2df-4131-80df-7a493dd5d714"/>
+                <box leftPadding="6" rightPadding="6"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[STATUS]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="22">
+            <textField isBlankWhenNull="true">
+                <reportElement x="0" y="0" width="95" height="22" forecolor="#1F2937" uuid="a5edbe65-9f14-42d0-91b9-0f601323f83b"/>
+                <box leftPadding="6" rightPadding="6" topPadding="4" bottomPadding="4">
+                    <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
+                </box>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{numero}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="95" y="0" width="255" height="22" forecolor="#1F2937" uuid="a5f2d40b-b4c9-4c8c-a184-0bb375d23dfe"/>
+                <box leftPadding="6" rightPadding="6" topPadding="4" bottomPadding="4">
+                    <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
+                </box>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{cliente}]]></textFieldExpression>
+            </textField>
+            <textField pattern="R$ #,##0.00" isBlankWhenNull="true">
+                <reportElement x="350" y="0" width="110" height="22" forecolor="#1F2937" uuid="e812c6aa-df84-4782-b83e-8626a712622b"/>
+                <box leftPadding="6" rightPadding="6" topPadding="4" bottomPadding="4">
+                    <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
+                </box>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{valorMensal}]]></textFieldExpression>
+            </textField>
+            <textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+                <reportElement x="460" y="0" width="105" height="22" forecolor="#1F2937" uuid="d68e03cb-91b6-4c87-8156-3dccb1298f0e"/>
+                <box leftPadding="6" rightPadding="6" topPadding="4" bottomPadding="4">
+                    <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
+                </box>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{dataInicioFormatada}]]></textFieldExpression>
+            </textField>
+            <textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+                <reportElement x="565" y="0" width="105" height="22" forecolor="#1F2937" uuid="5148f156-f1bc-40a1-a1e5-f71122f82436"/>
+                <box leftPadding="6" rightPadding="6" topPadding="4" bottomPadding="4">
+                    <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
+                </box>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{dataFimFormatada}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="670" y="0" width="132" height="22" forecolor="#1F2937" uuid="6f992ab0-45dd-42a6-88ff-a4bd79d528ba"/>
+                <box leftPadding="6" rightPadding="6" topPadding="4" bottomPadding="4">
+                    <bottomPen lineWidth="0.5" lineColor="#E5E7EB"/>
+                </box>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{status} == null ? "" : $F{status}.getDescricao()]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <pageFooter>
+        <band height="18">
+            <textField>
+                <reportElement x="0" y="0" width="220" height="18" forecolor="#6B7280" uuid="b2f1b609-6337-4542-a234-f180082c1735"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["GW FRETE"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="682" y="0" width="120" height="18" forecolor="#6B7280" uuid="cfa442ec-a1c6-4d33-b264-1fa294ee3f7f"/>
+                <textElement textAlignment="Right">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+</jasperReport>

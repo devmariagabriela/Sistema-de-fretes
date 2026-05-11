@@ -26,8 +26,7 @@
                 </div>
                 <div class="page-actions">
                     <jsp:include page="/WEB-INF/views/includes/header.jsp" />
-                    <button class="button button-primary" type="submit" form="relatorio-filtros-form">Gerar relatório</button>
-                    <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/fretes/pdf${queryStringFiltros}" target="_blank" rel="noopener">Exportar PDF</a>
+                    <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios">Central de relatórios</a>
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
                     <a class="button button-secondary" href="${pageContext.request.contextPath}/fretes">Fretes</a>
                 </div>
@@ -85,6 +84,7 @@
                     <div class="report-filters-actions">
                         <button class="button button-primary" type="submit">Gerar relatório</button>
                         <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/fretes">Limpar filtros</a>
+                        <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/fretes/pdf${queryStringFiltros}" target="_blank" rel="noopener">Exportar PDF</a>
                     </div>
                 </form>
             </section>

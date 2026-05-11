@@ -734,6 +734,9 @@ a {
 .badge-ativo,
 .badge-status-disponivel,
 .badge-motorista-ativo,
+.badge-contrato-ativo,
+.badge-fatura-pago,
+.badge-manutencao-concluida,
 .badge-frete-entregue,
 .badge-ocorrencia-entrega_realizada,
 .badge-vinculo-funcionario {
@@ -744,6 +747,10 @@ a {
 
 .badge-operador,
 .badge-status-manutencao,
+.badge-contrato-suspenso,
+.badge-fatura-pendente,
+.badge-manutencao-agendada,
+.badge-manutencao-em_andamento,
 .badge-cnh-vencida,
 .badge-frete-em_coleta,
 .badge-ocorrencia-tentativa_entrega {
@@ -755,6 +762,10 @@ a {
 .badge-bloqueado,
 .badge-status-inativo,
 .badge-motorista-suspenso,
+.badge-contrato-cancelado,
+.badge-fatura-vencido,
+.badge-fatura-cancelado,
+.badge-manutencao-cancelada,
 .badge-frete-cancelado,
 .badge-frete-ocorrencia,
 .badge-ocorrencia-avaria,
@@ -769,6 +780,7 @@ a {
 .badge-tipo-carreta,
 .badge-tipo-vuc,
 .badge-tipo-utilitario,
+.badge-contrato-encerrado,
 .badge-cnh-a,
 .badge-cnh-b,
 .badge-vinculo-terceiro,
@@ -1106,6 +1118,65 @@ a {
     font-size: 12px;
 }
 
+.report-hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 22px;
+}
+
+.report-hub-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 250px;
+    padding: 20px;
+}
+
+.report-hub-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--interactive-border);
+    border-radius: 8px;
+    background: var(--interactive-subtle);
+    color: var(--color-accent);
+}
+
+.report-hub-icon svg {
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.report-hub-card h2 {
+    margin: 18px 0 0;
+    color: var(--color-text);
+    font-size: 18px;
+    line-height: 1.25;
+}
+
+.report-hub-card p {
+    margin: 10px 0 18px;
+    color: var(--color-muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.report-hub-card .button {
+    margin-top: auto;
+    width: fit-content;
+}
+
+.report-hub-card-disabled {
+    opacity: 0.72;
+}
+
 .filter-card {
     padding: 18px;
 }
@@ -1148,6 +1219,10 @@ a {
 
 .report-filters-grid {
     grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.report-contract-filters-grid {
+    grid-template-columns: minmax(220px, 1.4fr) repeat(3, minmax(0, 1fr));
 }
 
 .report-filters-actions {
@@ -1287,7 +1362,8 @@ body.theme-high-contrast .notification-item:hover {
 }
 
 @media (max-width: 1100px) {
-    .report-filters-grid {
+    .report-filters-grid,
+    .report-contract-filters-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
@@ -1337,6 +1413,7 @@ body.theme-high-contrast .notification-item:hover {
     }
 
     .summary-grid,
+    .report-hub-grid,
     .timeline-grid {
         grid-template-columns: 1fr;
     }
@@ -1370,7 +1447,8 @@ body.theme-high-contrast .notification-item:hover {
 
     .app-sidebar nav,
     .form-grid,
-    .report-filters-grid {
+    .report-filters-grid,
+    .report-contract-filters-grid {
         grid-template-columns: 1fr;
     }
 

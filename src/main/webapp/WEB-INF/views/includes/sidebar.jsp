@@ -30,7 +30,7 @@
         <a href="${pageContext.request.contextPath}/rastreamentos" class="${param.ativo == 'rastreamentos' ? 'active' : ''}"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s7-4.7 7-11a7 7 0 0 0-14 0c0 6.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>Rastreamentos</a>
 
         <c:if test="${perfilLogado == 'ADMIN' || perfilLogado == 'GESTOR'}">
-            <a href="${pageContext.request.contextPath}/relatorios/fretes" class="${param.ativo == 'relatorios' ? 'active' : ''}"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M12 16V8"/><path d="M16 16v-3"/></svg></span>Relatórios</a>
+            <a href="${pageContext.request.contextPath}/relatorios" class="${param.ativo == 'relatorios' ? 'active' : ''}"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M12 16V8"/><path d="M16 16v-3"/></svg></span>Relatórios</a>
             <a href="${pageContext.request.contextPath}/financeiro" class="${param.ativo == 'financeiro' ? 'active' : ''}"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"/></svg></span>Financeiro</a>
             <a href="${pageContext.request.contextPath}/manutencoes" class="${param.ativo == 'manutencoes' ? 'active' : ''}"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a5 5 0 0 0-6.9 6.9L3 18v3h3l4.8-4.8a5 5 0 0 0 6.9-6.9l-3 3-3-3 3-3z"/></svg></span>Manutenções</a>
         </c:if>
