@@ -8,6 +8,7 @@
     <title>GW FRETE | ${tituloFormulario}</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css?v=app-20260510-theme">
     <script defer src="${pageContext.request.contextPath}/assets/js/theme.js?v=theme-20260510-ui"></script>
+    <script defer src="${pageContext.request.contextPath}/assets/js/mascaras.js?v=mask-20260510-clientes"></script>
 </head>
 <body class="theme-dark">
     <main class="app-shell">
@@ -33,7 +34,7 @@
             </c:if>
 
             <section class="content-card form-card" aria-label="Formulário de cliente">
-                <form action="${acaoFormulario}" method="post">
+                <form action="${acaoFormulario}" method="post" data-mask-form="cliente">
                     <c:if test="${not empty cliente.id}">
                         <input type="hidden" name="id" value="${cliente.id}">
                     </c:if>
@@ -56,7 +57,17 @@
 
                         <div class="form-field">
                             <label for="cpfCnpj">CPF/CNPJ</label>
-                            <input id="cpfCnpj" name="cpfCnpj" type="text" value="${cliente.cpfCnpj}" maxlength="18" required>
+                            <input
+                                id="cpfCnpj"
+                                name="cpfCnpj"
+                                type="text"
+                                value="${cliente.cpfCnpj}"
+                                maxlength="18"
+                                inputmode="numeric"
+                                autocomplete="off"
+                                aria-describedby="cpfCnpjFeedback"
+                                required>
+                            <small id="cpfCnpjFeedback" class="field-feedback" data-field-feedback="cpfCnpj" hidden></small>
                         </div>
 
                         <div class="form-field">
@@ -66,7 +77,7 @@
 
                         <div class="form-field">
                             <label for="telefone">Telefone</label>
-                            <input id="telefone" name="telefone" type="text" value="${cliente.telefone}" maxlength="20">
+                            <input id="telefone" name="telefone" type="text" value="${cliente.telefone}" maxlength="15" inputmode="numeric">
                         </div>
 
                         <div class="form-field">
@@ -86,12 +97,41 @@
 
                         <div class="form-field">
                             <label for="estado">Estado</label>
-                            <input id="estado" name="estado" type="text" value="${cliente.estado}" maxlength="2">
+                            <select id="estado" name="estado" autocomplete="address-level1">
+                                <option value="">Selecione</option>
+                                <option value="AC" ${cliente.estado == 'AC' ? 'selected' : ''}>AC</option>
+                                <option value="AL" ${cliente.estado == 'AL' ? 'selected' : ''}>AL</option>
+                                <option value="AP" ${cliente.estado == 'AP' ? 'selected' : ''}>AP</option>
+                                <option value="AM" ${cliente.estado == 'AM' ? 'selected' : ''}>AM</option>
+                                <option value="BA" ${cliente.estado == 'BA' ? 'selected' : ''}>BA</option>
+                                <option value="CE" ${cliente.estado == 'CE' ? 'selected' : ''}>CE</option>
+                                <option value="DF" ${cliente.estado == 'DF' ? 'selected' : ''}>DF</option>
+                                <option value="ES" ${cliente.estado == 'ES' ? 'selected' : ''}>ES</option>
+                                <option value="GO" ${cliente.estado == 'GO' ? 'selected' : ''}>GO</option>
+                                <option value="MA" ${cliente.estado == 'MA' ? 'selected' : ''}>MA</option>
+                                <option value="MT" ${cliente.estado == 'MT' ? 'selected' : ''}>MT</option>
+                                <option value="MS" ${cliente.estado == 'MS' ? 'selected' : ''}>MS</option>
+                                <option value="MG" ${cliente.estado == 'MG' ? 'selected' : ''}>MG</option>
+                                <option value="PA" ${cliente.estado == 'PA' ? 'selected' : ''}>PA</option>
+                                <option value="PB" ${cliente.estado == 'PB' ? 'selected' : ''}>PB</option>
+                                <option value="PR" ${cliente.estado == 'PR' ? 'selected' : ''}>PR</option>
+                                <option value="PE" ${cliente.estado == 'PE' ? 'selected' : ''}>PE</option>
+                                <option value="PI" ${cliente.estado == 'PI' ? 'selected' : ''}>PI</option>
+                                <option value="RJ" ${cliente.estado == 'RJ' ? 'selected' : ''}>RJ</option>
+                                <option value="RN" ${cliente.estado == 'RN' ? 'selected' : ''}>RN</option>
+                                <option value="RS" ${cliente.estado == 'RS' ? 'selected' : ''}>RS</option>
+                                <option value="RO" ${cliente.estado == 'RO' ? 'selected' : ''}>RO</option>
+                                <option value="RR" ${cliente.estado == 'RR' ? 'selected' : ''}>RR</option>
+                                <option value="SC" ${cliente.estado == 'SC' ? 'selected' : ''}>SC</option>
+                                <option value="SP" ${cliente.estado == 'SP' ? 'selected' : ''}>SP</option>
+                                <option value="SE" ${cliente.estado == 'SE' ? 'selected' : ''}>SE</option>
+                                <option value="TO" ${cliente.estado == 'TO' ? 'selected' : ''}>TO</option>
+                            </select>
                         </div>
 
                         <div class="form-field">
                             <label for="cep">CEP</label>
-                            <input id="cep" name="cep" type="text" value="${cliente.cep}" maxlength="9">
+                            <input id="cep" name="cep" type="text" value="${cliente.cep}" maxlength="9" inputmode="numeric" autocomplete="postal-code">
                         </div>
 
                         <div class="form-field">
