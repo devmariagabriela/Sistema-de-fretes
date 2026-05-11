@@ -1,6 +1,6 @@
 package br.com.gwfrete.filter;
 
-import br.com.gwfrete.model.Usuario;
+import br.com.gwfrete.usuario.Usuario;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
