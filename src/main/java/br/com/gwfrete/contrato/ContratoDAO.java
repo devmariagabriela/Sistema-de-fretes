@@ -18,6 +18,21 @@ import java.util.List;
 
 public class ContratoDAO {
 
+    public String gerarNumeroAutomatico() throws SQLException {
+        String sql = "SELECT 'CTR-' || LPAD(nextval('contrato_numero_seq')::text, 6, '0') AS numero";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getString("numero");
+            }
+        }
+
+        throw new SQLException("Não foi possível gerar o número do contrato.");
+    }
+
     public void salvar(Contrato contrato) throws SQLException {
         String sql = "INSERT INTO contrato (cliente_id, numero, descricao, valor_mensal, data_inicio, "
                 + "data_fim, reajuste_percentual, status, observacao) "

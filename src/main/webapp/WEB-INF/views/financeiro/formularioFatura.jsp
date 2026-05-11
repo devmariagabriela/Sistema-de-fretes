@@ -41,7 +41,7 @@
                     <div class="form-grid">
                         <div class="form-field">
                             <label for="numero">Número</label>
-                            <input id="numero" name="numero" type="text" value="${fatura.numero}" maxlength="30" required>
+                            <input id="numero" name="numero" type="text" value="${fatura.numero}" maxlength="30" placeholder="Gerado automaticamente" readonly>
                         </div>
 
                         <div class="form-field">
@@ -66,22 +66,22 @@
 
                         <div class="form-field">
                             <label for="valor">Valor</label>
-                            <input id="valor" name="valor" type="number" min="0.01" step="0.01" value="${fatura.valor}" required>
+                            <input id="valor" name="valor" type="text" inputmode="decimal" value="${fatura.valor}" required>
                         </div>
 
                         <div class="form-field">
                             <label for="dataEmissao">Data de emissão</label>
-                            <input id="dataEmissao" name="dataEmissao" type="date" value="${fatura.dataEmissao}" required>
+                            <input id="dataEmissao" name="dataEmissao" type="date" value="${fatura.dataEmissao}" data-max-today="true" required>
                         </div>
 
                         <div class="form-field">
                             <label for="dataVencimento">Data de vencimento</label>
-                            <input id="dataVencimento" name="dataVencimento" type="date" value="${fatura.dataVencimento}" required>
+                            <input id="dataVencimento" name="dataVencimento" type="date" value="${fatura.dataVencimento}" data-min-from="dataEmissao" required>
                         </div>
 
                         <div class="form-field">
                             <label for="dataPagamento">Data de pagamento</label>
-                            <input id="dataPagamento" name="dataPagamento" type="date" value="${fatura.dataPagamento}">
+                            <input id="dataPagamento" name="dataPagamento" type="date" value="${fatura.dataPagamento}" data-min-from="dataEmissao" data-max-today="true">
                         </div>
 
                         <div class="form-field">

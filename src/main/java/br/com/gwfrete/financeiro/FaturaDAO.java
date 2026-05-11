@@ -20,6 +20,21 @@ import java.util.List;
 
 public class FaturaDAO {
 
+    public String gerarNumeroAutomatico() throws SQLException {
+        String sql = "SELECT 'FAT-' || LPAD(nextval('fatura_numero_seq')::text, 6, '0') AS numero";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getString("numero");
+            }
+        }
+
+        throw new SQLException("Não foi possível gerar o número da fatura.");
+    }
+
     public void salvar(Fatura fatura) throws SQLException {
         String sql = "INSERT INTO fatura (frete_id, cliente_id, numero, valor, data_emissao, data_vencimento, "
                 + "data_pagamento, status, observacao) "
