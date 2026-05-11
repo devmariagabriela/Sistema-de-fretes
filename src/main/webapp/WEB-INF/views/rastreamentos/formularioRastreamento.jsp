@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GW FRETE | Novo rastreamento</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css?v=app-20260510">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css?v=app-20260510-notif">
 </head>
 <body>
     <main class="app-shell">
