@@ -155,6 +155,24 @@ public class FreteDAO {
         return null;
     }
 
+    public String buscarUltimoCodigoSequencial() throws SQLException {
+        String sql = "SELECT codigo FROM frete "
+                + "WHERE codigo ~ '^FRT-[0-9]+$' "
+                + "ORDER BY CAST(SUBSTRING(codigo FROM 5) AS INTEGER) DESC "
+                + "LIMIT 1";
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getString("codigo");
+            }
+        }
+
+        return null;
+    }
+
     public void atualizar(Frete frete) throws SQLException {
         String sql = "UPDATE frete "
                 + "SET codigo = ?, origem = ?, destino = ?, descricao_carga = ?, peso_kg = ?, valor_frete = ?, "

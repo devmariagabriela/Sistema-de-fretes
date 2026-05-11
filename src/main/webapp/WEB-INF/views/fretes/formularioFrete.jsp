@@ -41,7 +41,7 @@
                     <div class="form-grid">
                         <div class="form-field">
                             <label for="codigo">Código</label>
-                            <input id="codigo" name="codigo" type="text" value="${frete.codigo}" maxlength="20" placeholder="FRT-0001" required>
+                            <input id="codigo" name="codigo" type="text" value="${frete.codigo}" maxlength="20" placeholder="FRT-001" readonly required>
                         </div>
 
                         <div class="form-field">

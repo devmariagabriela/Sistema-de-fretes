@@ -144,6 +144,7 @@ public class FreteController extends HttpServlet {
             throws ServletException, IOException, CadastroException {
 
         Frete frete = new Frete();
+        frete.setCodigo(freteBO.gerarProximoCodigo());
         frete.setStatus(StatusFrete.AGENDADO);
         frete.setMotorista(new Motorista());
         frete.setVeiculo(new Veiculo());

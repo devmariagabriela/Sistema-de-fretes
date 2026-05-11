@@ -27,9 +27,14 @@ public class FreteBO {
 
     public void salvar(Frete frete) throws CadastroException {
         aplicarPadroesCadastro(frete);
-        validarCadastro(frete);
 
         try {
+            if (frete.getCodigo() == null || frete.getCodigo().trim().isEmpty()) {
+                frete.setCodigo(gerarProximoCodigoComTratamento());
+            }
+
+            validarCadastro(frete);
+
             if (freteDAO.buscarPorCodigo(frete.getCodigo()) != null) {
                 throw new CadastroException("Já existe frete cadastrado com este código.");
             }
@@ -71,10 +76,17 @@ public class FreteBO {
         }
     }
 
+    public String gerarProximoCodigo() throws CadastroException {
+        try {
+            return gerarProximoCodigoComTratamento();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível gerar o próximo código do frete.");
+        }
+    }
+
     public void atualizar(Frete frete) throws CadastroException {
         validarIdentificador(frete);
         aplicarPadroesAtualizacao(frete);
-        validarCamposComuns(frete);
 
         try {
             Frete freteAtual = freteDAO.buscarPorId(frete.getId());
@@ -82,6 +94,9 @@ public class FreteBO {
             if (freteAtual == null) {
                 throw new CadastroException("Frete não encontrado.");
             }
+
+            frete.setCodigo(freteAtual.getCodigo());
+            validarCamposComuns(frete);
 
             validarAlteracaoStatus(freteAtual, frete);
 
@@ -183,6 +198,21 @@ public class FreteBO {
 
         String valorNormalizado = valor.trim();
         return valorNormalizado.isEmpty() ? null : valorNormalizado;
+    }
+
+    private String gerarProximoCodigoComTratamento() throws SQLException {
+        String ultimoCodigo = freteDAO.buscarUltimoCodigoSequencial();
+        int proximoNumero = 1;
+
+        if (ultimoCodigo != null && ultimoCodigo.startsWith("FRT-")) {
+            try {
+                proximoNumero = Integer.parseInt(ultimoCodigo.substring(4)) + 1;
+            } catch (NumberFormatException e) {
+                proximoNumero = 1;
+            }
+        }
+
+        return String.format("FRT-%03d", proximoNumero);
     }
 
     private void validarRecursosOperacionais(Frete frete) throws SQLException, CadastroException {
