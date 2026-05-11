@@ -586,6 +586,151 @@ a {
     background: #FFFFFF;
 }
 
+.voice-assistant-widget {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    padding: 4px 12px 4px 8px;
+    border: 2px solid #FFFF00;
+    border-radius: 999px;
+    background: #000000;
+    color: #FFFF00;
+    cursor: pointer;
+    text-align: left;
+}
+
+.voice-assistant-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background: #FFFF00;
+    color: #000000;
+}
+
+.voice-assistant-icon svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.voice-assistant-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    line-height: 1.1;
+}
+
+.voice-assistant-copy strong,
+.voice-assistant-copy small {
+    color: #FFFF00;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.voice-assistant-copy small {
+    color: #FFFFFF;
+    font-size: 9px;
+}
+
+body.theme-high-contrast .voice-assistant-widget {
+    display: inline-flex;
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 10000;
+    min-height: 58px;
+    padding: 8px 16px 8px 10px;
+    border: 3px solid #FFFF00;
+    background: #000000;
+    box-shadow: 0 0 0 3px #000000, 0 0 0 6px #FFFFFF;
+}
+
+body.theme-high-contrast .voice-assistant-icon {
+    width: 42px;
+    height: 42px;
+}
+
+body.theme-high-contrast .voice-assistant-icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+body.theme-high-contrast .voice-assistant-copy strong {
+    font-size: 13px;
+}
+
+body.theme-high-contrast .voice-assistant-copy small {
+    font-size: 11px;
+}
+
+.voice-assistant-panel {
+    display: none;
+    position: fixed;
+    right: 24px;
+    bottom: 104px;
+    z-index: 10001;
+    width: min(360px, calc(100vw - 32px));
+    padding: 16px;
+    border: 3px solid #FFFF00;
+    border-radius: 8px;
+    background: #000000;
+    color: #FFFFFF;
+    box-shadow: 0 0 0 3px #000000, 0 0 0 6px #FFFFFF;
+}
+
+body.theme-high-contrast .voice-assistant-panel.is-open {
+    display: block;
+}
+
+.voice-assistant-panel h2 {
+    margin: 0 0 8px;
+    color: #FFFF00;
+    font-size: 16px;
+}
+
+.voice-assistant-panel p {
+    margin: 0 0 12px;
+    color: #FFFFFF;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.voice-assistant-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.voice-assistant-actions button {
+    min-height: 42px;
+    border: 2px solid #FFFF00;
+    border-radius: 8px;
+    background: #000000;
+    color: #FFFF00;
+    font-size: 11px;
+    font-weight: 900;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.voice-assistant-status {
+    display: block;
+    margin-top: 12px;
+    color: #00FF66;
+    font-size: 11px;
+    font-weight: 900;
+}
+
 .button {
     display: inline-flex;
     align-items: center;
@@ -1388,6 +1533,7 @@ body.theme-high-contrast .session-user,
 body.theme-high-contrast .notification-trigger,
 body.theme-high-contrast .notification-dropdown,
 body.theme-high-contrast .theme-switcher,
+body.theme-high-contrast .voice-assistant-widget,
 body.theme-high-contrast .button,
 body.theme-high-contrast .form-field input,
 body.theme-high-contrast .form-field select,

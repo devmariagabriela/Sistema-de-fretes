@@ -18,7 +18,6 @@
 
     function applyTheme(theme) {
         const normalizedTheme = normalizeTheme(theme);
-
         if (!document.body) {
             return;
         }
@@ -29,6 +28,7 @@
         document.querySelectorAll("[data-theme-select]").forEach((select) => {
             select.value = normalizedTheme;
         });
+
     }
 
     function persistTheme(theme) {
