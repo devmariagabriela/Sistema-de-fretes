@@ -2,6 +2,7 @@ package br.com.gwfrete.notificacao;
 
 import br.com.gwfrete.notificacao.NotificacaoBO;
 import br.com.gwfrete.exception.CadastroException;
+import br.com.gwfrete.notificacao.StatusNotificacao;
 import br.com.gwfrete.usuario.PerfilUsuario;
 import br.com.gwfrete.usuario.Usuario;
 
@@ -66,7 +67,8 @@ public class NotificacaoController extends HttpServlet {
             throws ServletException, IOException, CadastroException {
 
         consumirMensagemSessao(request);
-        request.setAttribute("notificacoes", notificacaoBO.listarTodas());
+        prepararFiltroStatus(request);
+        request.setAttribute("notificacoes", notificacaoBO.listarPorFiltro(obterFiltroStatus(request)));
         request.setAttribute("podeGerenciarNotificacoes", usuarioPodeGerenciar(obterUsuarioLogado(request)));
         request.getRequestDispatcher(VIEW_LISTA).forward(request, response);
     }
@@ -75,7 +77,8 @@ public class NotificacaoController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            request.setAttribute("notificacoes", notificacaoBO.listarTodas());
+            prepararFiltroStatus(request);
+            request.setAttribute("notificacoes", notificacaoBO.listarPorFiltro(obterFiltroStatus(request)));
         } catch (CadastroException e) {
             request.setAttribute("mensagemErro", e.getMessage());
         }
@@ -198,5 +201,16 @@ public class NotificacaoController extends HttpServlet {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    private void prepararFiltroStatus(HttpServletRequest request) {
+        String filtroStatus = obterFiltroStatus(request);
+        request.setAttribute("statusFiltro", filtroStatus);
+        request.setAttribute("statusNotificacao", StatusNotificacao.values());
+    }
+
+    private String obterFiltroStatus(HttpServletRequest request) {
+        String status = request.getParameter("status");
+        return status == null || status.trim().isEmpty() ? "ATIVAS" : status.trim();
     }
 }

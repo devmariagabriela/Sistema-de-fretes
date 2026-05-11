@@ -36,6 +36,36 @@
                 <p class="message message-error" role="alert">${mensagemErro}</p>
             </c:if>
 
+            <section class="content-card filter-panel" aria-label="Filtros de notificações">
+                <div class="filter-panel-header">
+                    <div>
+                        <span class="summary-label">Filtro</span>
+                        <h2>Consultar notificações</h2>
+                    </div>
+                    <p>Veja alertas ativos, lidos, não lidos ou arquivados.</p>
+                </div>
+
+                <form class="report-filters-form" action="${pageContext.request.contextPath}/notificacoes" method="get">
+                    <div class="form-grid report-filters-grid">
+                        <div class="form-field">
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                <option value="ATIVAS" ${statusFiltro == 'ATIVAS' ? 'selected' : ''}>Ativas</option>
+                                <c:forEach var="status" items="${statusNotificacao}">
+                                    <option value="${status.name()}" ${statusFiltro == status.name() ? 'selected' : ''}>${status.descricao}</option>
+                                </c:forEach>
+                                <option value="TODAS" ${statusFiltro == 'TODAS' ? 'selected' : ''}>Todas</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="report-filters-actions">
+                        <button class="button button-primary" type="submit">Filtrar</button>
+                        <a class="button button-secondary" href="${pageContext.request.contextPath}/notificacoes">Limpar filtros</a>
+                    </div>
+                </form>
+            </section>
+
             <section class="content-card" aria-label="Lista de notificações">
                 <div class="table-wrap">
                     <table class="data-table">
@@ -93,13 +123,15 @@
                                                         <button class="button button-secondary" type="submit">Marcar lida</button>
                                                     </form>
                                                 </c:if>
-                                                <button class="button button-danger" type="button"
-                                                        data-soft-delete-button
-                                                        data-action="${pageContext.request.contextPath}/notificacoes/inativar"
-                                                        data-id="${notificacao.id}"
-                                                        data-title="Arquivar notificação"
-                                                        data-message="Deseja arquivar a notificação ${notificacao.titulo}?"
-                                                        data-submit="Arquivar">Arquivar</button>
+                                                <c:if test="${notificacao.status.name() != 'ARQUIVADA'}">
+                                                    <button class="button button-danger" type="button"
+                                                            data-soft-delete-button
+                                                            data-action="${pageContext.request.contextPath}/notificacoes/inativar"
+                                                            data-id="${notificacao.id}"
+                                                            data-title="Arquivar notificação"
+                                                            data-message="Deseja arquivar a notificação ${notificacao.titulo}?"
+                                                            data-submit="Arquivar">Arquivar</button>
+                                                </c:if>
                                             </div>
                                         </td>
                                     </c:if>
@@ -108,7 +140,7 @@
                             <c:if test="${empty notificacoes}">
                                 <tr>
                                     <td colspan="${podeGerenciarNotificacoes ? 8 : 7}">
-                                        <div class="empty-state">Nenhuma notificação operacional pendente.</div>
+                                        <div class="empty-state">Nenhuma notificação encontrada para o filtro selecionado.</div>
                                     </td>
                                 </tr>
                             </c:if>

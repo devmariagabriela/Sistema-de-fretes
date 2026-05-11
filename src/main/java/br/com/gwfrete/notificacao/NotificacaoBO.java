@@ -55,6 +55,25 @@ public class NotificacaoBO {
         }
     }
 
+    public List<Notificacao> listarPorFiltro(String filtroStatus) throws CadastroException {
+        try {
+            notificacaoDAO.gerarNotificacoesAutomaticasPorDatas();
+
+            if ("TODAS".equals(filtroStatus)) {
+                return notificacaoDAO.listarTodasIncluindoArquivadas();
+            }
+
+            StatusNotificacao status = parseStatus(filtroStatus);
+            if (status != null) {
+                return notificacaoDAO.listarPorStatus(status);
+            }
+
+            return notificacaoDAO.listarTodas();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar as notificações.");
+        }
+    }
+
     public List<Notificacao> listarNaoLidas() throws CadastroException {
         try {
             notificacaoDAO.gerarNotificacoesAutomaticasPorDatas();
@@ -163,5 +182,17 @@ public class NotificacaoBO {
 
         String valorNormalizado = valor.trim();
         return valorNormalizado.isEmpty() ? null : valorNormalizado;
+    }
+
+    private StatusNotificacao parseStatus(String filtroStatus) {
+        if (filtroStatus == null || filtroStatus.trim().isEmpty() || "ATIVAS".equals(filtroStatus)) {
+            return null;
+        }
+
+        try {
+            return StatusNotificacao.valueOf(filtroStatus.trim());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 }

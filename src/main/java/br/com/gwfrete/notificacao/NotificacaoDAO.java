@@ -77,9 +77,33 @@ public class NotificacaoDAO {
         return listarPorSql(sql);
     }
 
+    public List<Notificacao> listarTodasIncluindoArquivadas() throws SQLException {
+        String sql = sqlBase() + " ORDER BY data_criacao DESC";
+        return listarPorSql(sql);
+    }
+
     public List<Notificacao> listarNaoLidas() throws SQLException {
         String sql = sqlBase() + " WHERE status = 'NAO_LIDA' ORDER BY data_criacao DESC";
         return listarPorSql(sql);
+    }
+
+    public List<Notificacao> listarPorStatus(StatusNotificacao status) throws SQLException {
+        String sql = sqlBase() + " WHERE status = ?::status_notificacao_enum ORDER BY data_criacao DESC";
+        List<Notificacao> notificacoes = new ArrayList<>();
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, status.name());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    notificacoes.add(mapearNotificacao(rs));
+                }
+            }
+        }
+
+        return notificacoes;
     }
 
     public Notificacao buscarPorId(Long id) throws SQLException {
