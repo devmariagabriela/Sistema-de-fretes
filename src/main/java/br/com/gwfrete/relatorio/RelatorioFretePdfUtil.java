@@ -26,12 +26,20 @@ public final class RelatorioFretePdfUtil {
     }
 
     public static byte[] gerarPdf(List<RelatorioFreteDTO> fretes) throws JRException {
+        JasperPrint impressao = preencherRelatorio(fretes);
+        return JasperExportManager.exportReportToPdf(impressao);
+    }
+
+    public static byte[] gerarXlsx(List<RelatorioFreteDTO> fretes) throws JRException {
+        return RelatorioExcelUtil.gerarFretes(fretes);
+    }
+
+    private static JasperPrint preencherRelatorio(List<RelatorioFreteDTO> fretes) throws JRException {
         JasperReport relatorioCompilado = compilarRelatorio();
         Map<String, Object> parametros = criarParametros(fretes);
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(fretes);
 
-        JasperPrint impressao = JasperFillManager.fillReport(relatorioCompilado, parametros, dataSource);
-        return JasperExportManager.exportReportToPdf(impressao);
+        return JasperFillManager.fillReport(relatorioCompilado, parametros, dataSource);
     }
 
     private static JasperReport compilarRelatorio() throws JRException {

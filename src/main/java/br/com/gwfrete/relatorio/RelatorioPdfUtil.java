@@ -26,10 +26,18 @@ public final class RelatorioPdfUtil {
     }
 
     public static byte[] gerarPdf(String caminhoRelatorio, List<?> dados) throws JRException {
+        JasperPrint impressao = preencherRelatorio(caminhoRelatorio, dados);
+        return JasperExportManager.exportReportToPdf(impressao);
+    }
+
+    public static byte[] gerarXlsx(String caminhoRelatorio, List<?> dados) throws JRException {
+        return RelatorioExcelUtil.gerarPorRelatorio(caminhoRelatorio, dados);
+    }
+
+    private static JasperPrint preencherRelatorio(String caminhoRelatorio, List<?> dados) throws JRException {
         JasperReport relatorioCompilado = compilarRelatorio(caminhoRelatorio);
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(dados);
-        JasperPrint impressao = JasperFillManager.fillReport(relatorioCompilado, criarParametros(caminhoRelatorio, dados), dataSource);
-        return JasperExportManager.exportReportToPdf(impressao);
+        return JasperFillManager.fillReport(relatorioCompilado, criarParametros(caminhoRelatorio, dados), dataSource);
     }
 
     private static JasperReport compilarRelatorio(String caminhoRelatorio) throws JRException {

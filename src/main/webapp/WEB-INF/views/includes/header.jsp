@@ -1,6 +1,6 @@
 <%@ page pageEncoding="UTF-8" %>
-<%@ page import="br.com.gwfrete.bo.NotificacaoBO" %>
-<%@ page import="br.com.gwfrete.model.Notificacao" %>
+<%@ page import="br.com.gwfrete.notificacao.NotificacaoBO" %>
+<%@ page import="br.com.gwfrete.notificacao.Notificacao" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>

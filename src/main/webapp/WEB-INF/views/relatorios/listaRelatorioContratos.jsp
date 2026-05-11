@@ -77,6 +77,7 @@
                     <div class="report-filters-actions">
                         <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/contratos">Limpar filtros</a>
                         <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/contratos/pdf${queryStringFiltros}" target="_blank" rel="noopener">Exportar PDF</a>
+                        <a class="button button-secondary" href="${pageContext.request.contextPath}/relatorios/contratos/excel${queryStringFiltros}">Exportar Excel</a>
                     </div>
                 </form>
             </section>

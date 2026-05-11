@@ -33,11 +33,11 @@ public class AuthFilter implements Filter {
         }
 
         HttpSession session = request.getSession(false);
-        boolean autenticado = session != null && session.getAttribute("usuarioLogado") instanceof Usuario;
+        boolean autenticado = usuarioAutenticado(session);
 
         if (!autenticado) {
             if (session != null) {
-                session.invalidate();
+                invalidarSessao(session);
             }
 
             response.sendRedirect(request.getContextPath() + "/login");
@@ -60,5 +60,26 @@ public class AuthFilter implements Filter {
                 || path.equals("/redefinir-senha")
                 || path.startsWith("/assets/")
                 || path.startsWith("/favicon");
+    }
+
+    private boolean usuarioAutenticado(HttpSession session) {
+        if (session == null) {
+            return false;
+        }
+
+        try {
+            return session.getAttribute("usuarioLogado") instanceof Usuario;
+        } catch (RuntimeException e) {
+            invalidarSessao(session);
+            return false;
+        }
+    }
+
+    private void invalidarSessao(HttpSession session) {
+        try {
+            session.invalidate();
+        } catch (RuntimeException e) {
+            // A sessão pode estar corrompida no Redis após mudanças de pacote.
+        }
     }
 }

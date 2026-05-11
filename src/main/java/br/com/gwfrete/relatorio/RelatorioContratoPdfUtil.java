@@ -27,12 +27,20 @@ public final class RelatorioContratoPdfUtil {
     }
 
     public static byte[] gerarPdf(List<RelatorioContratoDTO> contratos) throws JRException {
+        JasperPrint impressao = preencherRelatorio(contratos);
+        return JasperExportManager.exportReportToPdf(impressao);
+    }
+
+    public static byte[] gerarXlsx(List<RelatorioContratoDTO> contratos) throws JRException {
+        return RelatorioExcelUtil.gerarContratos(contratos);
+    }
+
+    private static JasperPrint preencherRelatorio(List<RelatorioContratoDTO> contratos) throws JRException {
         JasperReport relatorioCompilado = compilarRelatorio();
         Map<String, Object> parametros = criarParametros(contratos);
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(contratos);
 
-        JasperPrint impressao = JasperFillManager.fillReport(relatorioCompilado, parametros, dataSource);
-        return JasperExportManager.exportReportToPdf(impressao);
+        return JasperFillManager.fillReport(relatorioCompilado, parametros, dataSource);
     }
 
     private static JasperReport compilarRelatorio() throws JRException {

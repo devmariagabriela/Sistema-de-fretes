@@ -253,12 +253,22 @@
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/fretes/excel</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/contratos</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/contratos/pdf</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/contratos/excel</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -273,12 +283,22 @@
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/financeiro/excel</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/manutencoes</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/manutencoes/pdf</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/manutencoes/excel</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -293,12 +313,22 @@
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/ocorrencias/excel</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/clientes</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/clientes/pdf</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/clientes/excel</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -313,12 +343,22 @@
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/motoristas/excel</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/veiculos</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>RelatorioController</servlet-name>
         <url-pattern>/relatorios/veiculos/pdf</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioController</servlet-name>
+        <url-pattern>/relatorios/veiculos/excel</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>

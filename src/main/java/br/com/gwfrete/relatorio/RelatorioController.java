@@ -115,6 +115,11 @@ public class RelatorioController extends HttpServlet {
             return;
         }
 
+        if (isRotaExcel(request)) {
+            exportarExcelFretes(response, filtro);
+            return;
+        }
+
         try {
             consumirMensagemSessao(request);
             prepararFiltroFretes(request, filtro);
@@ -139,6 +144,11 @@ public class RelatorioController extends HttpServlet {
 
         if (isRotaPdf(request)) {
             exportarPdfContratos(response, filtro);
+            return;
+        }
+
+        if (isRotaExcel(request)) {
+            exportarExcelContratos(response, filtro);
             return;
         }
 
@@ -168,6 +178,11 @@ public class RelatorioController extends HttpServlet {
                         "relatorio-financeiro.pdf");
                 return;
             }
+            if (isRotaExcel(request)) {
+                exportarExcel(response, RelatorioPdfUtil.gerarXlsx("report/relatorio_financeiro.jrxml", dados),
+                        "relatorio-financeiro.xlsx");
+                return;
+            }
             request.setAttribute("faturas", dados);
             prepararIndicadoresFinanceiro(request, dados);
         } catch (CadastroException e) {
@@ -175,7 +190,7 @@ public class RelatorioController extends HttpServlet {
             request.setAttribute("faturas", Collections.emptyList());
             prepararIndicadoresFinanceiro(request, Collections.<RelatorioFinanceiroDTO>emptyList());
         } catch (JRException e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Não foi possível gerar o PDF do relatório financeiro.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Não foi possível gerar o arquivo do relatório financeiro.");
             return;
         }
         request.getRequestDispatcher(VIEW_RELATORIO_FINANCEIRO).forward(request, response);
@@ -190,6 +205,11 @@ public class RelatorioController extends HttpServlet {
                         "relatorio-manutencoes.pdf");
                 return;
             }
+            if (isRotaExcel(request)) {
+                exportarExcel(response, RelatorioPdfUtil.gerarXlsx("report/relatorio_manutencoes.jrxml", dados),
+                        "relatorio-manutencoes.xlsx");
+                return;
+            }
             request.setAttribute("manutencoes", dados);
             prepararIndicadoresManutencoes(request, dados);
         } catch (CadastroException e) {
@@ -197,7 +217,7 @@ public class RelatorioController extends HttpServlet {
             request.setAttribute("manutencoes", Collections.emptyList());
             prepararIndicadoresManutencoes(request, Collections.<RelatorioManutencaoDTO>emptyList());
         } catch (JRException e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Não foi possível gerar o PDF do relatório de manutenções.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Não foi possível gerar o arquivo do relatório de manutenções.");
             return;
         }
         request.getRequestDispatcher(VIEW_RELATORIO_MANUTENCOES).forward(request, response);
@@ -212,6 +232,11 @@ public class RelatorioController extends HttpServlet {
                         "relatorio-ocorrencias.pdf");
                 return;
             }
+            if (isRotaExcel(request)) {
+                exportarExcel(response, RelatorioPdfUtil.gerarXlsx("report/relatorio_ocorrencias.jrxml", dados),
+                        "relatorio-ocorrencias.xlsx");
+                return;
+            }
             request.setAttribute("ocorrencias", dados);
             prepararIndicadoresOcorrencias(request, dados);
         } catch (CadastroException e) {
@@ -219,7 +244,7 @@ public class RelatorioController extends HttpServlet {
             request.setAttribute("ocorrencias", Collections.emptyList());
             prepararIndicadoresOcorrencias(request, Collections.<RelatorioOcorrenciaDTO>emptyList());
         } catch (JRException e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Não foi possível gerar o PDF do relatório de ocorrências.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Não foi possível gerar o arquivo do relatório de ocorrências.");
             return;
         }
         request.getRequestDispatcher(VIEW_RELATORIO_OCORRENCIAS).forward(request, response);
@@ -234,6 +259,11 @@ public class RelatorioController extends HttpServlet {
                         "relatorio-clientes.pdf");
                 return;
             }
+            if (isRotaExcel(request)) {
+                exportarExcel(response, RelatorioPdfUtil.gerarXlsx("report/relatorio_clientes.jrxml", dados),
+                        "relatorio-clientes.xlsx");
+                return;
+            }
             request.setAttribute("clientes", dados);
             prepararIndicadoresClientes(request, dados);
         } catch (CadastroException e) {
@@ -241,7 +271,7 @@ public class RelatorioController extends HttpServlet {
             request.setAttribute("clientes", Collections.emptyList());
             prepararIndicadoresClientes(request, Collections.<RelatorioClienteDTO>emptyList());
         } catch (JRException e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Não foi possível gerar o PDF do relatório de clientes.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Não foi possível gerar o arquivo do relatório de clientes.");
             return;
         }
         request.getRequestDispatcher(VIEW_RELATORIO_CLIENTES).forward(request, response);
@@ -256,6 +286,11 @@ public class RelatorioController extends HttpServlet {
                         "relatorio-motoristas.pdf");
                 return;
             }
+            if (isRotaExcel(request)) {
+                exportarExcel(response, RelatorioPdfUtil.gerarXlsx("report/relatorio_motoristas.jrxml", dados),
+                        "relatorio-motoristas.xlsx");
+                return;
+            }
             request.setAttribute("motoristas", dados);
             prepararIndicadoresMotoristas(request, dados);
         } catch (CadastroException e) {
@@ -263,7 +298,7 @@ public class RelatorioController extends HttpServlet {
             request.setAttribute("motoristas", Collections.emptyList());
             prepararIndicadoresMotoristas(request, Collections.<RelatorioMotoristaDTO>emptyList());
         } catch (JRException e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Não foi possível gerar o PDF do relatório de motoristas.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Não foi possível gerar o arquivo do relatório de motoristas.");
             return;
         }
         request.getRequestDispatcher(VIEW_RELATORIO_MOTORISTAS).forward(request, response);
@@ -278,6 +313,11 @@ public class RelatorioController extends HttpServlet {
                         "relatorio-veiculos.pdf");
                 return;
             }
+            if (isRotaExcel(request)) {
+                exportarExcel(response, RelatorioPdfUtil.gerarXlsx("report/relatorio_veiculos.jrxml", dados),
+                        "relatorio-veiculos.xlsx");
+                return;
+            }
             request.setAttribute("veiculos", dados);
             prepararIndicadoresVeiculos(request, dados);
         } catch (CadastroException e) {
@@ -285,7 +325,7 @@ public class RelatorioController extends HttpServlet {
             request.setAttribute("veiculos", Collections.emptyList());
             prepararIndicadoresVeiculos(request, Collections.<RelatorioVeiculoDTO>emptyList());
         } catch (JRException e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Não foi possível gerar o PDF do relatório de veículos.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Não foi possível gerar o arquivo do relatório de veículos.");
             return;
         }
         request.getRequestDispatcher(VIEW_RELATORIO_VEICULOS).forward(request, response);
@@ -310,6 +350,19 @@ public class RelatorioController extends HttpServlet {
         }
     }
 
+    private void exportarExcelFretes(HttpServletResponse response, FiltroRelatorioFrete filtro) throws IOException {
+        try {
+            List<RelatorioFreteDTO> fretes = relatorioBO.gerarRelatorioFretes(filtro.dataInicial, filtro.dataFinal,
+                    filtro.status, filtro.motorista, filtro.veiculo);
+            exportarExcel(response, RelatorioFretePdfUtil.gerarXlsx(fretes), "relatorio-operacional-fretes.xlsx");
+        } catch (CadastroException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        } catch (JRException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Não foi possível gerar o Excel do relatório de fretes.");
+        }
+    }
+
     private void exportarPdfContratos(HttpServletResponse response, FiltroRelatorioContrato filtro) throws IOException {
         try {
             List<RelatorioContratoDTO> contratos = relatorioBO.gerarRelatorioContratos(filtro.dataInicial,
@@ -329,11 +382,32 @@ public class RelatorioController extends HttpServlet {
         }
     }
 
+    private void exportarExcelContratos(HttpServletResponse response, FiltroRelatorioContrato filtro) throws IOException {
+        try {
+            List<RelatorioContratoDTO> contratos = relatorioBO.gerarRelatorioContratos(filtro.dataInicial,
+                    filtro.dataFinal, filtro.status, filtro.cliente);
+            exportarExcel(response, RelatorioContratoPdfUtil.gerarXlsx(contratos), "relatorio-gerencial-contratos.xlsx");
+        } catch (CadastroException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        } catch (JRException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Não foi possível gerar o Excel do relatório de contratos.");
+        }
+    }
+
     private void exportarPdf(HttpServletResponse response, byte[] pdf, String nomeArquivo) throws IOException {
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "inline; filename=\"" + nomeArquivo + "\"");
         response.setContentLength(pdf.length);
         response.getOutputStream().write(pdf);
+        response.getOutputStream().flush();
+    }
+
+    private void exportarExcel(HttpServletResponse response, byte[] excel, String nomeArquivo) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + nomeArquivo + "\"");
+        response.setContentLength(excel.length);
+        response.getOutputStream().write(excel);
         response.getOutputStream().flush();
     }
 
@@ -650,6 +724,11 @@ public class RelatorioController extends HttpServlet {
     private boolean isRotaPdf(HttpServletRequest request) {
         String servletPath = request.getServletPath();
         return servletPath != null && servletPath.endsWith("/pdf");
+    }
+
+    private boolean isRotaExcel(HttpServletRequest request) {
+        String servletPath = request.getServletPath();
+        return servletPath != null && servletPath.endsWith("/excel");
     }
 
     private boolean isRotaHub(HttpServletRequest request) {
