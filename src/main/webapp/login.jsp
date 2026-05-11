@@ -6,8 +6,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GW FRETE | Login</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css?v=login-20260510-login-theme">
-    <script defer src="${pageContext.request.contextPath}/assets/js/theme.js?v=theme-20260510-login"></script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css?v=login-20260511-voice-access">
+    <script defer src="${pageContext.request.contextPath}/assets/js/theme.js?v=theme-20260511-voice-access"></script>
+    <script defer src="${pageContext.request.contextPath}/assets/js/voice-assistant.js?v=voice-20260511-assistant"></script>
 </head>
 <body class="login-screen theme-dark">
     <script>
@@ -26,7 +27,7 @@
             document.body.classList.add(theme);
         })();
     </script>
-    <header class="login-topbar" aria-hidden="true">
+    <header class="login-topbar">
         <div class="topbar-brand">
             <div class="brand-mark">
                 <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
@@ -51,6 +52,20 @@
                     <option value="theme-high-contrast">Alto contraste</option>
                 </select>
             </label>
+            <button class="voice-assistant-widget" type="button" data-voice-assistant-toggle aria-expanded="false" aria-label="Abrir assistente de voz para orientação de pessoas com baixa visão">
+                <span class="voice-assistant-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path>
+                        <path d="M4 21a8 8 0 0 1 16 0"></path>
+                        <path d="M18 7c1.5 1.5 1.5 4 0 5.5"></path>
+                        <path d="M21 4c3 3.5 3 8.5 0 12"></path>
+                    </svg>
+                </span>
+                <span class="voice-assistant-copy">
+                    <strong>Assistente de voz</strong>
+                    <small>Orientação sonora</small>
+                </span>
+            </button>
             <span class="online-pill">
                 <i></i>
                 SISTEMA ONLINE

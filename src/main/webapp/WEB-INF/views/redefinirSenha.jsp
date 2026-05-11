@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GW FRETE | Redefinir senha</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css?v=login-20260510-login-theme">
-    <script defer src="${pageContext.request.contextPath}/assets/js/theme.js?v=theme-20260510-login"></script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css?v=login-20260511-voice-access">
+    <script defer src="${pageContext.request.contextPath}/assets/js/theme.js?v=theme-20260511-voice-access"></script>
 </head>
 <body class="login-screen theme-dark">
     <main class="login-shell single-login-shell" aria-label="Redefinição de senha">
