@@ -51,7 +51,7 @@
 
                         <div class="form-field">
                             <label for="dataNascimento">Data de nascimento</label>
-                            <input id="dataNascimento" name="dataNascimento" type="date" value="${motorista.dataNascimento}" required>
+                            <input id="dataNascimento" name="dataNascimento" type="date" value="${motorista.dataNascimento}" data-max-today="true" required>
                         </div>
 
                         <div class="form-field">

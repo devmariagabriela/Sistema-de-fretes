@@ -47,7 +47,7 @@
 
                         <div class="form-field">
                             <label for="dataHora">Data/hora</label>
-                            <input id="dataHora" name="dataHora" type="datetime-local" value="${rastreamento.dataHora}" required>
+                            <input id="dataHora" name="dataHora" type="datetime-local" value="${rastreamento.dataHora}" data-max-now="true" required>
                         </div>
 
                         <div class="form-field">

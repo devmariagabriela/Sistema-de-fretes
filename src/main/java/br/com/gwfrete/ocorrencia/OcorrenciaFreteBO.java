@@ -9,12 +9,17 @@ import br.com.gwfrete.frete.Frete;
 import br.com.gwfrete.ocorrencia.OcorrenciaFrete;
 import br.com.gwfrete.frete.StatusFrete;
 import br.com.gwfrete.notificacao.TipoNotificacao;
+import br.com.gwfrete.ocorrencia.TipoDocumentoRecebedor;
 import br.com.gwfrete.ocorrencia.TipoOcorrenciaFrete;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class OcorrenciaFreteBO {
+    private static final Pattern NAO_DIGITO = Pattern.compile("\\D");
+
     private final OcorrenciaFreteDAO ocorrenciaFreteDAO;
     private final FreteDAO freteDAO;
     private final NotificacaoBO notificacaoBO;
@@ -90,6 +95,10 @@ public class OcorrenciaFreteBO {
             throw new CadastroException("Data e hora da ocorrência são obrigatórias.");
         }
 
+        if (ocorrencia.getDataHora().isAfter(LocalDateTime.now())) {
+            throw new CadastroException("Data e hora da ocorrência não podem ser futuras.");
+        }
+
         if (ocorrencia.getLocalizacao() == null || ocorrencia.getLocalizacao().trim().isEmpty()) {
             throw new CadastroException("Localização é obrigatória.");
         }
@@ -107,11 +116,35 @@ public class OcorrenciaFreteBO {
             }
         }
 
+        validarDocumentoRecebedor(ocorrencia);
+
         if ((ocorrencia.getTipo() == TipoOcorrenciaFrete.AVARIA
                 || ocorrencia.getTipo() == TipoOcorrenciaFrete.EXTRAVIO
                 || ocorrencia.getTipo() == TipoOcorrenciaFrete.OUTROS)
                 && (ocorrencia.getDescricao() == null || ocorrencia.getDescricao().trim().isEmpty())) {
             throw new CadastroException("Descrição é obrigatória para este tipo de ocorrência.");
+        }
+    }
+
+    private void validarDocumentoRecebedor(OcorrenciaFrete ocorrencia) throws CadastroException {
+        if (ocorrencia.getDocumentoRecebedor() == null
+                || ocorrencia.getDocumentoRecebedor().trim().isEmpty()) {
+            return;
+        }
+
+        if (ocorrencia.getTipoDocumentoRecebedor() == null) {
+            throw new CadastroException("Tipo do documento do recebedor é obrigatório.");
+        }
+
+        String documento = ocorrencia.getDocumentoRecebedor();
+        if (ocorrencia.getTipoDocumentoRecebedor() == TipoDocumentoRecebedor.CPF
+                && documento.length() != 11) {
+            throw new CadastroException("CPF do recebedor deve conter 11 dígitos.");
+        }
+
+        if (ocorrencia.getTipoDocumentoRecebedor() == TipoDocumentoRecebedor.CNPJ
+                && documento.length() != 14) {
+            throw new CadastroException("CNPJ do recebedor deve conter 14 dígitos.");
         }
     }
 
@@ -152,6 +185,13 @@ public class OcorrenciaFreteBO {
             ocorrencia.setDescricao(descricao.isEmpty() ? null : descricao);
         }
 
+        if (ocorrencia.getTipo() != TipoOcorrenciaFrete.ENTREGA_REALIZADA) {
+            ocorrencia.setNomeRecebedor(null);
+            ocorrencia.setTipoDocumentoRecebedor(null);
+            ocorrencia.setDocumentoRecebedor(null);
+            return;
+        }
+
         if (ocorrencia.getNomeRecebedor() != null) {
             String nomeRecebedor = ocorrencia.getNomeRecebedor().trim();
             ocorrencia.setNomeRecebedor(nomeRecebedor.isEmpty() ? null : nomeRecebedor);
@@ -159,6 +199,10 @@ public class OcorrenciaFreteBO {
 
         if (ocorrencia.getDocumentoRecebedor() != null) {
             String documentoRecebedor = ocorrencia.getDocumentoRecebedor().trim();
+            if (ocorrencia.getTipoDocumentoRecebedor() == TipoDocumentoRecebedor.CPF
+                    || ocorrencia.getTipoDocumentoRecebedor() == TipoDocumentoRecebedor.CNPJ) {
+                documentoRecebedor = NAO_DIGITO.matcher(documentoRecebedor).replaceAll("");
+            }
             ocorrencia.setDocumentoRecebedor(documentoRecebedor.isEmpty() ? null : documentoRecebedor);
         }
     }

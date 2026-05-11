@@ -8,6 +8,7 @@ import br.com.gwfrete.rastreamento.RastreamentoFrete;
 import br.com.gwfrete.frete.StatusFrete;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class RastreamentoFreteBO {
@@ -76,6 +77,10 @@ public class RastreamentoFreteBO {
 
         if (rastreamento.getDataHora() == null) {
             throw new CadastroException("Data e hora do rastreamento são obrigatórias.");
+        }
+
+        if (rastreamento.getDataHora().isAfter(LocalDateTime.now())) {
+            throw new CadastroException("Data e hora do rastreamento não podem ser futuras.");
         }
 
         if (rastreamento.getLatitude() != null && rastreamento.getLongitude() == null) {
