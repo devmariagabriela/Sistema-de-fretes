@@ -83,8 +83,15 @@ public class VeiculoController extends HttpServlet {
             throws ServletException, IOException, CadastroException {
 
         consumirMensagemSessao(request);
-        request.setAttribute("veiculos", veiculoBO.listarTodos());
+        String placaFiltro = obterParametroFiltro(request, "placa");
+        String tipoFiltro = obterParametroFiltro(request, "tipo");
+        String statusFiltro = obterParametroFiltro(request, "status");
+        String modeloFiltro = obterParametroFiltro(request, "modelo");
+
+        request.setAttribute("veiculos", veiculoBO.listarComFiltros(placaFiltro, obterTipo(tipoFiltro),
+                obterStatus(statusFiltro), modeloFiltro));
         request.setAttribute("podeGerenciarVeiculos", usuarioPodeGerenciar(obterUsuarioLogado(request)));
+        prepararFiltrosLista(request, placaFiltro, tipoFiltro, statusFiltro, modeloFiltro);
         request.getRequestDispatcher(VIEW_LISTA).forward(request, response);
     }
 
@@ -92,7 +99,14 @@ public class VeiculoController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            request.setAttribute("veiculos", veiculoBO.listarTodos());
+            String placaFiltro = obterParametroFiltro(request, "placa");
+            String tipoFiltro = obterParametroFiltro(request, "tipo");
+            String statusFiltro = obterParametroFiltro(request, "status");
+            String modeloFiltro = obterParametroFiltro(request, "modelo");
+
+            request.setAttribute("veiculos", veiculoBO.listarComFiltros(placaFiltro, obterTipo(tipoFiltro),
+                    obterStatus(statusFiltro), modeloFiltro));
+            prepararFiltrosLista(request, placaFiltro, tipoFiltro, statusFiltro, modeloFiltro);
         } catch (CadastroException e) {
             request.setAttribute("mensagemErro", e.getMessage());
         }
@@ -177,6 +191,16 @@ public class VeiculoController extends HttpServlet {
         request.setAttribute("statusVeiculo", StatusVeiculo.values());
     }
 
+    private void prepararFiltrosLista(HttpServletRequest request, String placaFiltro, String tipoFiltro,
+            String statusFiltro, String modeloFiltro) {
+        request.setAttribute("placaFiltro", placaFiltro);
+        request.setAttribute("tipoFiltro", tipoFiltro);
+        request.setAttribute("statusFiltro", statusFiltro);
+        request.setAttribute("modeloFiltro", modeloFiltro);
+        request.setAttribute("tiposVeiculo", TipoVeiculo.values());
+        request.setAttribute("statusVeiculo", StatusVeiculo.values());
+    }
+
     private boolean usuarioPodeVisualizar(Usuario usuarioLogado, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
@@ -248,6 +272,16 @@ public class VeiculoController extends HttpServlet {
     private String obterRota(HttpServletRequest request) {
         String pathInfo = request.getPathInfo();
         return pathInfo == null ? "" : pathInfo;
+    }
+
+    private String obterParametroFiltro(HttpServletRequest request, String nome) {
+        String valor = request.getParameter(nome);
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
     }
 
     private Long obterId(HttpServletRequest request) {

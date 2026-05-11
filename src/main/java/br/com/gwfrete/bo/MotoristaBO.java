@@ -2,6 +2,7 @@ package br.com.gwfrete.bo;
 
 import br.com.gwfrete.dao.MotoristaDAO;
 import br.com.gwfrete.exception.CadastroException;
+import br.com.gwfrete.model.CategoriaCNH;
 import br.com.gwfrete.model.Motorista;
 import br.com.gwfrete.model.StatusMotorista;
 
@@ -40,6 +41,16 @@ public class MotoristaBO {
     public List<Motorista> listarTodos() throws CadastroException {
         try {
             return motoristaDAO.listarTodos();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar os motoristas.");
+        }
+    }
+
+    public List<Motorista> listarComFiltros(String nome, String cpf, String cnhNumero, CategoriaCNH categoriaCnh,
+            StatusMotorista status) throws CadastroException {
+        try {
+            return motoristaDAO.listarComFiltros(normalizarFiltro(nome), normalizarDocumentoFiltro(cpf),
+                    normalizarDocumentoFiltro(cnhNumero), categoriaCnh, status);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível listar os motoristas.");
         }
@@ -182,5 +193,23 @@ public class MotoristaBO {
 
     private String removerCaracteresNaoNumericos(String valor) {
         return SOMENTE_DIGITOS.matcher(valor.trim()).replaceAll("");
+    }
+
+    private String normalizarFiltro(String valor) {
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
+    }
+
+    private String normalizarDocumentoFiltro(String valor) {
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = SOMENTE_DIGITOS.matcher(valor.trim()).replaceAll("");
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
     }
 }

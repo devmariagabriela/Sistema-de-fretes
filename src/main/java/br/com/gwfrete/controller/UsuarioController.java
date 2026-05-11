@@ -68,7 +68,14 @@ public class UsuarioController extends HttpServlet {
             throws ServletException, IOException, CadastroException {
 
         consumirMensagemSessao(request);
-        request.setAttribute("usuarios", usuarioBO.listarTodos());
+        String nomeFiltro = obterParametroFiltro(request, "nome");
+        String emailFiltro = obterParametroFiltro(request, "email");
+        String perfilFiltro = obterParametroFiltro(request, "perfil");
+        String statusFiltro = obterParametroFiltro(request, "status");
+
+        request.setAttribute("usuarios", usuarioBO.listarComFiltros(nomeFiltro, emailFiltro,
+                obterPerfil(perfilFiltro), obterStatus(statusFiltro)));
+        prepararFiltrosLista(request, nomeFiltro, emailFiltro, perfilFiltro, statusFiltro);
         request.getRequestDispatcher(VIEW_LISTA).forward(request, response);
     }
 
@@ -76,7 +83,14 @@ public class UsuarioController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            request.setAttribute("usuarios", usuarioBO.listarTodos());
+            String nomeFiltro = obterParametroFiltro(request, "nome");
+            String emailFiltro = obterParametroFiltro(request, "email");
+            String perfilFiltro = obterParametroFiltro(request, "perfil");
+            String statusFiltro = obterParametroFiltro(request, "status");
+
+            request.setAttribute("usuarios", usuarioBO.listarComFiltros(nomeFiltro, emailFiltro,
+                    obterPerfil(perfilFiltro), obterStatus(statusFiltro)));
+            prepararFiltrosLista(request, nomeFiltro, emailFiltro, perfilFiltro, statusFiltro);
         } catch (CadastroException e) {
             request.setAttribute("mensagemErro", e.getMessage());
         }
@@ -155,6 +169,16 @@ public class UsuarioController extends HttpServlet {
         request.setAttribute("statusUsuarios", StatusUsuario.values());
     }
 
+    private void prepararFiltrosLista(HttpServletRequest request, String nomeFiltro, String emailFiltro,
+            String perfilFiltro, String statusFiltro) {
+        request.setAttribute("nomeFiltro", nomeFiltro);
+        request.setAttribute("emailFiltro", emailFiltro);
+        request.setAttribute("perfilFiltro", perfilFiltro);
+        request.setAttribute("statusFiltro", statusFiltro);
+        request.setAttribute("perfis", PerfilUsuario.values());
+        request.setAttribute("statusUsuarios", StatusUsuario.values());
+    }
+
     private boolean usuarioAdminLogado(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession(false);
         Usuario usuarioLogado = session == null ? null : (Usuario) session.getAttribute("usuarioLogado");
@@ -197,6 +221,16 @@ public class UsuarioController extends HttpServlet {
     private String obterRota(HttpServletRequest request) {
         String pathInfo = request.getPathInfo();
         return pathInfo == null ? "" : pathInfo;
+    }
+
+    private String obterParametroFiltro(HttpServletRequest request, String nome) {
+        String valor = request.getParameter(nome);
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
     }
 
     private Long obterId(HttpServletRequest request) {

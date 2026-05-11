@@ -3,6 +3,7 @@ package br.com.gwfrete.bo;
 import br.com.gwfrete.dao.ClienteDAO;
 import br.com.gwfrete.exception.CadastroException;
 import br.com.gwfrete.model.Cliente;
+import br.com.gwfrete.model.TipoCliente;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -35,6 +36,16 @@ public class ClienteBO {
     public List<Cliente> listarTodos() throws CadastroException {
         try {
             return clienteDAO.listarTodos();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar os clientes.");
+        }
+    }
+
+    public List<Cliente> listarComFiltros(String nome, String cpfCnpj, TipoCliente tipo, String cidade, Boolean status)
+            throws CadastroException {
+        try {
+            return clienteDAO.listarComFiltros(normalizarTexto(nome), normalizarDocumentoFiltro(cpfCnpj), tipo,
+                    normalizarTexto(cidade), status);
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível listar os clientes.");
         }
@@ -158,5 +169,14 @@ public class ClienteBO {
 
     private String removerCaracteresNaoNumericos(String valor) {
         return SOMENTE_DIGITOS.matcher(valor.trim()).replaceAll("");
+    }
+
+    private String normalizarDocumentoFiltro(String valor) {
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = SOMENTE_DIGITOS.matcher(valor.trim()).replaceAll("");
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
     }
 }

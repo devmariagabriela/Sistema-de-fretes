@@ -51,6 +51,37 @@ public class VeiculoDAO {
         return veiculos;
     }
 
+    public List<Veiculo> listarComFiltros(String placa, TipoVeiculo tipo, StatusVeiculo status, String modelo)
+            throws SQLException {
+
+        StringBuilder sql = new StringBuilder("SELECT id, placa, modelo, marca, ano, capacidade_kg, tipo, status, "
+                + "quilometragem, data_criacao FROM veiculo WHERE 1 = 1");
+        List<Object> parametros = new ArrayList<>();
+
+        if (textoPreenchido(placa)) {
+            sql.append(" AND UPPER(placa) LIKE UPPER(?)");
+            parametros.add("%" + placa.trim() + "%");
+        }
+
+        if (tipo != null) {
+            sql.append(" AND tipo = ?::tipo_veiculo_enum");
+            parametros.add(tipo.name());
+        }
+
+        if (status != null) {
+            sql.append(" AND status = ?::status_veiculo_enum");
+            parametros.add(status.name());
+        }
+
+        if (textoPreenchido(modelo)) {
+            sql.append(" AND LOWER(modelo) LIKE LOWER(?)");
+            parametros.add("%" + modelo.trim() + "%");
+        }
+
+        sql.append(" ORDER BY placa");
+        return executarConsultaVeiculos(sql.toString(), parametros);
+    }
+
     public Veiculo buscarPorId(Long id) throws SQLException {
         String sql = "SELECT id, placa, modelo, marca, ano, capacidade_kg, tipo, status, quilometragem, data_criacao "
                 + "FROM veiculo WHERE id = ?";
@@ -113,6 +144,30 @@ public class VeiculoDAO {
         stmt.setString(6, veiculo.getTipo().name());
         stmt.setString(7, veiculo.getStatus().name());
         stmt.setLong(8, veiculo.getQuilometragem());
+    }
+
+    private List<Veiculo> executarConsultaVeiculos(String sql, List<Object> parametros) throws SQLException {
+        List<Veiculo> veiculos = new ArrayList<>();
+
+        try (Connection conn = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < parametros.size(); i++) {
+                stmt.setObject(i + 1, parametros.get(i));
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    veiculos.add(mapearVeiculo(rs));
+                }
+            }
+        }
+
+        return veiculos;
+    }
+
+    private boolean textoPreenchido(String valor) {
+        return valor != null && !valor.trim().isEmpty();
     }
 
     private Veiculo mapearVeiculo(ResultSet rs) throws SQLException {

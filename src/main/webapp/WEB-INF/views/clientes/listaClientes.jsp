@@ -39,6 +39,59 @@
                 <p class="message message-error" role="alert">${mensagemErro}</p>
             </c:if>
 
+            <section class="content-card filter-panel" aria-label="Filtros de clientes">
+                <div class="filter-panel-header">
+                    <div>
+                        <span class="summary-label">Filtros</span>
+                        <h2>Consultar clientes</h2>
+                    </div>
+                    <p>Refine a base por nome, documento, tipo, cidade ou status cadastral.</p>
+                </div>
+
+                <form class="report-filters-form" action="${pageContext.request.contextPath}/clientes" method="get">
+                    <div class="form-grid report-filters-grid">
+                        <div class="form-field">
+                            <label for="nome">Nome</label>
+                            <input id="nome" name="nome" type="text" value="${nomeFiltro}" placeholder="Nome do cliente">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="cpfCnpj">CPF/CNPJ</label>
+                            <input id="cpfCnpj" name="cpfCnpj" type="text" value="${cpfCnpjFiltro}" placeholder="Documento">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="tipo">Tipo</label>
+                            <select id="tipo" name="tipo">
+                                <option value="">Todos os tipos</option>
+                                <c:forEach var="tipo" items="${tiposCliente}">
+                                    <option value="${tipo.name()}" ${tipoFiltro == tipo.name() ? 'selected' : ''}>${tipo.descricao}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="cidade">Cidade</label>
+                            <input id="cidade" name="cidade" type="text" value="${cidadeFiltro}" placeholder="Cidade">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                <option value="">Todos os status</option>
+                                <option value="true" ${statusFiltro == 'true' ? 'selected' : ''}>Ativo</option>
+                                <option value="false" ${statusFiltro == 'false' ? 'selected' : ''}>Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="report-filters-actions">
+                        <button class="button button-primary" type="submit">Consultar</button>
+                        <a class="button button-secondary" href="${pageContext.request.contextPath}/clientes">Limpar filtros</a>
+                    </div>
+                </form>
+            </section>
+
             <section class="content-card" aria-label="Lista de clientes">
                 <div class="table-wrap">
                     <table class="data-table">

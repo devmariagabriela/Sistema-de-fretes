@@ -85,8 +85,16 @@ public class MotoristaController extends HttpServlet {
             throws ServletException, IOException, CadastroException {
 
         consumirMensagemSessao(request);
-        request.setAttribute("motoristas", motoristaBO.listarTodos());
+        String nomeFiltro = obterParametroFiltro(request, "nome");
+        String cpfFiltro = obterParametroFiltro(request, "cpf");
+        String cnhFiltro = obterParametroFiltro(request, "cnh");
+        String categoriaCnhFiltro = obterParametroFiltro(request, "categoriaCnh");
+        String statusFiltro = obterParametroFiltro(request, "status");
+
+        request.setAttribute("motoristas", motoristaBO.listarComFiltros(nomeFiltro, cpfFiltro, cnhFiltro,
+                obterCategoriaCNH(categoriaCnhFiltro), obterStatus(statusFiltro)));
         request.setAttribute("podeGerenciarMotoristas", usuarioPodeGerenciar(obterUsuarioLogado(request)));
+        prepararFiltrosLista(request, nomeFiltro, cpfFiltro, cnhFiltro, categoriaCnhFiltro, statusFiltro);
         request.getRequestDispatcher(VIEW_LISTA).forward(request, response);
     }
 
@@ -94,7 +102,15 @@ public class MotoristaController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            request.setAttribute("motoristas", motoristaBO.listarTodos());
+            String nomeFiltro = obterParametroFiltro(request, "nome");
+            String cpfFiltro = obterParametroFiltro(request, "cpf");
+            String cnhFiltro = obterParametroFiltro(request, "cnh");
+            String categoriaCnhFiltro = obterParametroFiltro(request, "categoriaCnh");
+            String statusFiltro = obterParametroFiltro(request, "status");
+
+            request.setAttribute("motoristas", motoristaBO.listarComFiltros(nomeFiltro, cpfFiltro, cnhFiltro,
+                    obterCategoriaCNH(categoriaCnhFiltro), obterStatus(statusFiltro)));
+            prepararFiltrosLista(request, nomeFiltro, cpfFiltro, cnhFiltro, categoriaCnhFiltro, statusFiltro);
         } catch (CadastroException e) {
             request.setAttribute("mensagemErro", e.getMessage());
         }
@@ -182,6 +198,17 @@ public class MotoristaController extends HttpServlet {
         request.setAttribute("statusMotorista", StatusMotorista.values());
     }
 
+    private void prepararFiltrosLista(HttpServletRequest request, String nomeFiltro, String cpfFiltro,
+            String cnhFiltro, String categoriaCnhFiltro, String statusFiltro) {
+        request.setAttribute("nomeFiltro", nomeFiltro);
+        request.setAttribute("cpfFiltro", cpfFiltro);
+        request.setAttribute("cnhFiltro", cnhFiltro);
+        request.setAttribute("categoriaCnhFiltro", categoriaCnhFiltro);
+        request.setAttribute("statusFiltro", statusFiltro);
+        request.setAttribute("categoriasCnh", CategoriaCNH.values());
+        request.setAttribute("statusMotorista", StatusMotorista.values());
+    }
+
     private boolean usuarioPodeVisualizar(Usuario usuarioLogado, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
@@ -253,6 +280,16 @@ public class MotoristaController extends HttpServlet {
     private String obterRota(HttpServletRequest request) {
         String pathInfo = request.getPathInfo();
         return pathInfo == null ? "" : pathInfo;
+    }
+
+    private String obterParametroFiltro(HttpServletRequest request, String nome) {
+        String valor = request.getParameter(nome);
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
     }
 
     private Long obterId(HttpServletRequest request) {

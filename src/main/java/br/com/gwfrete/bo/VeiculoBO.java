@@ -3,6 +3,7 @@ package br.com.gwfrete.bo;
 import br.com.gwfrete.dao.VeiculoDAO;
 import br.com.gwfrete.exception.CadastroException;
 import br.com.gwfrete.model.StatusVeiculo;
+import br.com.gwfrete.model.TipoVeiculo;
 import br.com.gwfrete.model.Veiculo;
 
 import java.math.BigDecimal;
@@ -39,6 +40,15 @@ public class VeiculoBO {
     public List<Veiculo> listarTodos() throws CadastroException {
         try {
             return veiculoDAO.listarTodos();
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar os veículos.");
+        }
+    }
+
+    public List<Veiculo> listarComFiltros(String placa, TipoVeiculo tipo, StatusVeiculo status, String modelo)
+            throws CadastroException {
+        try {
+            return veiculoDAO.listarComFiltros(normalizarFiltro(placa), tipo, status, normalizarFiltro(modelo));
         } catch (SQLException e) {
             throw new CadastroException("Não foi possível listar os veículos.");
         }
@@ -185,6 +195,15 @@ public class VeiculoBO {
         if (veiculo.getMarca() != null) {
             veiculo.setMarca(veiculo.getMarca().trim());
         }
+    }
+
+    private String normalizarFiltro(String valor) {
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
     }
 
     private void validarTransicaoManutencao(Veiculo veiculoAtual, Veiculo veiculoAtualizado) throws CadastroException {

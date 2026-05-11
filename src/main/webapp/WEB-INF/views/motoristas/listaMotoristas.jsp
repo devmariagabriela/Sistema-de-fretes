@@ -40,6 +40,60 @@
                 <p class="message message-error" role="alert">${mensagemErro}</p>
             </c:if>
 
+            <section class="content-card filter-panel" aria-label="Filtros de motoristas">
+                <div class="filter-panel-header">
+                    <div>
+                        <span class="summary-label">Filtros</span>
+                        <h2>Consultar motoristas</h2>
+                    </div>
+                    <p>Filtre condutores por identificação, CNH, categoria ou status.</p>
+                </div>
+
+                <form class="report-filters-form" action="${pageContext.request.contextPath}/motoristas" method="get">
+                    <div class="form-grid report-filters-grid">
+                        <div class="form-field">
+                            <label for="nome">Nome</label>
+                            <input id="nome" name="nome" type="text" value="${nomeFiltro}" placeholder="Nome do motorista">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="cpf">CPF</label>
+                            <input id="cpf" name="cpf" type="text" value="${cpfFiltro}" placeholder="CPF">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="cnh">CNH</label>
+                            <input id="cnh" name="cnh" type="text" value="${cnhFiltro}" placeholder="Número da CNH">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="categoriaCnh">Categoria CNH</label>
+                            <select id="categoriaCnh" name="categoriaCnh">
+                                <option value="">Todas as categorias</option>
+                                <c:forEach var="categoria" items="${categoriasCnh}">
+                                    <option value="${categoria.name()}" ${categoriaCnhFiltro == categoria.name() ? 'selected' : ''}>${categoria.descricao}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                <option value="">Todos os status</option>
+                                <c:forEach var="status" items="${statusMotorista}">
+                                    <option value="${status.name()}" ${statusFiltro == status.name() ? 'selected' : ''}>${status.descricao}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="report-filters-actions">
+                        <button class="button button-primary" type="submit">Consultar</button>
+                        <a class="button button-secondary" href="${pageContext.request.contextPath}/motoristas">Limpar filtros</a>
+                    </div>
+                </form>
+            </section>
+
             <section class="content-card" aria-label="Motoristas cadastrados">
                 <div class="table-wrap">
                     <table class="data-table driver-table">

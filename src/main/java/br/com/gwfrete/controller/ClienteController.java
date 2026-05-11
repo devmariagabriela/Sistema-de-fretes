@@ -81,8 +81,16 @@ public class ClienteController extends HttpServlet {
             throws ServletException, IOException, CadastroException {
 
         consumirMensagemSessao(request);
-        request.setAttribute("clientes", clienteBO.listarTodos());
+        String nomeFiltro = obterParametroFiltro(request, "nome");
+        String cpfCnpjFiltro = obterParametroFiltro(request, "cpfCnpj");
+        String tipoFiltro = obterParametroFiltro(request, "tipo");
+        String cidadeFiltro = obterParametroFiltro(request, "cidade");
+        String statusFiltro = obterParametroFiltro(request, "status");
+
+        request.setAttribute("clientes", clienteBO.listarComFiltros(nomeFiltro, cpfCnpjFiltro,
+                obterTipoCliente(tipoFiltro), cidadeFiltro, obterStatusFiltro(statusFiltro)));
         request.setAttribute("podeGerenciarClientes", usuarioPodeGerenciar(obterUsuarioLogado(request)));
+        prepararFiltrosLista(request, nomeFiltro, cpfCnpjFiltro, tipoFiltro, cidadeFiltro, statusFiltro);
         request.getRequestDispatcher(VIEW_LISTA).forward(request, response);
     }
 
@@ -90,7 +98,15 @@ public class ClienteController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            request.setAttribute("clientes", clienteBO.listarTodos());
+            String nomeFiltro = obterParametroFiltro(request, "nome");
+            String cpfCnpjFiltro = obterParametroFiltro(request, "cpfCnpj");
+            String tipoFiltro = obterParametroFiltro(request, "tipo");
+            String cidadeFiltro = obterParametroFiltro(request, "cidade");
+            String statusFiltro = obterParametroFiltro(request, "status");
+
+            request.setAttribute("clientes", clienteBO.listarComFiltros(nomeFiltro, cpfCnpjFiltro,
+                    obterTipoCliente(tipoFiltro), cidadeFiltro, obterStatusFiltro(statusFiltro)));
+            prepararFiltrosLista(request, nomeFiltro, cpfCnpjFiltro, tipoFiltro, cidadeFiltro, statusFiltro);
         } catch (CadastroException e) {
             request.setAttribute("mensagemErro", e.getMessage());
         }
@@ -178,6 +194,16 @@ public class ClienteController extends HttpServlet {
         request.setAttribute("tiposCliente", TipoCliente.values());
     }
 
+    private void prepararFiltrosLista(HttpServletRequest request, String nomeFiltro, String cpfCnpjFiltro,
+            String tipoFiltro, String cidadeFiltro, String statusFiltro) {
+        request.setAttribute("nomeFiltro", nomeFiltro);
+        request.setAttribute("cpfCnpjFiltro", cpfCnpjFiltro);
+        request.setAttribute("tipoFiltro", tipoFiltro);
+        request.setAttribute("cidadeFiltro", cidadeFiltro);
+        request.setAttribute("statusFiltro", statusFiltro);
+        request.setAttribute("tiposCliente", TipoCliente.values());
+    }
+
     private boolean usuarioPodeVisualizar(Usuario usuarioLogado, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
@@ -251,6 +277,16 @@ public class ClienteController extends HttpServlet {
         return pathInfo == null ? "" : pathInfo;
     }
 
+    private String obterParametroFiltro(HttpServletRequest request, String nome) {
+        String valor = request.getParameter(nome);
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
+    }
+
     private Long obterId(HttpServletRequest request) {
         try {
             String id = request.getParameter("id");
@@ -271,6 +307,14 @@ public class ClienteController extends HttpServlet {
     private Boolean obterStatus(String valor) {
         if (valor == null || valor.trim().isEmpty()) {
             return Boolean.TRUE;
+        }
+
+        return Boolean.valueOf(valor);
+    }
+
+    private Boolean obterStatusFiltro(String valor) {
+        if (valor == null || valor.trim().isEmpty()) {
+            return null;
         }
 
         return Boolean.valueOf(valor);
