@@ -38,6 +38,55 @@
                 <p class="message message-error" role="alert">${mensagemErro}</p>
             </c:if>
 
+            <section class="content-card filter-panel" aria-label="Filtros de usuários">
+                <div class="filter-panel-header">
+                    <div>
+                        <span class="summary-label">Filtros</span>
+                        <h2>Consultar usuários</h2>
+                    </div>
+                    <p>Busque por nome, e-mail, perfil ou status de acesso.</p>
+                </div>
+
+                <form class="report-filters-form" action="${pageContext.request.contextPath}/usuarios" method="get">
+                    <div class="form-grid report-filters-grid">
+                        <div class="form-field">
+                            <label for="nome">Nome</label>
+                            <input id="nome" name="nome" type="text" value="${nomeFiltro}" placeholder="Nome do usuário">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="email">E-mail</label>
+                            <input id="email" name="email" type="text" value="${emailFiltro}" placeholder="usuario@email.com">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="perfil">Perfil</label>
+                            <select id="perfil" name="perfil">
+                                <option value="">Todos os perfis</option>
+                                <c:forEach var="perfil" items="${perfis}">
+                                    <option value="${perfil.name()}" ${perfilFiltro == perfil.name() ? 'selected' : ''}>${perfil.descricao}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                <option value="">Todos os status</option>
+                                <c:forEach var="status" items="${statusUsuarios}">
+                                    <option value="${status.name()}" ${statusFiltro == status.name() ? 'selected' : ''}>${status.descricao}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="report-filters-actions">
+                        <button class="button button-primary" type="submit">Consultar</button>
+                        <a class="button button-secondary" href="${pageContext.request.contextPath}/usuarios">Limpar filtros</a>
+                    </div>
+                </form>
+            </section>
+
             <section class="content-card" aria-label="Usuários cadastrados">
                 <div class="table-wrap">
                     <table class="data-table">

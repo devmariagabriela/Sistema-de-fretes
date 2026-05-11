@@ -49,6 +49,16 @@ public class FreteBO {
         }
     }
 
+    public List<Frete> listarComFiltros(String codigo, String origem, String destino, String motorista,
+            String veiculo, StatusFrete status) throws CadastroException {
+        try {
+            return freteDAO.listarComFiltros(normalizarFiltro(codigo), normalizarFiltro(origem),
+                    normalizarFiltro(destino), normalizarFiltro(motorista), normalizarFiltro(veiculo), status);
+        } catch (SQLException e) {
+            throw new CadastroException("Não foi possível listar os fretes.");
+        }
+    }
+
     public Frete buscarPorId(Long id) throws CadastroException {
         if (id == null || id <= 0) {
             throw new CadastroException("Frete inválido.");
@@ -164,6 +174,15 @@ public class FreteBO {
             String descricaoCarga = frete.getDescricaoCarga().trim();
             frete.setDescricaoCarga(descricaoCarga.isEmpty() ? null : descricaoCarga);
         }
+    }
+
+    private String normalizarFiltro(String valor) {
+        if (valor == null) {
+            return null;
+        }
+
+        String valorNormalizado = valor.trim();
+        return valorNormalizado.isEmpty() ? null : valorNormalizado;
     }
 
     private void validarRecursosOperacionais(Frete frete) throws SQLException, CadastroException {

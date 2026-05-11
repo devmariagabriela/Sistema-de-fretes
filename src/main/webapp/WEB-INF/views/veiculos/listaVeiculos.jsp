@@ -40,6 +40,55 @@
                 <p class="message message-error" role="alert">${mensagemErro}</p>
             </c:if>
 
+            <section class="content-card filter-panel" aria-label="Filtros de veículos">
+                <div class="filter-panel-header">
+                    <div>
+                        <span class="summary-label">Filtros</span>
+                        <h2>Consultar veículos</h2>
+                    </div>
+                    <p>Localize veículos por placa, modelo, tipo ou status operacional.</p>
+                </div>
+
+                <form class="report-filters-form" action="${pageContext.request.contextPath}/veiculos" method="get">
+                    <div class="form-grid report-filters-grid">
+                        <div class="form-field">
+                            <label for="placa">Placa</label>
+                            <input id="placa" name="placa" type="text" value="${placaFiltro}" placeholder="ABC-1234">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="modelo">Modelo</label>
+                            <input id="modelo" name="modelo" type="text" value="${modeloFiltro}" placeholder="Modelo">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="tipo">Tipo</label>
+                            <select id="tipo" name="tipo">
+                                <option value="">Todos os tipos</option>
+                                <c:forEach var="tipo" items="${tiposVeiculo}">
+                                    <option value="${tipo.name()}" ${tipoFiltro == tipo.name() ? 'selected' : ''}>${tipo.descricao}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                <option value="">Todos os status</option>
+                                <c:forEach var="status" items="${statusVeiculo}">
+                                    <option value="${status.name()}" ${statusFiltro == status.name() ? 'selected' : ''}>${status.descricao}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="report-filters-actions">
+                        <button class="button button-primary" type="submit">Consultar</button>
+                        <a class="button button-secondary" href="${pageContext.request.contextPath}/veiculos">Limpar filtros</a>
+                    </div>
+                </form>
+            </section>
+
             <section class="content-card" aria-label="Veículos cadastrados">
                 <div class="table-wrap">
                     <table class="data-table fleet-table">
