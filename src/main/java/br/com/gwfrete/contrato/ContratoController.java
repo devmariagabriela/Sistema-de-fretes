@@ -208,7 +208,6 @@ public class ContratoController extends HttpServlet {
         Contrato contrato = new Contrato();
         contrato.setCliente(criarClienteReferencia(obterLong(request.getParameter("clienteId"))));
         contrato.setNumero(request.getParameter("numero"));
-        contrato.setDescricao(request.getParameter("descricao"));
         contrato.setValorMensal(obterBigDecimal(request.getParameter("valorMensal")));
         contrato.setDataInicio(obterData(request.getParameter("dataInicio")));
         contrato.setDataFim(obterData(request.getParameter("dataFim")));
